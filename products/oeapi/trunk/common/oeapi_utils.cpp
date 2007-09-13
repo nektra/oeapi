@@ -447,9 +447,9 @@ void nkt_debug_print(int level, LPCTSTR format, ...)
 		TCHAR buffer[2048];
 		va_start(ap, format);
 #if _MSC_VER >= 1400
-		_vsntprintf_s(buffer, _TRUNCATE, format, ap);
+		_vstprintf_s(buffer, _TRUNCATE, format, ap);
 #else
-		_vsntprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), format, ap);
+		_vstprintf(buffer, format, ap);
 #endif
 		va_end(ap);
 		std::basic_stringstream<TCHAR> str;
