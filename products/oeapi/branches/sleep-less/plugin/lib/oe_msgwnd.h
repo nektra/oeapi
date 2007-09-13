@@ -399,7 +399,8 @@ private:
 	BOOL destroyed_;
 	// count the number of threads trying to lock. Used to know if the object can be destroyed
 	// or not.
-	volatile int locking_;
+	volatile LONG locking_;
+	HANDLE hShutdownEvent_;
 
 	// flag used to know if the Send process was cancelled
 	BOOL sendCancelled_;

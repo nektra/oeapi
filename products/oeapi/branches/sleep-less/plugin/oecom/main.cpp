@@ -427,7 +427,8 @@ OEAPIManager::OEAPIManager()
 	curFolderId_ = -1;
 	curMsgId_ = -1;
 	selMsgIds_ = NULL;
-	guiFlag_ = FALSE;
+	//guiFlag_ = FALSE;
+	hGuiFlag_ = ::CreateEvent(NULL, FALSE, FALSE, NULL);
 	lastFolderName_[0] = 0;
 	pSN_ = NULL;
 	hWnd_ = NULL;
@@ -759,7 +760,8 @@ BOOL OEAPIManager::EnterEvent()
 		ret = FALSE;
 	}
 	else {
-		eventCount_++;
+		//eventCount_++;
+		::InterlockedIncrement(&eventCount_);
 	}
 	LeaveCriticalSection(&eventCS_);
 
@@ -770,7 +772,8 @@ BOOL OEAPIManager::EnterEvent()
 void OEAPIManager::LeaveEvent()
 {
 	EnterCriticalSection(&eventCS_);
-	eventCount_--;
+	//eventCount_--;
+	::InterlockedDecrement(&eventCount_);
 	if(IsAboutToShutdown() && eventCount_ <= 0) {
 		::SetEvent(hShutdownEvent_);
 	}
@@ -1127,7 +1130,7 @@ Wait until watchFlag is true and non-input process events.
 void OEAPIManager::WaitGUIEvent()
 {
 	// wait until all the clients process the event. Otherwise, a 'Compact Folders'
-	while(!guiFlag_) {
+	/* while(!guiFlag_) {
 		MSG msg;
 		if(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
 			if((msg.message >= WM_KEYFIRST && msg.message <= WM_KEYLAST) ||
@@ -1141,6 +1144,25 @@ void OEAPIManager::WaitGUIEvent()
 
 		if(!guiFlag_) {
 			Sleep(10);
+		}
+	} */
+	LRESULT res;
+	MSG msg;
+	while(TRUE) {
+		res = ::MsgWaitForMultipleObjects(1, &hGuiFlag_, FALSE, INFINITE, QS_ALLINPUT & ~QS_INPUT);
+		if(res == WAIT_OBJECT_0) {
+			break;
+		}
+		else if(res == WAIT_OBJECT_0 + 1) {
+			while(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+				if((msg.message >= WM_KEYFIRST && msg.message <= WM_KEYLAST) ||
+					(msg.message > WM_MOUSEFIRST && msg.message <= WM_MOUSELAST)) {
+					// don't process message
+				}
+				else { // if(::GetMessage(&msg, 0, 0, 0)) {
+					::DispatchMessage(&msg);
+				}
+			}
 		}
 	}
 }
@@ -3426,34 +3448,34 @@ INT ExitServerCallback(BOOL logOff)
 	// delete the toolbar
 	delete OEPluginToolbarMgr::Get();
 
-	HANDLE hLastEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
-	pThis->SetAboutToShutdown(hLastEvent);
+	HANDLE hShutdownEvent = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+	pThis->SetAboutToShutdown(hShutdownEvent);
 
 	// while a pending event wait and process messages.
 	// new events are not triggered.
-	//while(pThis->GetActiveEventCount() > 0) {
-	MSG msg;
-	LRESULT res;
-	while(TRUE) {
-		res = ::MsgWaitForMultipleObjects(1, &hLastEvent, FALSE, INFINITE, QS_ALLINPUT);
-		if(res == WAIT_OBJECT_0) {
-			// Last event complete
-			::CloseHandle(hLastEvent);
-			break;
-		}
-		else if(res == WAIT_OBJECT_0 + 1) {
-			while(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
-				if(::GetMessage(&msg, 0, 0, 0)) {
-					::DispatchMessage(&msg);
-				}
-				else {
-					::PostMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+	if(pThis->GetActiveEventCount() > 0) {
+		MSG msg;
+		LRESULT res;
+		while(TRUE) {
+			res = ::MsgWaitForMultipleObjects(1, &hShutdownEvent, FALSE, INFINITE, QS_ALLINPUT);
+			if(res == WAIT_OBJECT_0) {
+				// Last event complete
+				::CloseHandle(hShutdownEvent);
+				break;
+			}
+			else if(res == WAIT_OBJECT_0 + 1) {
+				while(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
+					if(::GetMessage(&msg, 0, 0, 0)) {
+						::DispatchMessage(&msg);
+					}
+					else {
+						::PostMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+					}
 				}
 			}
 		}
+		//	Sleep(100);
 	}
-	//	Sleep(100);
-	//}
 
 	// update the events for oeapiinitcom
 	HANDLE shutdownEventHandle = CreateEvent(NULL, TRUE, FALSE, OEAPI_SHUTDOWN_EVENT_NAME);
@@ -3509,7 +3531,25 @@ INT ExitServerCallback(BOOL logOff)
 //		if(afterExitEventHandle != NULL) {
 			PostThreadMessage(serverID, WM_QUIT, 0, 0);
 //			WaitForSingleObject(afterExitEventHandle, INFINITE);
-			while(WaitForSingleObject(hServer, 0) == WAIT_TIMEOUT) {
+			LRESULT res;
+			MSG msg;
+			while(TRUE) {
+				res = ::MsgWaitForMultipleObjects(1, &hServer, FALSE, INFINITE, QS_ALLINPUT);
+				if(res == WAIT_OBJECT_0) {
+					break;
+				}
+				else if (res == WAIT_OBJECT_0 + 1) {
+					if(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
+						if(::GetMessage(&msg, 0, 0, 0)) {
+							::DispatchMessage(&msg);
+						}
+						else {
+							::PostMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+						}
+					}
+				}
+			}
+			/* while(WaitForSingleObject(hServer, 0) == WAIT_TIMEOUT) {
 				MSG msg;
 				if(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
 					if(::GetMessage(&msg, 0, 0, 0)) {
@@ -3521,7 +3561,7 @@ INT ExitServerCallback(BOOL logOff)
 				}
 
 				Sleep(10);
-			}
+			} */
 
 //			CloseHandle(afterExitEventHandle);
 //		}
@@ -3815,7 +3855,9 @@ DWORD _stdcall ServerProc(void *)
 		}
 
 		// force Manager creation in this thread
+		HANDLE hEvent = ::CreateEvent(NULL, TRUE, FALSE, OEAPI_MANAGER_START_EVENT_NAME);
 		OEAPIManager::Get();
+		::SetEvent(hEvent);
 
 		// reset: OE shouldn't get messages from server until all OEInit clients finish
 		// processing the OnOEAPIInit event
@@ -3914,8 +3956,35 @@ void _stdcall StartServer(HWND hwnd)
 				debug_print(DEBUG_ERROR, _T("COM Server: CreateThread failed.\n"));
 			}
 
+			HANDLE hEvent = ::CreateEvent(NULL, TRUE, FALSE, OEAPI_MANAGER_START_EVENT_NAME);
+
 			// Force OEAPIManager object creation before continue
-			while(pThis == NULL) {
+			LRESULT res;
+			MSG msg;
+			while(TRUE) {
+				res = ::MsgWaitForMultipleObjects(1, &hEvent, FALSE, INFINITE, QS_ALLINPUT);
+				if(res == WAIT_OBJECT_0) {
+					::CloseHandle(hEvent);
+					break;
+				}
+				else if (res == WAIT_OBJECT_0 +1) {
+					while(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
+						if(::GetMessage(&msg, 0, 0, 0)) {
+							if(msg.message != 0x0413) {
+								::DispatchMessage(&msg);
+							}
+							else {
+								//debug_print(DEBUG_INFO, _T("COM Server: (2) msg 0x0413 skipped %08x %08x %08x.\n"), msg.hwnd, msg.wParam, msg.lParam);
+								//::PostMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+							}
+						}
+						else {
+							break;
+						}
+					}
+				}
+			}
+			/* while(pThis == NULL) {
 				MSG msg;
 				if(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
 					if(::GetMessage(&msg, 0, 0, 0)) {
@@ -3933,14 +4002,36 @@ void _stdcall StartServer(HWND hwnd)
 				}
 
 				Sleep(10);
-			}
+			} */
 
 			// force to finish all initialization staff in ServerProc before continuing
 			HANDLE afterInitializationFinishHandle = CreateEvent(NULL, TRUE, FALSE, OEAPI_PLUGINS_INITIALIZED_EVENT_NAME);
 
 			// don't block because OEAPInit object needs messages to serve the events.
-			MSG msg;
-			while(WaitForSingleObject(afterInitializationFinishHandle, 0) == WAIT_TIMEOUT) {
+			//MSG msg;
+			while(TRUE) {
+				res = ::MsgWaitForMultipleObjects(1, &afterInitializationFinishHandle, FALSE, INFINITE, QS_ALLINPUT);
+				if(res == WAIT_OBJECT_0) {
+					break;
+				}
+				else if(res == WAIT_OBJECT_0 + 1) {
+					while(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
+						if(::GetMessage(&msg, 0, 0, 0)) {
+							if(msg.message != 0x0413) {
+								::DispatchMessage(&msg);
+							}
+							else {
+								//debug_print(DEBUG_INFO, _T("COM Server: (2) msg 0x0413 skipped %08x %08x %08x.\n"), msg.hwnd, msg.wParam, msg.lParam);
+								//::PostMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
+							}
+						}
+						else {
+							break;
+						}
+					}
+				}
+			}
+			/* while(WaitForSingleObject(afterInitializationFinishHandle, 0) == WAIT_TIMEOUT) {
 				if(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
 					if(::GetMessage(&msg, 0, 0, 0)) {
 						if(msg.message != 0x0413) {
@@ -3955,7 +4046,7 @@ void _stdcall StartServer(HWND hwnd)
 						break;
 					}
 				}
-			}
+			} */
 
 			CloseHandle(afterInitializationFinishHandle);
 

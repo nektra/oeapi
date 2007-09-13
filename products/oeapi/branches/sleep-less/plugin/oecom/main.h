@@ -343,17 +343,17 @@ public:
 	/**
 	Set GUI flag false. Call this function before triggering a event.
 	*/
-	void ResetGUIFlag() { guiFlag_ = FALSE; }
+	void ResetGUIFlag() { ::ResetEvent(hGuiFlag_); } // guiFlag_ = FALSE; }
 
 	/**
 	Set GUI flag true. Set this flag after the event was processed.
 	*/
-	void SetGUIFlag() { guiFlag_ = TRUE; }
+	void SetGUIFlag() { ::SetEvent(hGuiFlag_); } // guiFlag_ = TRUE; }
 
 	/**
 	Test if the GUI flag is set.
 	*/
-	BOOL IsGUIFlagSet() { return guiFlag_; }
+	//BOOL IsGUIFlagSet() { return guiFlag_; }
 
 	/**
 	Get the value of the key value where is stored OE 'Send Mail Immediately' property.
@@ -753,13 +753,14 @@ private:
 	//BOOL shutdown_;
 	// counter of events that the library is attending at this moment. It is used to
 	// prevent shutdown while a event is attended.
-	int eventCount_;
+	volatile LONG eventCount_;
 	HANDLE hShutdownEvent_;
 
 	CRITICAL_SECTION eventCS_;
 
 	// flag indicates that there is a OE GUI thread pending event 
-	BOOL guiFlag_;
+	//BOOL guiFlag_;
+	HANDLE hGuiFlag_;
 
 	// UI critical section
 	CRITICAL_SECTION uiCS_;

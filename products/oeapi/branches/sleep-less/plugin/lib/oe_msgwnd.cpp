@@ -580,6 +580,7 @@ OEPluginMsgWnd::OEPluginMsgWnd(HWND hMsg)
 	//lockCount_ = 0;
 	destroyed_ = FALSE;
 	locking_ = 0;
+	hShutdownEvent_ = NULL;
 	topLevelMgr_ = NULL;
 	isPreviewMsgWnd_ = FALSE;
 
@@ -627,9 +628,14 @@ OEPluginMsgWnd::~OEPluginMsgWnd()
 	destroyed_ = TRUE;
 
 	// wait that the threads that are trying to lock exit.
-	while(locking_) {
-		Sleep(100);
+	hShutdownEvent_ = ::CreateEvent(NULL, TRUE, FALSE, NULL);
+	if(locking_) {
+		::WaitForSingleObject(hShutdownEvent_, INFINITE);
 	}
+	::CloseHandle(hShutdownEvent_);
+	//while(locking_) {
+	//	Sleep(100);
+	//}
 
 	lock_.Term();
 }
@@ -1357,7 +1363,8 @@ BOOL OEPluginMsgWnd::Lock(BOOL processMsgs)
 	MSG msg;
 	BOOL ret = FALSE;
 
-	locking_++;
+	//locking_++;
+	::InterlockedIncrement(&locking_);
 	//dbgprint2("OEPluginMsgWnd::Lock: %08x %d\n", this, lockCount_);
 
 	if(processMsgs) {
@@ -1386,7 +1393,11 @@ BOOL OEPluginMsgWnd::Lock(BOOL processMsgs)
 		ret = TRUE;
 	}
 
-	locking_--;
+	//locking_--;
+	::InterlockedDecrement(&locking_);
+	if(locking_ == 0 && hShutdownEvent_ != NULL) {
+		::SetEvent(hShutdownEvent_);
+	}
 
 	return ret;
 }
