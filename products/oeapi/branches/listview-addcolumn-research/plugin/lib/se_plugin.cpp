@@ -99,10 +99,9 @@ VOID UpdateMsgSelection()
 	}
 }
 
-static INT msgList[1024];
-static INT msgCount = 0;
-
-
+// Unused
+//static INT msgList[1024];
+//static INT msgCount = 0;
 
 
 void OEAPI_SetSelectedMessage(INT count, INT *indexs)
@@ -421,6 +420,603 @@ LRESULT CALLBACK CommonWndProc(WNDPROC lpOldProc, HWND hDlg,
 	return res;
 }
 
+HWND oldLH = NULL;
+WNDPROC oldListHeaderWndProc = NULL;
+HWND oldMV = NULL;
+WNDPROC oldMessageViewWndProc = NULL;
+HWND oldML = NULL;
+WNDPROC oldMessageListWndProc = NULL;
+HWND oldLV = NULL;
+WNDPROC oldSysListViewWndProc = NULL;
+
+int depth = 0;
+
+class DebugSentry {
+public:
+	DebugSentry(LPCTSTR stag, LPCTSTR etag) : etag_(etag)
+	{
+		//OutputDebugString(stag); 
+	}
+	~DebugSentry() 
+	{ 
+		//OutputDebugString(etag_); 
+	}
+private:
+	LPCTSTR etag_;
+};
+
+DWORD oeapiColumns[32];
+DWORD oeapiColumns2[32];
+
+//---------------------------------------------------------------------------------//
+LRESULT CALLBACK ListHeaderWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	switch(msg) 
+	{
+	case HDM_ORDERTOINDEX:
+		{
+			//debug_print(DEBUG_TRACE, _T("^^^^^^^> ListHeaderWndProc: %08x, HDM_ORDERTOINDEX %d, %08x <--- zero.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case HDM_GETITEMRECT:
+		{
+			LPRECT pRect = (LPRECT)lParam;
+			//debug_print(DEBUG_TRACE, _T("^^^^^^^> ListHeaderWndProc: %08x, HDM_GETITEMRECT %d, %08x .\n"), hWnd, wParam, lParam);
+			//DWORD res = CallWindowProc(oldListHeaderWndProc, hWnd, msg, wParam, lParam);
+			////if(wParam == 3) {
+			//if(wParam == 0 && pRect->right - pRect->left > 100) {
+			//	//debug_print(DEBUG_TRACE, _T("<<><>>%d.\n"), wParam);
+			//	//pRect->left += 20;
+			//}
+			//return res;
+			break;
+		}
+	case HDM_LAYOUT:
+		{
+			//debug_print(DEBUG_TRACE, _T("^^^^^^^> ListHeaderWndProc: %08x, HDM_LAYOUT %d, %08x .\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case HDM_INSERTITEMW:
+		{
+			//debug_print(DEBUG_TRACE, _T("^^^^^^^> ListHeaderWndProc: %08x, HDM_INSERTITEMW %d, %08x .\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case HDM_GETORDERARRAY:
+		{
+			static int q = 0;
+			//debug_print(DEBUG_TRACE, _T("^^^^^^^> ListHeaderWndProc: %08x, HDM_GETORDERARRAY %d, %08x .\n"), hWnd, wParam, lParam);
+			DWORD count = Header_GetItemCount(hWnd);
+			if(count != wParam) {
+				LPDWORD newOrder = oeapiColumns; //new DWORD[wParam+1];		// assumes wParam == 6
+				LPDWORD prevOrder = (LPDWORD)lParam;
+				if(q < 2) {
+					LRESULT res = CallWindowProc(oldListHeaderWndProc, hWnd, msg, wParam+1, (LPARAM)newOrder);
+					/* int col2 = newOrder[2];
+					newOrder[2] = newOrder[wParam];
+					newOrder[wParam] = col2; */
+					//memcpy((LPVOID)lParam, newOrder, wParam * sizeof(DWORD));
+					int i = 0;
+					while(i<wParam && newOrder[i] != wParam) {
+						prevOrder[i] = newOrder[i];
+						i++;
+					}
+					while(i<wParam) {
+						prevOrder[i] = newOrder[i+1];
+						i++;
+					}
+					memcpy(oeapiColumns2, prevOrder, sizeof(DWORD) * wParam);
+					q++;
+					//delete [] newOrder;
+					return res;
+				}
+				else {
+					memcpy(prevOrder, oeapiColumns2, sizeof(DWORD) * wParam);
+					return TRUE;
+				}
+			}
+			//else {
+			//}
+			break;
+		}
+	case HDM_SETORDERARRAY:
+		{
+			//debug_print(DEBUG_TRACE, _T("^^^^^^^> ListHeaderWndProc: %08x, HDM_GETORDERARRAY %d, %08x .\n"), hWnd, wParam, lParam);
+			break;
+		}
+	default:
+		{
+			//debug_print(DEBUG_TRACE, _T("^^^^^^^> ListHeaderWndProc: %08x, %08x %08x, %08x.\n"), hWnd, msg, wParam, lParam);
+			break;
+		}
+	}
+	//if(msg == WM_DESTROY) {
+	//	LRESULT res = CallWindowProc(oldListHeaderWndProc, hWnd, msg, wParam, lParam);
+	//	::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)oldListHeaderWndProc);
+	//	oldListHeaderWndProc = NULL;
+	//	return res;
+	//}
+	return CallWindowProc(oldListHeaderWndProc, hWnd, msg, wParam, lParam);
+}
+
+//---------------------------------------------------------------------------------//
+LRESULT CALLBACK SysListViewWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	//volatile DebugSentry s;
+	switch(msg)	
+	{
+	case LVM_GETITEMCOUNT:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_GETITEMCOUNT %d %d.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_INSERTCOLUMNA:
+		{
+			debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_INSERTCOLUMNA %d %08x.\n"), hWnd, wParam, lParam);
+			//* 
+			if(wParam == 5) 
+			{
+				LRESULT res = CallWindowProc(oldSysListViewWndProc, hWnd, msg, wParam, lParam);
+				LVCOLUMN column = {0};
+				column.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT; // | LVCF_IMAGE; // 
+				column.cx = 24;
+				column.fmt = LVCFMT_CENTER;
+				column.iImage = 0;
+				column.pszText = _T("q"); // _T("qq");
+				CallWindowProc(oldSysListViewWndProc, hWnd, msg, 6, (LPARAM)&column);
+
+				HIMAGELIST hImageList = ListView_GetImageList(hWnd, LVSIL_SMALL); //ListView_GetImageList(hWnd, LVSIL_NORMAL); //::SendMessage(hWnd, LVM_GETIMAGELIST, NULL, NULL);
+				//HIMAGELIST h1, h2, h3, h4;
+				//h1 = ListView_GetImageList(hWnd, LVSIL_NORMAL);
+				//h2 = ListView_GetImageList(hWnd, LVSIL_SMALL);
+				//h3 = ListView_GetImageList(hWnd, LVSIL_STATE);
+				//h4 = ListView_GetImageList(hWnd, LVSIL_GROUPHEADER);
+				//int count = ImageList_GetImageCount(hImageList);
+				//HBITMAP hBitmap = (HBITMAP)::LoadImage(Plugin.hInstance, MAKEINTRESOURCE(104), IMAGE_ICON, 0, 0, LR_CREATEDIBSECTION);
+				//DWORD ind = ImageList_Add(hImageList, hBitmap, hBitmap);
+				//count = ImageList_GetImageCount(hImageList);
+				return res;
+			} // */
+			break;
+		}
+	case LVM_DELETECOLUMN:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_DELETECOLUMN %d %08x <-- zero.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_GETNEXTITEM:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_GETNEXTITEM %d %08x.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_SETIMAGELIST:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_SETIMAGELIST %d %08x.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_GETSELECTEDCOUNT:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_GETSELECTEDCOUNT %d %d.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_SETITEMSTATE:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_SETITEMSTATE %d %08x.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_SETCOLUMNORDERARRAY:
+		{
+			debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_SETCOLUMNORDERARRAY %d %08x.\n"), hWnd, wParam, lParam);
+			// Add our column to the order array
+			//* 
+			LPDWORD newOrder = new DWORD[wParam+1];	// assumes wParam == 6
+			LPDWORD prevOrder = (LPDWORD)lParam;
+
+			//*
+			for(int i = 0; i < 3; i++) {
+				newOrder[i] = prevOrder[i];
+			}
+			newOrder[3] = wParam;
+			for(int i = 3; i < wParam; i++) {
+				newOrder[1+i] = prevOrder[i];
+			} // */
+			/* 
+			int i = 0;
+			while(i < wParam && prevOrder[i] != 0) {
+				newOrder[i] = prevOrder[i];
+				i++;
+			}
+			newOrder[i] = wParam;
+			while(i < wParam) {
+				newOrder[i+1] = prevOrder[i];
+				i++;
+			} // */
+
+			//memcpy(newOrder, (LPVOID)lParam, wParam * sizeof(DWORD));
+			//newOrder[wParam] = wParam;
+			//int col2 = newOrder[2];
+			//if(col2 != wParam) {
+			//	newOrder[2] = wParam;
+			//	newOrder[wParam] = col2;
+			//}
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_SETCOLUMNORDERARRAY %d %08x.\n"), hWnd, wParam, lParam);
+			LRESULT res = CallWindowProc(oldSysListViewWndProc, hWnd, msg, wParam+1, (LPARAM)newOrder);
+			//LRESULT res = CallWindowProc(oldSysListViewWndProc, hWnd, msg, wParam, lParam);
+			delete [] newOrder;
+			return res; //*/
+		}
+	case LVM_GETCOLUMNORDERARRAY:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_GETCOLUMNORDERARRAY %d %08x.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_SETITEMCOUNT:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_SETITEMCOUNT %d %08x.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_GETITEMSTATE:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_GETITEMSTATE %d %08x.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case LVM_GETHEADER:
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x LVM_GETHEADER %d %d <--- zero.\n"), hWnd, wParam, lParam);
+			break;
+		}
+	case WM_NOTIFY:
+		{
+			//LPNMHDR pnmhdr = (LPNMHDR)lParam;
+			////debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: %08x, %08x %08x, %08x.\n"), hWnd, msg, , wParam, lParam);
+			//
+			//switch(pnmhdr->code) 
+			//{
+			//	case NM_CUSTOMDRAW: 
+			//	default:
+			//		{
+			//			debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x, %08x, %08x, %d, %08x, %08x.\n"), hWnd, msg, wParam, pnmhdr->code, pnmhdr->idFrom, pnmhdr->hwndFrom);
+			//			break;
+			//		}
+			//}			
+			break;
+		}
+	default: 
+		{
+			//debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x, %08x %08x, %08x.\n"), hWnd, msg, wParam, lParam);
+			break;
+		}
+	}
+	//if(msg == WM_DESTROY) {
+	//	LRESULT res = CallWindowProc(oldSysListViewWndProc, hWnd, msg, wParam, lParam);
+	//	::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)oldSysListViewWndProc);
+	//	oldSysListViewWndProc = NULL;
+	//	return res;
+	//}
+	//if(msg == LVM_INSERTCOLUMNW || msg == LVM_SETCOLUMNW) {
+	//if(msg == LVM_INSERTCOLUMNA || msg == LVM_SETCOLUMNA) {
+	//	debug_print(DEBUG_TRACE, _T(".......> SysListViewWndProc: %08x, %08x %08x, %08x.\n"), hWnd, msg, wParam, lParam);
+	//}
+	//if(msg == LVM_INSERTCOLUMNA) {
+	//}
+	return CallWindowProc(oldSysListViewWndProc, hWnd, msg, wParam, lParam);
+}
+
+bool bf = false;
+
+//---------------------------------------------------------------------------------//
+LRESULT CALLBACK MessageListWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	//volatile DebugSentry s(_T("]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]\n"), _T("[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[[\n"));
+	//if(msg == WM_NOTIFY) {
+	//	LPNMHDR pnmhdr = (LPNMHDR)lParam;
+	//	//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: %08x, %08x %08x, %08x.\n"), hWnd, msg, , wParam, lParam);
+	//	debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: %08x, %08x, %08x, %d, %08x, %08x.\n"), hWnd, msg, wParam, pnmhdr->code, pnmhdr->idFrom, pnmhdr->hwndFrom);
+	//	/* switch(pnmhdr->code) {
+	//		case NM_CUSTOMDRAW:
+	//			break;
+	//	} */
+	//}
+	//else {
+	//	debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: %08x, %08x, %08x, %08x.\n"), hWnd, msg, wParam, lParam);
+	//}
+	if(msg == WM_NOTIFY) {
+		LPNMHDR pnmhdr = (LPNMHDR)lParam;
+		// I've to catch some messages but I dont know what exactly yet
+		switch(pnmhdr->code)
+		{
+		case NM_CUSTOMDRAW: {
+			LPNMLVCUSTOMDRAW pCustomDraw = (LPNMLVCUSTOMDRAW)lParam;			
+			//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: NM_CUSTOMDRAW %08x %08x %d %d.\n"), pCustomDraw->nmcd.hdr.hwndFrom, pCustomDraw->nmcd.dwDrawStage, pCustomDraw->nmcd.dwItemSpec, pCustomDraw->iSubItem);
+			////int oldSubItem = pCustomDraw->iSubItem;
+			////if(pCustomDraw->iSubItem > 5) {
+			////	pCustomDraw->iSubItem--;
+			////}
+			////if(pCustomDraw->nmcd.dwItemSpec >= 2) {
+			////	pCustomDraw->nmcd.dwItemSpec--;
+			////}
+			////COLORREF clrTextBk = pCustomDraw->clrTextBk;
+			////if((pCustomDraw->nmcd.dwDrawStage == CDDS_ITEMPREPAINT) ||
+			////	(pCustomDraw->nmcd.dwDrawStage == CDDS_ITEMPREPAINT | CDDS_SUBITEM)) {
+
+			////	/* if(pCustomDraw->nmcd.dwItemSpec % 2) {
+			////		pCustomDraw->clrTextBk = RGB(0x88, 0x22, 0xaa);
+			////		if(pCustomDraw->nmcd.uItemState == CDIS_HOT) {
+			////			pCustomDraw->clrText = RGB(0x00, 0x00, 0x00);
+			////		}
+			////		else {
+			////			pCustomDraw->clrText = RGB(0xff, 0xff, 0xff);
+			////		}
+			////	} */
+			////	//else {
+			////	//	pCustomDraw->clrTextBk = RGB(0xff, 0xff, 0xff); 
+			////	//	pCustomDraw->clrText = RGB(0xaa, 0x22, 0x88);
+			////	//}
+			////	//LRESULT res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+			////	//pCustomDraw->nmcd.dwItemSpec = oldItem;
+			////	//return res;
+			////}
+			////void* p = (LPVOID)pCustomDraw->nmcd.lItemlParam;
+			////pCustomDraw->nmcd.lItemlParam
+			////pCustomDraw->clrTextBk = clrTextBk;
+			//LRESULT res;
+
+			//// debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: NM_CUSTOMDRAW %08x %08x %d %d.\n"), pCustomDraw->nmcd.hdr.hwndFrom, pCustomDraw->nmcd.dwDrawStage, pCustomDraw->nmcd.dwItemSpec, pCustomDraw->iSubItem);
+
+
+			////if(pCustomDraw->nmcd.dwDrawStage == CDDS_ITEMPREPAINT) {
+			////	if(pCustomDraw->iSubItem == 4) {
+			////		pCustomDraw->nmcd.rc.left += 20;
+			////	}
+			////}
+			////if(pCustomDraw->iSubItem == 6) {
+			////	res = CDRF_NOTIFYITEMDRAW; // CDRF_NOTIFYITEMDRAW | CDRF_NEWFONT;
+			////}
+			////else {
+			//	res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+
+			////if(pCustomDraw->nmcd.dwDrawStage == CDDS_ITEM) {
+			////	//if(pCustomDraw->iSubItem == 4) {
+			////	//	pCustomDraw->nmcd.rc.left += 20;
+			////	//}
+			////}
+			////}
+			////CDRF_NOTIFYITEMDRAW
+			////pCustomDraw->iSubItem = oldSubItem;
+			//return res;
+			break;
+		}
+		//case NM_CLICK: case NM_HOVER: case LVN_ODCACHEHINT: {
+		//	//return FALSE;
+		//	//break;
+		//}
+		case LVN_GETDISPINFOA:
+			{
+				LPNMLVDISPINFOA pdi = (LPNMLVDISPINFOA)lParam;
+				//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: LVN_GETDISPINFO: %08x %d %d %08x.\n"), pdi->hdr.hwndFrom, pdi->item.iItem, pdi->item.iSubItem, pdi->item.mask);
+				//* 
+				if(pdi->item.iSubItem == 6) {
+					if(pdi->item.mask & LVIF_IMAGE) {
+						if(pdi->item.iItem % 5 == 2) {
+							pdi->item.iImage = 37; // 0x1234;
+						}
+					}
+					if(pdi->item.mask & LVIF_TEXT) {
+						strcpy_s(pdi->item.pszText, pdi->item.cchTextMax, _T(""));
+						//pdi->item.pszText = ""; // (LPWSTR)0xabcd;
+						//pdi->item.cchTextMax = 
+					}
+					if(pdi->item.mask & LVIF_STATE) {
+						pdi->item.stateMask = LVIS_STATEIMAGEMASK; //0x5678;	//
+						pdi->item.state = 0; //0x9abc;
+					}
+					return FALSE;
+				}
+				else {
+					LRESULT res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+					if(pdi->item.iSubItem >= 1 && pdi->item.iSubItem <= 3) {
+						debug_print(DEBUG_TRACE, _T("       > MessageListWndProc: LVN_GETDISPINFO: ret %08x %d.\n"), res, res);
+					}
+					return res;
+				} // */
+				//LRESULT res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+				//if(pdi->item.iSubItem == 4) {
+				//	LPSTR pstr = new TCHAR[pdi->item.cchTextMax];
+				//	strcpy_s(pstr, pdi->item.cchTextMax, pdi->item.pszText);
+				//	strcpy_s(pdi->item.pszText, pdi->item.cchTextMax, _T("__"));
+				//	strcat_s(pdi->item.pszText, pdi->item.cchTextMax, pstr);
+				//	delete [] pstr;
+				//}
+				//return res;
+				break;
+			}
+		case LVN_GETDISPINFOW: {
+			LPNMLVDISPINFOW pdi = (LPNMLVDISPINFOW)lParam;
+			//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: LVN_GETDISPINFOW: %08x %d %d %08x.\n"), pdi->hdr.hwndFrom, pdi->item.iItem, pdi->item.iSubItem, pdi->item.mask);
+			/* LPNMLVDISPINFOW info = (LPNMLVDISPINFOW)lParam;
+			int oldSubItem = info->item.iSubItem;
+			if(info->item.iSubItem > 0) {
+				if(info->item.iSubItem > 1) {
+					info->item.iSubItem--;
+				}
+			}
+			LRESULT res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+			info->item.iSubItem = oldSubItem;
+			return res; */
+			
+			/* 
+			if(pdi->item.iSubItem == 4) {
+				if(pdi->item.mask & LVIF_IMAGE) {
+					pdi->item.iImage = -1; // 0x1234;
+				}
+				if(pdi->item.mask & LVIF_TEXT) {
+					pdi->item.pszText = L""; // (LPWSTR)0xabcd;
+				}
+				if(pdi->item.mask & LVIF_STATE) {
+					pdi->item.stateMask = 0; //0x5678;	//
+					pdi->item.state = 0; //0x9abc;
+				}
+				if(pdi->item.mask & LVIF_PARAM) {
+					//pdi->item.lParam = 0xef01;
+				}
+				if(pdi->item.mask & LVIF_INDENT) {
+					//pdi->item.iIndent = 0x4321;
+				}
+				//if(pdi->item.mask & 0x00000100) {
+				//	//pdi->item
+				//}
+				return FALSE;
+			}
+			else {
+				LRESULT res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+				return res;
+			} // */
+			break;
+		}
+		/* case LVN_GETINFOTIPW: {
+			LPNMLVGETINFOTIPW pdi = (LPNMLVGETINFOTIPW)lParam;
+			debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: LVN_GETINFOTIPW %d %d.\n"), pdi->iItem, pdi->iSubItem);
+			if(pdi->iSubItem > 5) {
+				pdi->pszText = NULL;
+				return FALSE;
+			}
+			break;
+		} */
+		/* case LVN_ITEMCHANGED: {
+			LPNMLISTVIEW pdi = (LPNMLISTVIEW)lParam;
+			debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: LVN_ITEMCHANGED %d %d.\n"), pdi->iItem, pdi->iSubItem);
+			if(pdi->iSubItem > 5) {
+				return FALSE;
+			}
+			break;
+		} */
+		case LVN_HOTTRACK: {
+			LPNMLISTVIEW pdi = (LPNMLISTVIEW)lParam;
+			//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: LVN_HOTTRACK %d %d.\n"), pdi->iItem, pdi->iSubItem);
+			/* if(pdi->iSubItem > 5) {
+				return FALSE;
+			} */
+			break;
+		}
+		case NM_SETFOCUS: 
+			{
+				//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: %08x, NM_SETFOCUS %08x, %d, %08x, %08x.\n"), hWnd, wParam, pnmhdr->code, pnmhdr->idFrom, pnmhdr->hwndFrom);
+				/* if(!bf) {
+					// Doesn't seems to be safe toi add a header here
+					bf = true;
+					HWND hListView = ::FindWindowEx(hWnd, NULL, !IsWMail() ? _T("ATL:SysListView32") : _T("SysListView32"), NULL);
+					if(hListView) {
+						LVCOLUMN column = {0};
+						column.mask = LVCF_FMT | LVCF_WIDTH | LVCF_TEXT;
+						column.cx = 50;
+						column.fmt = LVCFMT_LEFT;
+						column.pszText = _T("mono");
+						INT index = (INT)::SendMessage(hListView, LVM_INSERTCOLUMN, 6, (LPARAM)&column);
+						debug_print(DEBUG_TRACE, _T("```````> MessageListWndProc: %08x %d.\n"), hListView, index);
+					}
+				} */
+				break;
+			}
+		case HDN_ITEMCHANGINGW: {
+			LPNMHEADERW phi = (LPNMHEADERW)lParam;
+			//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: HDN_ITEMCHANGINGW %d.\n"), phi->iItem);
+			/* if(phi->iItem > 5) {
+				return TRUE;
+			} */
+			break;
+		}
+		case HDN_ITEMCHANGEDW: {
+			LPNMHEADERW phi = (LPNMHEADERW)lParam;
+			//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: HDN_ITEMCHANGINGW %d.\n"), phi->iItem);
+			/* if(phi->iItem > 5) {
+				return TRUE;
+			} */
+			break;
+		}
+		default: {
+			//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: %08x, %08x, %08x, %d, %08x, %08x.\n"), hWnd, msg, wParam, pnmhdr->code, pnmhdr->idFrom, pnmhdr->hwndFrom);
+		}
+		}
+	}
+	else {
+		//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: %08x, %08x, %08x, %08x.\n"), hWnd, msg, wParam, lParam);
+	}
+	//if(msg == WM_DESTROY) {
+	//	LRESULT res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+	//	::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)oldMessageListWndProc);
+	//	oldMessageListWndProc = NULL;
+	//	return res;
+	//}
+	return CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+}
+
+HWND hPrevML = NULL;
+
+//---------------------------------------------------------------------------------//
+LRESULT CALLBACK MessageViewWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+{
+	//volatile DebugSentry s(_T(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>\n"), _T("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n"));
+	//LRESULT res;
+	debug_print(DEBUG_TRACE, _T("-------> MessageViewWndProc: %08x, %08x %08x, %08x.\n"), hWnd, msg, wParam, lParam);
+
+	switch(msg) { // == WM_PARENTNOTIFY) {
+		case WM_PARENTNOTIFY: 
+			{
+				if(LOWORD(wParam) == WM_CREATE) {
+					LRESULT res = ::CallWindowProc(oldMessageViewWndProc, hWnd, msg, wParam, lParam);
+
+					HWND hMsgList = (HWND)lParam;
+					if(hMsgList) {
+						if(hPrevML) {
+							::SetWindowLongPtr(hPrevML, GWL_WNDPROC, (LONG_PTR)oldMessageListWndProc);
+							oldMessageListWndProc = NULL;
+						}
+						hPrevML = hMsgList;
+						//TCHAR className[1024];
+						//::GetClassName(hMsgList, className, sizeof(className));
+						//debug_print(DEBUG_TRACE, _T("=======> MessageViewWndProc: %s.\n"), className);
+						oldMessageListWndProc = (WNDPROC)::GetWindowLongPtr(hMsgList, GWLP_WNDPROC);
+						::SetWindowLongPtr(hMsgList, GWL_WNDPROC, (LONG_PTR)MessageListWndProc);
+
+						HWND hSysListView = ::FindWindowEx(hMsgList, NULL, !IsWMail() ? _T("ATL:SysListView32") : _T("SysListView32"), NULL);
+						if(hSysListView) {
+							//if(!oldSysListViewWndProc) {
+							if(oldLV) {
+								::SetWindowLongPtr(oldLV, GWLP_WNDPROC, (LONG_PTR)oldSysListViewWndProc);
+								oldSysListViewWndProc = NULL;
+							}
+							oldSysListViewWndProc = (WNDPROC)::GetWindowLongPtr(hSysListView, GWLP_WNDPROC);
+							::SetWindowLongPtr(hSysListView, GWL_WNDPROC, (LONG_PTR)SysListViewWndProc);
+							oldLV = hSysListView;
+
+							if(oldLH) {
+								::SetWindowLongPtr(oldLH, GWLP_WNDPROC, (LONG_PTR)oldListHeaderWndProc);
+								oldListHeaderWndProc = NULL;
+							}
+							HWND hListHeader = (HWND)::SendMessage(hSysListView, LVM_GETHEADER, 0, 0);
+							oldListHeaderWndProc = (WNDPROC)::GetWindowLongPtr(hListHeader, GWLP_WNDPROC);
+							::SetWindowLongPtr(hListHeader, GWL_WNDPROC, (LONG_PTR)ListHeaderWndProc);
+							oldLH = hListHeader;
+							//}
+						}// */
+					}
+
+					return res;
+				}
+				break;
+			}
+	}
+	//if(msg == WM_DESTROY) {
+	//	LRESULT res = CallWindowProc(oldMessageViewWndProc, hWnd, msg, wParam, lParam);
+	//	::SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)oldMessageViewWndProc);
+	//	oldMessageViewWndProc = NULL;
+	//	return res;
+	//}
+	return CallWindowProc(oldMessageViewWndProc, hWnd, msg, wParam, lParam);
+}
+
+HWND hPrevList = NULL;
+
+//---------------------------------------------------------------------------------//
 LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 {
 	if(nCode == HCBT_CREATEWND) {
@@ -442,6 +1038,19 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 #ifdef ENTERPRISE_VERSION
 		if(className && !_tcscmp(className, _T("ATH_Note"))) {
 			MsgWndMgr.AddWindow(hWnd);
+		}
+		//else if(className && !_tcscmp(className, _T("Outlook Express Message List"))) {
+		else if(className && !_tcscmp(className, _T("Outlook Express Message View"))) {
+			if(hPrevList) {
+				SetWindowLongPtr(hPrevList, GWL_WNDPROC, (LONG_PTR)oldMessageViewWndProc);
+				oldMessageViewWndProc = NULL;
+			}
+			// Call the next handler in the chain
+			//LRESULT res = CallNextHookEx(Plugin.hookHandle, nCode, wParam, lParam);
+			hPrevList = hWnd;
+			oldMessageViewWndProc = (WNDPROC)GetWindowLongPtr(hWnd, GWLP_WNDPROC);
+			SetWindowLongPtr(hWnd, GWL_WNDPROC, (LONG_PTR)MessageViewWndProc);
+			//return res;
 		}
 		else if(className && cs->hwndParent && !_tcscmp(className, _T("##MimeEdit_Server"))) {
 			if(IsChild(Plugin.OEMainWindow, cs->hwndParent)) {
