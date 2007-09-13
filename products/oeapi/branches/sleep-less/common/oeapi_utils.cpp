@@ -444,13 +444,9 @@ void nkt_debug_print(int level, LPCTSTR format, ...)
 	if(nkt_debug_level >= level)
 	{
 		va_list ap;
-		TCHAR buffer[2048];
+		TCHAR buffer[1024];
 		va_start(ap, format);
-#if _MSC_VER >= 1400
-		_vsntprintf_s(buffer, _TRUNCATE, format, ap);
-#else
-		_vsntprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), format, ap);
-#endif
+		_vstprintf_s(buffer, _TRUNCATE, format, ap);
 		va_end(ap);
 		std::basic_stringstream<TCHAR> str;
 #ifdef OEAPI_DEBUG_PREFIX
