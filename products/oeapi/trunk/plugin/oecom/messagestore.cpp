@@ -582,9 +582,16 @@ HRESULT OEAPIMessageStore::NotifyFolderTransaction(HTRANSACTION__ *hTransaction,
 		//RegisterMessageNotification(transInfo.folderId1);
 
 		MapTransactionType(TRUE, transInfo.transType, &txType);
+		if(txType == oeapi_tx_folder_update && transInfo.parentId1 != transInfo.parentId2) {
+			// Folder move 
+			txType = oeapi_tx_folder_move;
+		}
+		else if(txType == oeapi_tx_folder_update && transInfo.rename) {
+			txType = oeapi_tx_folder_rename;
+		}
 		if(txType != oeapi_tx_invalid) {
 			if(_listener) {
-				_listener->OnDatabaseTransaction(txType, ft, transInfo.folderId1, transInfo.parentId1);
+				_listener->OnDatabaseTransaction(txType, ft, transInfo.folderId1, transInfo.parentId1, 0, transInfo.parentId2);
 			}
 		}
 
@@ -630,9 +637,9 @@ HRESULT OEAPIMessageStore::NotifyMessageTransaction(HTRANSACTION__ *hTransaction
 			debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::OnTransaction: Error GetFolderTransactionInfo %08x.\n"), hr);
 			return S_FALSE;
 		}
-		if(transInfo.transType == 1) {
-			//debug_print(DEBUG_TRACE, _T("...........1:%08x, 2:%08x ->\n"), transInfo.arf1, transInfo.arf2);
-		}
+		//if(transInfo.transType == tr_updaterecord) {
+		//	debug_print(DEBUG_TRACE, _T("...........1:%08x, 2:%08x ->\n"), transInfo.arf1, transInfo.arf2);
+		//}
 
 		FolderType ft;
 		TransactionType txType;
@@ -647,7 +654,7 @@ HRESULT OEAPIMessageStore::NotifyMessageTransaction(HTRANSACTION__ *hTransaction
 		MapTransactionType(FALSE, transInfo.transType, &txType);
 		
 		// TODO: Merge into MapTransactionType
-		if(transInfo.transType == 1) {
+		if(transInfo.transType == tr_updaterecord) {
 			if(IsWMail()) {
 				if((transInfo.arf1 & 0x80)) {
 					txType = oeapi_tx_message_read;
@@ -1041,6 +1048,8 @@ HRESULT OEAPIMessageStoreOE::GetFolderType(NktFOLDERID folderId, FolderType *fol
 
 	type = folderInfo.type;
 
+	hr = msgStore->FreeRecord(&folderInfo);
+
 	if(folderType) {
 		MapFolderType((BYTE)type, folderType);
 	}
@@ -1219,10 +1228,7 @@ HRESULT OEAPIMessageStoreOE::DeleteMessage(NktFOLDERID folderId, NktMESSAGEID ms
 	msgList.prgdwMsgId = &msgId2;
 
 	if(permanent) {
-		//IStoreCallback* callback = NULL;
-		//callback = new NktNullStoreCallback();
 		hr = folder->DeleteMessages(1, &msgList, NULL, &nullStoreCallback);
-		//delete callback;
 	}
 	else {
 		hr = folder->DeleteMessages(0, &msgList, NULL, NULL);
@@ -1317,7 +1323,12 @@ HRESULT OEAPIMessageStoreOE::GetFolderTransactionInfo(IDatabase* database, HTRAN
 	transInfo->parentId2 = folInfo2.dwParentFolderId;
 	transInfo->folderType = folInfo1.type;
 
-	//OEAPIMessageStore::RegisterMessageNotification(transInfo->folderId1);
+	transInfo->rename = FALSE;
+	if(transInfo->parentId1 == transInfo->parentId2 && transInfo->folderId1 == transInfo->folderId2) {
+		if(_tcscmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
+			transInfo->rename = TRUE;
+		}
+	}
 
 	database->FreeRecord(&folInfo1);
 	database->FreeRecord(&folInfo2);
@@ -1824,10 +1835,7 @@ HRESULT OEAPIMessageStoreWM::DeleteMessage(NktFOLDERID folderId, NktMESSAGEID ms
 	msgList.prgdwMsgId = msgId2;
 
 	if(permanent) {
-		//IStoreCallback* callback = NULL;
-		//callback = new NktNullStoreCallback();
 		hr = folder->DeleteMessages(1, &msgList, NULL, &nullStoreCallback);
-		//delete callback;
 	}
 	else {
 		hr = folder->DeleteMessages(0, &msgList, NULL, NULL);
@@ -1857,6 +1865,13 @@ HRESULT OEAPIMessageStoreWM::GetFolderTransactionInfo(IDatabase* database, HTRAN
 	transInfo->parentId2 = folInfo2.dwParentFolderId;
 	transInfo->folderType = folInfo1.type;
 
+	transInfo->rename = FALSE;
+	if(transInfo->parentId1 == transInfo->parentId2 && transInfo->folderId1 == transInfo->folderId2) {
+		if(_tcscmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
+			transInfo->rename = TRUE;
+		}
+	}
+
 	database->FreeRecord(&folInfo1);
 	database->FreeRecord(&folInfo2);
 
@@ -1871,7 +1886,6 @@ HRESULT OEAPIMessageStoreWM::GetMessageTransactionInfo(IDatabase* database, HTRA
 	MESSAGEINFOWMAIL msgInfo2 = {0};
 	ULONG dummy = 0;
 
-	//ZeroMemory(&transInfo->ordList, sizeof(transInfo->ordList));
 	hr = database->GetTransaction(hTransaction, &transInfo->transType, &msgInfo1,
 								&msgInfo2, &dummy, &transInfo->ordList);
 	if(FAILED(hr)) {
@@ -1879,26 +1893,14 @@ HRESULT OEAPIMessageStoreWM::GetMessageTransactionInfo(IDatabase* database, HTRA
 		return E_FAIL;
 	}
 
-	//* FOLDERID folderId = msgInfo1.dwFolderId;
-
 	transInfo->folderId = msgInfo1.dwFolderId;
 	transInfo->messageId1 = msgInfo1.dwMessageId;
 	transInfo->messageId2 = msgInfo2.dwMessageId;
 	transInfo->arf1 = msgInfo1.dwARF;
-	transInfo->arf2 = msgInfo2.dwARF; //*/
+	transInfo->arf2 = msgInfo2.dwARF;
 
-	//database->FreeRecord(&msgInfo1);
-	//database->FreeRecord(&msgInfo2);
-
-	/* IMessageFolderPtr folder;
-
-	hr = OpenFolder(folderId, &folder);
-
-	ZeroMemory(&msgInfo1, sizeof(msgInfo1));
-	msgInfo1.dwMessageId = transInfo->messageId1;
-	hr = folder->FindRecord(0, -1, &msgInfo1, 0);
-
-	hr = folder->FreeRecord(&msgInfo1); */
+	database->FreeRecord(&msgInfo1);
+	database->FreeRecord(&msgInfo2);
 
 	return S_OK;
 }

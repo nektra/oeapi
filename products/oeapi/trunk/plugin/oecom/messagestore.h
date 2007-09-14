@@ -78,6 +78,7 @@ typedef struct OEAPITransInfo__
 			NktFOLDERID parentId1;
 			NktFOLDERID parentId2;
 			BYTE folderType;
+			BOOL rename;
 		};
 		struct {
 			NktFOLDERID folderId;
