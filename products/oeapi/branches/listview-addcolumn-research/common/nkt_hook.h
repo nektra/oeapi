@@ -94,6 +94,8 @@ public:
 		return (Method)_oldMethod;
 	}
 
+	bool IsHooked() { return _ready; }
+
 	void Uninit()
 	{
 		if(!_ready) {
@@ -107,6 +109,11 @@ public:
 		_ready = false;
 
 		Patch(_oldMethodPtr, _oldMethod);
+	}
+
+	void Detach()
+	{
+		_ready = false;
 	}
 
 	// Method GetRawMethod() {

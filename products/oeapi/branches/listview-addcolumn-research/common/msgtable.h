@@ -126,9 +126,9 @@ EXTERN_C const IID IID_IMessageTable;
         virtual HRESULT STDMETHODCALLTYPE GetCount( 
             /* [out] */ DWORD *__MIDL_0011) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE GetRow( void) = 0;
+        virtual HRESULT STDMETHODCALLTYPE GetRow( DWORD rowId, DWORD** msgInfo) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE ReleaseRow( void) = 0;
+        virtual HRESULT STDMETHODCALLTYPE ReleaseRow( DWORD* msgInfo) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetIndentLevel( void) = 0;
         

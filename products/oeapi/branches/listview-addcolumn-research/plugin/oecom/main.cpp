@@ -412,6 +412,15 @@ LRESULT CALLBACK SendDlgWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPara
 //	}
 //}
 
+class HookManager 
+{
+public:
+	HookManager();
+	~HookManager();
+};
+
+HookManager* mgr = NULL;
+
 
 ///////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------//
@@ -467,12 +476,17 @@ OEAPIManager::OEAPIManager()
 	lpOldSendDlgWndProc_ = NULL;
 
 	HookSendWnd();
+
+	mgr = new HookManager();
 }
 
 //---------------------------------------------------------------------------//
 OEAPIManager::~OEAPIManager()
 {
 	//debug_print(DEBUG_TRACE, _T("OEAPIManager::~OEAPIManager\n"));
+	if(mgr) {
+		delete mgr;
+	}
 
 	RemoveProp(hWnd_, _T("NKTHANDLE"));
 
@@ -696,6 +710,295 @@ INT OEAPIManager::GetMaxOutboxMsgId()
 
 #endif // ENTERPRISE_VERSION
 
+typedef struct NktIMessageTableVtbl
+{
+    BEGIN_INTERFACE
+    
+    HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
+        IMessageTable * This,
+        /* [in] */ REFIID riid,
+        /* [iid_is][out] */ void **ppvObject);
+    
+    ULONG ( STDMETHODCALLTYPE *AddRef )( 
+        IMessageTable * This);
+    
+    ULONG ( STDMETHODCALLTYPE *Release )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *Initialize )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *StartFind )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *SetOwner )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *Close )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *Synchronize )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetCount )( 
+        IMessageTable * This,
+        /* [out] */ DWORD *__MIDL_0011);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetRow )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *ReleaseRow )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetIndentLevel )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *Mark )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetSortInfo )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *OnSynchronizeComplete )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *SetSortInfo )( 
+        IMessageTable * This,
+        DWORD *__MIDL_0012,
+        DWORD __MIDL_0013);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetLanguage )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *SetLanguage )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetNextRow )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetRelativeRow )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetRowState )( 
+        IMessageTable * This, DWORD , DWORD, LPDWORD);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetSelectionState )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *Expand )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *Collapse )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *OpenMessage )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetRowMessageId )( 
+        IMessageTable * This,
+        /* [in] */ DWORD __MIDL_0014,
+        /* [out] */ DWORD *__MIDL_0015);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetRowIndex )( 
+        IMessageTable * This,
+        /* [in] */ DWORD __MIDL_0016,
+        /* [out] */ DWORD *__MIDL_0017);
+    
+    HRESULT ( STDMETHODCALLTYPE *DeleteRows )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *CopyRows )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *RegisterNotify )( 
+        IMessageTable * This,
+        /* [in] */ HWND __MIDL_0018);
+    
+    HRESULT ( STDMETHODCALLTYPE *UnregisterNotify )( 
+        IMessageTable * This,
+        /* [in] */ DWORD dwReserved,
+        /* [in] */ HWND __MIDL_0019);
+    
+    HRESULT ( STDMETHODCALLTYPE *FindNextRow )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetRowFolderId )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetMessageIdList )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *ConnectionAddRef )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *ConnectionRelease )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *IsChild )( 
+        IMessageTable * This);
+    
+    HRESULT ( STDMETHODCALLTYPE *GetAdBarUrl )( 
+        IMessageTable * This);
+    
+    END_INTERFACE
+} NktIMessageTableVtbl;
+
+interface NktIMessageTable
+{
+    CONST_VTBL struct NktIMessageTableVtbl *lpVtbl;
+};
+
+
+NktMethodHooker<NktIMessageTable> _msgTableHook;
+NktMethodHooker<NktIMessageTable> _msgTableHook2;
+NktMethodHooker<NktIMessageTable> _msgTableHook3;
+NktMethodHooker<NktIMessageTable> _msgTableHook4;
+NktMethodHooker<NktIMessageTable> _msgTableHook5;
+NktMethodHooker<NktIMessageTable> _msgTableHook6;
+NktMethodHooker<NktIMessageList> _msgListHook;
+
+typedef HRESULT (STDMETHODCALLTYPE *NktGetRow)(NktIMessageTable* pThis, DWORD row, LPDWORD pMsgInfo);
+typedef HRESULT (STDMETHODCALLTYPE *NktGetRowMsgId)(NktIMessageTable* pThis, DWORD row, LPDWORD pMsgInfo);
+typedef HRESULT (STDMETHODCALLTYPE *NktGetRowState)(NktIMessageTable* pThis, DWORD row, DWORD , LPDWORD pMsgInfo);
+typedef HRESULT (STDMETHODCALLTYPE *NktGetRowIndex)(NktIMessageTable* pThis, DWORD msgId, LPDWORD pRow);
+typedef HRESULT (STDMETHODCALLTYPE *NktMark)(NktIMessageTable* pThis, LPDWORD, DWORD, DWORD, DWORD, LPVOID);
+typedef HRESULT (STDMETHODCALLTYPE *NktGetNextRow)(NktIMessageTable* pThis, DWORD, DWORD, DWORD, DWORD, LPDWORD);
+typedef HRESULT (STDMETHODCALLTYPE *NktMarkRead)(NktIMessageList* pThis, DWORD, DWORD);
+
+NktGetRow _oldGetRow = NULL;
+NktGetRowMsgId _oldGetRowMsgId = NULL;
+NktGetRowState _oldGetRowState = NULL;
+NktGetRowIndex _oldGetRowIndex = NULL;
+NktMark _oldMark = NULL;
+NktGetNextRow _oldGetNextRow = NULL;
+
+NktMarkRead _oldMarkRead = NULL;
+
+HookManager::HookManager()
+{
+}
+
+HookManager::~HookManager() 
+{
+	_msgListHook.Uninit();
+	_msgTableHook6.Uninit();
+	_msgTableHook5.Uninit();
+	_msgTableHook4.Uninit();
+	_msgTableHook3.Uninit();
+	_msgTableHook2.Uninit();
+	_msgTableHook.Uninit();
+}
+
+//int q = 1;
+
+DWORD qmap[] = {2, 3, 1, 0}; // {3, 2, 1, 0}; // { 2, 1, 3, 0 };
+DWORD rmap[] = {3, 2, 0, 1}; // {3, 2, 1, 0}; // { 3, 1, 0, 2 }; // inverse of qmap
+//DWORD markBuff[1024];
+
+BOOL flip_flop = FALSE;
+HRESULT STDMETHODCALLTYPE MarkReadHook(NktIMessageList* pThis, DWORD msgId, DWORD pRow)
+{
+	HRESULT hr;
+	flip_flop = TRUE;
+	hr = _oldMarkRead(pThis, msgId, pRow);
+	flip_flop = FALSE;
+	return hr;
+}
+
+HRESULT STDMETHODCALLTYPE GetNextRowHook(NktIMessageTable* pThis, DWORD a, DWORD b, DWORD c, DWORD d, LPDWORD e) 
+{
+	HRESULT hr;
+	if(d == 0) {
+		hr = _oldGetNextRow(pThis, a, b, c, d, e);
+	}
+	else {
+		a = qmap[a];
+		hr = _oldGetNextRow(pThis, a, b, c, d, e);
+		if(SUCCEEDED(hr)) {
+			*e = rmap[*e];
+		}
+	}
+	return hr;
+}
+
+HRESULT STDMETHODCALLTYPE MarkHook(NktIMessageTable* pThis, LPDWORD a, DWORD b, DWORD c, DWORD d, LPVOID e) 
+{
+	//*
+	if(!flip_flop) {
+		for(int i=0; i<b; i++) {
+			a[i] = qmap[a[i]];
+		} 
+	} // */
+	//memcpy(markBuff, a, b * sizeof(DWORD));
+	HRESULT hr = _oldMark(pThis, a, b, c, d, e);
+	/* 
+	for(int i=0; i<b; i++) {
+		a[i] = qmap[a[i]];
+	} // */
+	return hr;
+}
+
+HRESULT STDMETHODCALLTYPE GetRowHook(NktIMessageTable* pThis, DWORD row, LPDWORD pMsgInfo) 
+{
+	//if(!q) {
+	//	return _oldGetRow(pThis, row, pMsgInfo);
+	//}
+	//else {
+	//
+	//}
+	if(row > 3) {
+		HRESULT hr;
+		hr = _oldGetRow(pThis, row, pMsgInfo);
+		return hr;
+	}
+	else {
+		return _oldGetRow(pThis, qmap[row], pMsgInfo);
+	}
+}
+
+HRESULT STDMETHODCALLTYPE GetRowMsgIdHook(NktIMessageTable* pThis, DWORD row, LPDWORD pMsgInfo) 
+{
+	HRESULT hr;
+	if(!flip_flop) {
+		row = qmap[row]; 
+	}
+	hr = _oldGetRowMsgId(pThis, row, pMsgInfo);
+	return hr;
+}
+
+HRESULT STDMETHODCALLTYPE GetRowStateHook(NktIMessageTable* pThis, DWORD row, DWORD f1, LPDWORD pMsgInfo) 
+{
+	HRESULT hr;
+	if(!flip_flop) {
+		row = qmap[row]; 
+	}
+	hr = _oldGetRowState(pThis, row, f1, pMsgInfo);
+	return hr;
+}
+
+HRESULT STDMETHODCALLTYPE GetRowIndexHook(NktIMessageTable* pThis, DWORD msgId, LPDWORD pRow) 
+{
+	HRESULT hr;
+	hr = _oldGetRowIndex(pThis, msgId, pRow); // qmap[row], pMsgInfo);
+	if(SUCCEEDED(hr)) {
+		//if(!flip_flop) {
+			DWORD res = *pRow;
+			*pRow = rmap[*pRow];
+		//}
+		//for(int i=0; i<3; i++) {
+		//	if(res == qmap[i]) {
+		//		*pRow = i;
+		//		break;
+		//	}
+		//} 
+		return hr;
+	}
+	else {
+		debug_print(DEBUG_INFO, _T("TR: %08x %d.\n"), hr, msgId);
+	}
+	return hr;
+}
+
 
 //---------------------------------------------------------------------------//
 void OEAPIManager::SetMsgList(IUnknown *msgList, DWORD dwFolderId)
@@ -743,6 +1046,26 @@ void OEAPIManager::SetMsgList(IUnknown *msgList, DWORD dwFolderId)
 			msgList_->Release();
 			msgList_ = NULL;
 		}
+
+		//PVOID qq;
+		//qq = (LPVOID)((NktIMessageTable*)msgTable_)->lpVtbl->FindNextRow;
+		//qq = (LPVOID)((NktIMessageTable*)msgTable_)->lpVtbl->GetNextRow;
+		//qq = (LPVOID)((NktIMessageTable*)msgTable_)->lpVtbl->GetRelativeRow;
+
+		if(!_msgTableHook.IsHooked()) {
+			_oldGetRow = _msgTableHook.Init((NktIMessageTable*)msgTable_, GetRowHook, &NktIMessageTableVtbl::GetRow);
+			_oldGetRowMsgId = _msgTableHook2.Init((NktIMessageTable*)msgTable_, GetRowMsgIdHook, &NktIMessageTableVtbl::GetRowMessageId);
+			_oldGetRowState = _msgTableHook3.Init((NktIMessageTable*)msgTable_, GetRowStateHook, &NktIMessageTableVtbl::GetRowState);
+			_oldGetRowIndex = _msgTableHook4.Init((NktIMessageTable*)msgTable_, GetRowIndexHook, &NktIMessageTableVtbl::GetRowIndex);
+			_oldMark = _msgTableHook5.Init((NktIMessageTable*)msgTable_, MarkHook, &NktIMessageTableVtbl::Mark);
+			_oldGetNextRow = _msgTableHook6.Init((NktIMessageTable*)msgTable_, GetNextRowHook, &NktIMessageTableVtbl::GetNextRow);
+
+			_oldMarkRead = _msgListHook.Init((NktIMessageList*)msgList_, MarkReadHook, &NktIMessageListVtbl::MarkRead);
+		}
+
+		/* LPDWORD pVtbl = ((LPDWORD*)msgTable_)[0];
+		LPVOID pFunc = (LPVOID)((PCHAR)pVtbl[9]+0x286-0x02b4);
+		pFunc = pFunc; */
 	}
 
 	LeaveCriticalSection(&msgSelectionCS_);
@@ -1186,9 +1509,22 @@ DWORD OEAPIManager::GetNextSelectedMessage(DWORD lastReturnedId)
 int OEAPIManager::GetMessageIndex(DWORD msgId)
 {
 	if(msgTable_) {
-		HRESULT hr;
+		HRESULT hr = E_FAIL;
+		DWORD rowId = -1;
 
-		for(int i=0;; i++) {
+		if(IsWMail()) {
+		}
+		else {
+			hr = msgTable_->GetRowIndex(msgId, &rowId);
+		}
+
+		if(FAILED(hr)) {
+			return -1;
+		}
+
+		return rowId;
+
+		/* for(int i=0;; i++) {
 			DWORD id;
 
 			// FIXME: WinMail uses UINT64
@@ -1207,7 +1543,7 @@ int OEAPIManager::GetMessageIndex(DWORD msgId)
 			if(id == msgId) {
 				return i;
 			}
-		}
+		} */
 	}
 
 	return -1;
@@ -1262,14 +1598,16 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 		return;
 	}
 
-	DWORD *newSel;
+	//DWORD *newSel;
+	NktBuffer<DWORD> newSel;
 	HRESULT hr;
 	BOOL useFocusIndex = FALSE;
 	int i;
 
 	// FIXME: WinMail has 64 bits integers. This solution is TERRIBLE in all sense
 	if(IsWMail()) {
-		newSel = new DWORD[count*2];
+		//newSel = new DWORD[count*2];
+		newSel.alloc(count*2);
 		for(i=0; i<count; i++) {
 			hr = msgTable_->GetRowMessageId(msgIndexs[i], &newSel[i]);
 			if(FAILED(hr)) {
@@ -1278,7 +1616,7 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 	//			debug_print(DEBUG_ERROR, _T("SetSelectedMessages: Error GetRowMessageId\n"));
 				selMsgIds_ = NULL;
 				selCount_ = 0;
-				delete newSel;
+				//delete newSel;
 				return;
 			}
 
@@ -1314,7 +1652,9 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 		}
 	}
 	else {
-		newSel = new DWORD[count];
+		return;
+		// newSel = new DWORD[count];
+		newSel.alloc(count*2);
 		for(int i=0; i<count; i++) {
 			hr = msgTable_->GetRowMessageId(msgIndexs[i], &newSel[i]);
 			if(FAILED(hr)) {
@@ -1323,7 +1663,7 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 	//			debug_print(DEBUG_ERROR, _T("SetSelectedMessages: Error GetRowMessageId\n"));
 				selMsgIds_ = NULL;
 				selCount_ = 0;
-				delete newSel;
+				//delete newSel;
 				return;
 			}
 
@@ -1380,7 +1720,7 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 			delete [] selMsgIds_;
 		}
 
-		selMsgIds_ = newSel;
+		selMsgIds_ = newSel.detach();
 		selCount_ = count;
 
 		PostMessage(GetCallbackWindow(), MESSAGE_SELECTION_CHANGED_CODE, 0, 0);
@@ -1388,7 +1728,7 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 		LeaveCriticalSection(&msgSelectionCS_);
 	}
 	else {
-		delete [] newSel;
+		// delete [] newSel;
 	}
 }
 //

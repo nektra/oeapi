@@ -725,8 +725,36 @@ LRESULT CALLBACK MessageListWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 		switch(pnmhdr->code)
 		{
 		case NM_CUSTOMDRAW: {
-			LPNMLVCUSTOMDRAW pCustomDraw = (LPNMLVCUSTOMDRAW)lParam;			
-			//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: NM_CUSTOMDRAW %08x %08x %d %d.\n"), pCustomDraw->nmcd.hdr.hwndFrom, pCustomDraw->nmcd.dwDrawStage, pCustomDraw->nmcd.dwItemSpec, pCustomDraw->iSubItem);
+			LPNMLVCUSTOMDRAW pCustomDraw = (LPNMLVCUSTOMDRAW)lParam;
+			debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: NM_CUSTOMDRAW %08x %08x %d %d.\n"), pCustomDraw->nmcd.hdr.hwndFrom, pCustomDraw->nmcd.dwDrawStage, pCustomDraw->nmcd.dwItemSpec, pCustomDraw->iSubItem);
+			/* if(pCustomDraw->nmcd.dwDrawStage == CDDS_PREPAINT) {
+				DWORD res;
+				res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+				return res;
+			} // */
+			/* 
+			if(pCustomDraw->nmcd.dwDrawStage == CDDS_ITEMPREPAINT) {
+				DWORD res;
+				DWORD savedItem = pCustomDraw->nmcd.dwItemSpec;
+				pCustomDraw->nmcd.dwItemSpec = 3 - pCustomDraw->nmcd.dwItemSpec;
+				res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+				pCustomDraw->nmcd.dwItemSpec = savedItem;
+				return res;
+			} // */
+			//* 
+			if(pCustomDraw->nmcd.dwDrawStage == (CDDS_SUBITEM | CDDS_ITEM | CDDS_PREPAINT)) {
+				DWORD res;
+				DWORD savedItem = pCustomDraw->nmcd.dwItemSpec;
+				//pCustomDraw->nmcd.dwItemSpec = 3 - pCustomDraw->nmcd.dwItemSpec;
+				res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+				debug_print(DEBUG_TRACE, _T("+++++++< MessageListWndProc: NM_CUSTOMDRAW %08x %08x %d %d.\n"), pCustomDraw->nmcd.hdr.hwndFrom, pCustomDraw->nmcd.dwDrawStage, pCustomDraw->nmcd.dwItemSpec, pCustomDraw->iSubItem);
+				//pCustomDraw->nmcd.dwItemSpec = 3 - pCustomDraw->nmcd.dwItemSpec;
+				pCustomDraw->nmcd.dwItemSpec = savedItem;
+				return res;
+			} // */
+			//if(pCustomDraw->nmcd.dwDrawStage & CDDS_ITEM) {
+			//	pCustomDraw->nmcd.dwItemSpec = 3 - pCustomDraw->nmcd.dwItemSpec;
+			//}
 			////int oldSubItem = pCustomDraw->iSubItem;
 			////if(pCustomDraw->iSubItem > 5) {
 			////	pCustomDraw->iSubItem--;
@@ -760,7 +788,7 @@ LRESULT CALLBACK MessageListWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 			////pCustomDraw->clrTextBk = clrTextBk;
 			//LRESULT res;
 
-			//// debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: NM_CUSTOMDRAW %08x %08x %d %d.\n"), pCustomDraw->nmcd.hdr.hwndFrom, pCustomDraw->nmcd.dwDrawStage, pCustomDraw->nmcd.dwItemSpec, pCustomDraw->iSubItem);
+			//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: NM_CUSTOMDRAW %08x %08x %d %d.\n"), pCustomDraw->nmcd.hdr.hwndFrom, pCustomDraw->nmcd.dwDrawStage, pCustomDraw->nmcd.dwItemSpec, pCustomDraw->iSubItem);
 
 
 			////if(pCustomDraw->nmcd.dwDrawStage == CDDS_ITEMPREPAINT) {
@@ -793,7 +821,17 @@ LRESULT CALLBACK MessageListWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 			{
 				LPNMLVDISPINFOA pdi = (LPNMLVDISPINFOA)lParam;
 				//debug_print(DEBUG_TRACE, _T("+++++++> MessageListWndProc: LVN_GETDISPINFO: %08x %d %d %08x.\n"), pdi->hdr.hwndFrom, pdi->item.iItem, pdi->item.iSubItem, pdi->item.mask);
-				//* 
+				//if(pCustomDraw->nmcd.dwDrawStage & CDDS_ITEM) {
+				//{
+					//DWORD res;
+					DWORD savedItem = pdi->item.iItem;
+					//pdi->item.iItem = 3 - pdi->item.iItem;
+					//res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
+					//pdi->item.iItem = savedItem;
+					//return res;
+				//} // */
+				//*
+				//pdi->item.iItem = 3 - pdi->item.iItem;
 				if(pdi->item.iSubItem == 6) {
 					if(pdi->item.mask & LVIF_IMAGE) {
 						if(pdi->item.iItem % 5 == 2) {
@@ -809,13 +847,15 @@ LRESULT CALLBACK MessageListWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 						pdi->item.stateMask = LVIS_STATEIMAGEMASK; //0x5678;	//
 						pdi->item.state = 0; //0x9abc;
 					}
+					pdi->item.iItem = savedItem;
 					return FALSE;
 				}
 				else {
 					LRESULT res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
-					if(pdi->item.iSubItem >= 1 && pdi->item.iSubItem <= 3) {
-						debug_print(DEBUG_TRACE, _T("       > MessageListWndProc: LVN_GETDISPINFO: ret %08x %d.\n"), res, res);
-					}
+					pdi->item.iItem = savedItem;
+					//if(pdi->item.iSubItem >= 1 && pdi->item.iSubItem <= 3) {
+					//	debug_print(DEBUG_TRACE, _T("       > MessageListWndProc: LVN_GETDISPINFO: ret %08x %d.\n"), res, res);
+					//}
 					return res;
 				} // */
 				//LRESULT res = CallWindowProc(oldMessageListWndProc, hWnd, msg, wParam, lParam);
