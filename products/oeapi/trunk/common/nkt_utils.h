@@ -278,24 +278,37 @@ public:
 	NktBuffer(T* ptr) : _ptr(ptr) {}
 	explicit NktBuffer(size_t size) : _ptr(NULL) { alloc(size); }
 
-	~NktBuffer() {
+	~NktBuffer()
+	{
 		release();
 	}
 
-	T* alloc(size_t size) {
+	T* alloc(size_t size)
+	{
 		release();
 		_ptr = new T[size];
 		return _ptr;
 	}
 
-	void release() {
+	T* detach()
+	{
+		T* tmp = _ptr;
+		_ptr = NULL;
+		return tmp;
+	}
+
+	void release()
+	{
 		if(_ptr) {
 			delete [] _ptr;
 			_ptr = NULL;
 		}
 	}
 
-	operator T* () { return _ptr; }
+	operator T* ()
+	{ 
+		return _ptr;
+	}
 
 private:
 	T* _ptr;
