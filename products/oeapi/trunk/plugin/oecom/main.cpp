@@ -1262,14 +1262,16 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 		return;
 	}
 
-	DWORD *newSel;
+	//DWORD *newSel;
+	NktBuffer<DWORD> newSel;
 	HRESULT hr;
 	BOOL useFocusIndex = FALSE;
 	int i;
 
 	// FIXME: WinMail has 64 bits integers. This solution is TERRIBLE in all sense
 	if(IsWMail()) {
-		newSel = new DWORD[count*2];
+		//newSel = new DWORD[count*2];
+		newSel.alloc(count*2);
 		for(i=0; i<count; i++) {
 			hr = msgTable_->GetRowMessageId(msgIndexs[i], &newSel[i]);
 			if(FAILED(hr)) {
@@ -1278,7 +1280,7 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 	//			debug_print(DEBUG_ERROR, _T("SetSelectedMessages: Error GetRowMessageId\n"));
 				selMsgIds_ = NULL;
 				selCount_ = 0;
-				delete newSel;
+				//delete newSel;
 				return;
 			}
 
@@ -1314,7 +1316,8 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 		}
 	}
 	else {
-		newSel = new DWORD[count];
+		//newSel = new DWORD[count];
+		newSel.alloc(count);
 		for(int i=0; i<count; i++) {
 			hr = msgTable_->GetRowMessageId(msgIndexs[i], &newSel[i]);
 			if(FAILED(hr)) {
@@ -1323,7 +1326,7 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 	//			debug_print(DEBUG_ERROR, _T("SetSelectedMessages: Error GetRowMessageId\n"));
 				selMsgIds_ = NULL;
 				selCount_ = 0;
-				delete newSel;
+				//delete newSel;
 				return;
 			}
 
@@ -1380,7 +1383,7 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 			delete [] selMsgIds_;
 		}
 
-		selMsgIds_ = newSel;
+		selMsgIds_ = newSel.detach();
 		selCount_ = count;
 
 		PostMessage(GetCallbackWindow(), MESSAGE_SELECTION_CHANGED_CODE, 0, 0);
@@ -1388,7 +1391,7 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 		LeaveCriticalSection(&msgSelectionCS_);
 	}
 	else {
-		delete [] newSel;
+		//delete [] newSel;
 	}
 }
 //
