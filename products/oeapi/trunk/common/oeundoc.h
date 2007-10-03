@@ -57,6 +57,7 @@ DEFINE_GUID(IID_IMessageFolder,0xE883FC76, 0xEC08,0x11D1, 0x9A, 0x53, 0x0, 0xC0,
 typedef ULONG MESSAGEID__, MESSAGEID;
 typedef ULONG FOLDERID__, FOLDERID;
 
+#ifndef _WIN64
 // Some fields just for aligning, the meaning of them still unknown.
 typedef struct tagMESSAGEINFO
 {
@@ -106,7 +107,6 @@ typedef struct tagMESSAGEINFO
 	DWORD field_B4;
 } MESSAGEINFO, __RPC_FAR *LPMESSAGEINFO;
 
-#ifndef _WIN64
 typedef struct tagMESSAGEINFOWMAIL
 {
 	DWORD field_0;
@@ -175,6 +175,84 @@ typedef struct tagMESSAGEINFOWMAIL
 	DWORD field_108;
 } MESSAGEINFOWMAIL, __RPC_FAR *LPMESSAGEINFOWMAIL;
 #else
+typedef struct tagMESSAGEINFO
+{
+	ULONGLONG dwReserved;
+	ULONGLONG field_4;
+	ULONGLONG field_8;
+	ULONGLONG dwMessageId;
+	DWORD dwARF;
+	FILETIME ftSent;
+	DWORD field_1C;
+	DWORD dbFileAddress;
+	DWORD field_24;
+	LPSTR pszNormalSubject;
+	FILETIME ftSaved;
+	LPSTR szRFCMessageID;
+	LPSTR pszSubject;
+	DWORD field_3C;
+	ULONGLONG dwNeedOnline;
+	ULONGLONG hdrXref;
+	LPSTR szAccount;
+	LPSTR pszDisplayFrom;
+	LPSTR pszSender;
+	WORD wLanguage;
+	WORD wPriority;
+	DWORD cbMessage;
+	FILETIME ftReceived;
+	LPSTR pszDisplayTo;
+	LPSTR pszEmailTo;
+	DWORD totalCurrentParts;
+	LPSTR attUIDL;
+	ULONGLONG field_74;
+	ULONGLONG contentTypeId;
+	DWORD forwardTo;
+	LPSTR pszAthenaAccountName;
+	LPSTR szServerName;
+	DWORD field_88;
+	ULONGLONG StmOffsetTableSize;
+	LPVOID StmOffsetTableBinary;
+	DWORD field_94;
+	DWORD field_98;
+	DWORD field_9c;
+	DWORD field_A0;
+	DWORD field_A4;
+	DWORD field_A8;
+	DWORD field_Ac;
+	DWORD field_B0;
+	DWORD field_B4;
+	DWORD field_B8;
+	DWORD field_Bc;
+	DWORD field_c0;
+	DWORD field_c4;
+	DWORD field_c8;
+	DWORD field_cc;
+	DWORD field_d0;
+	DWORD field_d4;
+	DWORD field_d8;
+	DWORD field_dc;
+	DWORD field_e0;
+	DWORD field_e4;
+	DWORD field_e8;
+	DWORD field_ec;
+	DWORD field_f0;
+	DWORD field_f4;
+	DWORD field_f8;
+	DWORD field_fc;
+	DWORD field_100;
+	DWORD field_104;
+	DWORD field_108;
+	DWORD field_10c;
+	DWORD field_110;
+	DWORD field_114;
+	DWORD field_118;
+	DWORD field_11c;
+	DWORD field_120;
+	DWORD field_124;
+	DWORD field_128;
+	DWORD field_12c;
+} MESSAGEINFO, __RPC_FAR *LPMESSAGEINFO;
+
 typedef struct tagMESSAGEINFOWMAIL
 {
 	ULONGLONG field_0;
@@ -239,6 +317,7 @@ typedef struct tagMESSAGEINFOWMAIL
 } MESSAGEINFOWMAIL, __RPC_FAR *LPMESSAGEINFOWMAIL;
 #endif
 
+#ifndef _WIN64
 typedef struct tagFOLDERINFO
 {
 	DWORD field_0;
@@ -278,8 +357,6 @@ typedef struct tagFOLDERINFO
 	DWORD field_7C;
 } FOLDERINFO, __RPC_FAR *LPFOLDERINFO;
 
-
-#ifndef _WIN64
 typedef struct tagFOLDERINFOWMAIL
 {
 	DWORD field_0;
@@ -328,6 +405,57 @@ typedef struct tagFOLDERINFOWMAIL
 	DWORD field_a0;
 } FOLDERINFOWMAIL, __RPC_FAR *LPFOLDERINFOWMAIL;
 #else
+typedef struct tagFOLDERINFO
+{
+	ULONGLONG field_0;
+	ULONGLONG field_4;
+	ULONGLONG dwFolderId;
+	ULONGLONG dwParentFolderId;
+	LPSTR szFolderName;
+	LPSTR szFilename;
+	LPSTR szAccountName;
+	LPSTR szStoreName;
+	ULONGLONG field_20;
+	DWORD dwFlags;
+	DWORD cMessage;
+	DWORD numUnread;
+	DWORD field_30;
+	DWORD field_34;
+	DWORD field_38;
+	DWORD field_3C;
+	BYTE specialFolder;
+	BYTE type;
+	BYTE field_42;
+	BYTE field_43;
+	DWORD field_44;
+	DWORD field_48;
+	DWORD field_4C;
+	DWORD field_50;
+	DWORD field_54;
+	DWORD field_58;
+	DWORD field_5C;
+	DWORD field_60;
+	DWORD unreadNews;
+	DWORD field_68;
+	DWORD field_6C;
+	DWORD field_70;
+	DWORD field_74;
+	DWORD field_78;
+	DWORD field_7C;
+	DWORD field_80;
+	DWORD field_84;
+	DWORD field_88;
+	DWORD field_8C;
+	DWORD field_90;
+	DWORD field_94;
+	DWORD field_98;
+	DWORD field_9c;
+	DWORD field_a0;
+	DWORD field_a4;
+	DWORD field_a8;
+	DWORD field_aC;
+} FOLDERINFO, __RPC_FAR *LPFOLDERINFO;
+
 typedef struct tagFOLDERINFOWMAIL
 {
 	ULONGLONG field_0;
