@@ -77,7 +77,7 @@ HWND CreateFolderCallbackWindow()
 //---------------------------------------------------------------------------//
 LRESULT CALLBACK FolderWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	TOEFolder *pThis = (TOEFolder *) GetWindowLongPtr(hwnd, GWL_USERDATA);
+	TOEFolder *pThis = (TOEFolder *) GetWindowLongPtr(hwnd, GWLP_USERDATA);
 
 //	// BEGIN DEBUG
 //	CHAR msg[256];
@@ -215,7 +215,7 @@ void TOEFolder::RegisterNotifier()
 	if(pSF_ != NULL && hWnd_ == NULL && connection_point.is_connected()) {
 		hWnd_ = CreateFolderCallbackWindow();
 		if(hWnd_) {
-			::SetWindowLongPtr(hWnd_, GWL_USERDATA, (LONG_PTR)this);
+			::SetWindowLongPtr(hWnd_, GWLP_USERDATA, (LONG_PTR)this);
 			HRESULT hr = pSF_->RegisterNotification(0, hWnd_);
 			if(FAILED(hr)) {
 				debug_print(DEBUG_ERROR, _T("OEFolder::RegisterNotifier: RegisterNotification failed\n"));

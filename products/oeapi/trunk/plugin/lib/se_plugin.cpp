@@ -481,7 +481,7 @@ LRESULT CALLBACK CallWndProc(int nCode, WPARAM wParam, LPARAM lParam)
 			!_tcscmp(className, _T("Outlook Express Browser Class"))))	{				
 			Plugin.OldWinProc = (WNDPROC)GetWindowLongPtr(hWnd, GWLP_WNDPROC);
 			Plugin.OEMainWindow = hWnd;
-			SetWindowLongPtr(hWnd, GWL_WNDPROC, (LONG_PTR)MainWndProc);
+			SetWindowLongPtr(hWnd, GWLP_WNDPROC, (LONG_PTR)MainWndProc);
 			debug_print(DEBUG_TRACE, _T("CallWndProc: Hook ThorBrowserWndClass: %08x : %08x -> %08x.\n"), hWnd, Plugin.OldWinProc, MainWndProc);
 		}
 	}
@@ -539,9 +539,9 @@ void AttachPlugin(HWND hwnd, HINSTANCE hInstance)
 		!_tcscmp(szWndClass, _T("Outlook Express Browser Class"))))	{
 		OEPluginMenuMgr::Get(hwnd)->Initialize(NULL, (OEPluginMsgWnd::WNDSTYLE)0);
 
-		Plugin.OldWinProc = (WNDPROC) GetWindowLongPtr(hwnd, GWL_WNDPROC);
+		Plugin.OldWinProc = (WNDPROC) GetWindowLongPtr(hwnd, GWLP_WNDPROC);
 		Plugin.OEMainWindow = hwnd;
-		SetWindowLongPtr(hwnd, GWL_WNDPROC, (LONG_PTR)MainWndProc);
+		SetWindowLongPtr(hwnd, GWLP_WNDPROC, (LONG_PTR)MainWndProc);
 	}
 	else if(!_tcscmp(szWndClass, _T("ATH_Note"))) {
 		MsgWndMgr.AddWindow(hwnd);

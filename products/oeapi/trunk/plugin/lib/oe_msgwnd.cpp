@@ -594,7 +594,7 @@ OEPluginMsgWnd::OEPluginMsgWnd(HWND hMsg)
 	wndStyle_ = MsgWndStyles::OE_MSG_INVALID;
 
 	oldProc_ = (WNDPROC) GetWindowLongPtr(hMsg, GWLP_WNDPROC);
-	SetWindowLongPtr(hMsg, GWL_WNDPROC, (LONG_PTR)MsgWndProc);
+	SetWindowLongPtr(hMsg, GWLP_WNDPROC, (LONG_PTR)MsgWndProc);
 
 	lock_.Init();
 }
@@ -1324,7 +1324,8 @@ BOOL OEPluginMsgWnd::GetHTMLDocument()
 		return ret;
 	}
 
-	::SendMessageTimeout(ieServer_, HtmlMsg, 0L, 0L, SMTO_ABORTIFHUNG, 3000, (DWORD*) &hr);
+	LRESULT lResult = 0;
+	::SendMessageTimeout(ieServer_, HtmlMsg, 0L, 0L, SMTO_ABORTIFHUNG, 3000, (DWORD_PTR*) &lResult);
 
 	if(hOleAcc == NULL) {
 		hOleAcc = ::LoadLibrary(_T("OLEACC.DLL"));
@@ -1342,7 +1343,7 @@ BOOL OEPluginMsgWnd::GetHTMLDocument()
 		}
 	}
 
-	hr = (*pfObjectFromLresult)(hr, IID_IHTMLDocument2, 0, (void**)&pHTMLDocument2_);
+	hr = (*pfObjectFromLresult)(lResult, IID_IHTMLDocument2, 0, (void**)&pHTMLDocument2_);
 	if(FAILED(hr) || pHTMLDocument2_ == NULL) {
 		debug_print(DEBUG_ERROR, _T("OEPluginMsgWnd::GetHTMLDocument: Cannot get IID_IHTMLDocument2 object.\n"));
 		return ret;
