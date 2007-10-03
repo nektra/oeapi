@@ -1485,10 +1485,10 @@ bool OEAPIMessageStoreWM::CheckStore()
 
 //----------------------------------------------------------------------------
 HRESULT STDMETHODCALLTYPE 
-OEAPIMessageStoreWM::OpenFolderHook(IMessageStoreWMail * This, NktFOLDERID folderId, ULONG , IMessageServer * server, ULONG reserved, IMessageFolder** folder)
+OEAPIMessageStoreWM::OpenFolderHook(IMessageStoreWMail * This, NktFOLDERID folderId, ULONG a, IMessageServer * server, ULONG reserved, IMessageFolder** folder)
 {
-	HRESULT hr = _oldOpenFolder(This, folderId, 0, server, reserved, folder);
-	if(SUCCEEDED(hr)) {
+	HRESULT hr = _oldOpenFolder(This, folderId, a, server, reserved, folder);
+	if(SUCCEEDED(hr) && a == 0) {
 		HRESULT hr2 = E_FAIL;
 		hr2 = OEAPIMessageStoreOE::Get()->RegisterMessageNotification(folderId);
 		if(FAILED(hr2)) {
