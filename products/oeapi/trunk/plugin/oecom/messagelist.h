@@ -18,8 +18,13 @@
 #include "nkt_hook.h"
 
 //----------------------------------------------------------------------------
+#ifndef _WIN64
 typedef HRESULT (STDMETHODCALLTYPE *NktSetFolder)(NktIMessageList* , DWORD , DWORD , DWORD , DWORD , DWORD );
 typedef HRESULT (STDMETHODCALLTYPE *NktSetFolderWMail)(NktIMessageList* , DWORD , DWORD , DWORD , DWORD , DWORD , DWORD );
+#else
+typedef HRESULT (STDMETHODCALLTYPE *NktSetFolder)(NktIMessageList* , ULONGLONG , LPVOID , DWORD , LPVOID, LPVOID);
+typedef HRESULT (STDMETHODCALLTYPE *NktSetFolderWMail)(NktIMessageList* , ULONGLONG , LPVOID , DWORD , DWORD , LPVOID, LPVOID);
+#endif
 
 class OEAPIMessageList {
 public:
@@ -31,8 +36,13 @@ public:
 
 protected:
 	HRESULT GetMessageList(IUnknown** msgList);
+#ifndef _WIN64
 	static HRESULT STDMETHODCALLTYPE SetFolderHook(NktIMessageList* , DWORD , DWORD , DWORD , DWORD , DWORD );
 	static HRESULT STDMETHODCALLTYPE SetFolderHookWMail(NktIMessageList* , DWORD , DWORD, DWORD , DWORD , DWORD , DWORD );
+#else
+	static HRESULT STDMETHODCALLTYPE SetFolderHook(NktIMessageList* , ULONGLONG , LPVOID , DWORD , LPVOID, LPVOID);
+	static HRESULT STDMETHODCALLTYPE SetFolderHookWMail(NktIMessageList* , ULONGLONG , LPVOID , DWORD , DWORD , LPVOID, LPVOID);
+#endif
 
 private:
 	NktMethodHooker<NktIMessageList> _hook;

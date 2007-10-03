@@ -203,17 +203,29 @@ void OEAPIMessageList::Uninit()
 	//}
 
 //----------------------------------------------------------------------------
+#ifndef _WIN64
 HRESULT STDMETHODCALLTYPE OEAPIMessageList::SetFolderHook(NktIMessageList* msgList, DWORD dwFolderId, DWORD dw2, DWORD dw3, DWORD dw4, DWORD dw5)
+#else
+HRESULT STDMETHODCALLTYPE OEAPIMessageList::SetFolderHook(NktIMessageList* msgList, ULONGLONG dwFolderId, LPVOID dw2, DWORD dw3, LPVOID dw4, LPVOID dw5)
+#endif
 {
 	HRESULT hr = _oldSetFolder(msgList, dwFolderId, dw2, dw3, dw4, dw5);
-	if(dwFolderId != (DWORD)-1) {
+#ifndef _WIN64
+	if(dwFolderId != (ULONG)-1) {
+#else
+	if(dwFolderId != (ULONGLONG)-1LL) {
+#endif
 		OEAPIManager::Get()->SetMsgList((IUnknown*)msgList, dwFolderId);
 	}
 	return hr;
 }
 
 //----------------------------------------------------------------------------
+#ifndef _WIN64
 HRESULT STDMETHODCALLTYPE OEAPIMessageList::SetFolderHookWMail(NktIMessageList* msgList, DWORD dwFolderId, DWORD dw1, DWORD dw2, DWORD dw3, DWORD dw4, DWORD dw5)
+#else
+HRESULT STDMETHODCALLTYPE OEAPIMessageList::SetFolderHookWMail(NktIMessageList* msgList, ULONGLONG dwFolderId, LPVOID dw1, DWORD dw2, DWORD dw3, LPVOID dw4, LPVOID dw5)
+#endif
 {
 	HRESULT hr = _oldSetFolderWMail(msgList, dwFolderId, dw1, dw2, dw3, dw4, dw5);
 	if(dwFolderId != (DWORD)-1) {

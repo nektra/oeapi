@@ -1263,7 +1263,11 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 	}
 
 	//DWORD *newSel;
+#ifndef _WIN64
 	NktBuffer<DWORD> newSel;
+#else
+	NktBuffer<DWORD> newSel;
+#endif
 	HRESULT hr;
 	BOOL useFocusIndex = FALSE;
 	int i;
@@ -1271,9 +1275,11 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 	// FIXME: WinMail has 64 bits integers. This solution is TERRIBLE in all sense
 	if(IsWMail()) {
 		//newSel = new DWORD[count*2];
-		newSel.alloc(count*2);
+		newSel.alloc(count);
 		for(i=0; i<count; i++) {
-			hr = msgTable_->GetRowMessageId(msgIndexs[i], &newSel[i]);
+			ULONGLONG sel;
+			hr = msgTable_->GetRowMessageId(msgIndexs[i], (DWORD*)&sel);
+			newSel[i] = sel;
 			if(FAILED(hr)) {
 				// this could happen when a user deletes a message.
 				// The message index doesn't
@@ -1319,7 +1325,13 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 		//newSel = new DWORD[count];
 		newSel.alloc(count);
 		for(int i=0; i<count; i++) {
-			hr = msgTable_->GetRowMessageId(msgIndexs[i], &newSel[i]);
+#ifndef _WIN64
+			DWORD sel;
+#else
+			ULONGLONG sel;
+#endif
+			hr = msgTable_->GetRowMessageId(msgIndexs[i], (DWORD*)&sel);
+			newSel[i] = sel;
 			if(FAILED(hr)) {
 				// this could happen when a user deletes a message.
 				// The message index doesn't
@@ -1338,10 +1350,14 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 		}
 
 		if(useFocusIndex || count == 0) {
+#ifndef _WIN64
 			DWORD focusId;
+#else
+			ULONGLONG focusId;
+#endif
 
 			if(count != 0) {
-				hr = msgTable_->GetRowMessageId(focusIndex, &focusId);
+				hr = msgTable_->GetRowMessageId(focusIndex, (DWORD*)&focusId);
 				if(FAILED(hr)) {
 					debug_print(DEBUG_ERROR, _T("SetSelectedMessages: Error GetRowMessageId\n"));
 					return;
@@ -1863,7 +1879,11 @@ void OEAPIManager::SetSelectedFolderName(HWND hTree)
 		return;
 	}
 
+#ifndef _WIN64
 	LONG* p = (LONG*)itemInfo.lParam;
+#else
+	ULONGLONG* p = (ULONGLONG*)itemInfo.lParam;
+#endif
 
 	selFolderId = p[2];
 
