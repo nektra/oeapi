@@ -2423,7 +2423,7 @@ HTREEITEM OEAPIManager::FindHTreeItem(HWND hTree, HTREEITEM hRoot, LONG folderId
 	FOLDERID parentId;
 	HRESULT hr = msgStore_->GetParentId(folderId, &parentId);
 
-	if(FAILED(hr)) {
+	if(FAILED(hr) || parentId == (FOLDERID)-1) {
 		debug_print(DEBUG_ERROR, _T("OEAPIManager::FindHTreeItem: Can't get parent id %d %08x.\n"), folderId, hr);
 		return NULL;
 	}
@@ -2451,7 +2451,11 @@ HTREEITEM OEAPIManager::FindChild(HWND hTree, HTREEITEM hParent, LONG folderId)
 		tv.lParam = 0;
 		TreeView_GetItem(hTree, &tv);
 		if(tv.lParam != 0) {
+#ifndef _WIN64
 			LONG* p = (LONG*)tv.lParam;
+#else
+			ULONGLONG* p = (ULONGLONG*)tv.lParam;
+#endif
 			if(p[2] == folderId) {
 				return hItem;
 			}

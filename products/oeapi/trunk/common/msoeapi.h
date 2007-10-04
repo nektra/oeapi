@@ -388,6 +388,7 @@ enum tagSPECIALFOLDER
 
     }	SPECIALFOLDER;
 
+#ifndef _WIN64
 typedef struct  tagFOLDERPROPS
     {
     DWORD cbSize;
@@ -398,6 +399,18 @@ typedef struct  tagFOLDERPROPS
     DWORD cMessage;
     CHAR szName[ 256 ];
     }	FOLDERPROPS;
+#else
+typedef struct  tagFOLDERPROPS
+    {
+    DWORD cbSize;
+    ULONGLONG dwFolderId;
+    INT cSubFolders;
+    SPECIALFOLDER sfType;
+    DWORD cUnread;
+    DWORD cMessage;
+    CHAR szName[256];
+    }	FOLDERPROPS;
+#endif
 
 typedef struct tagFOLDERPROPS __RPC_FAR *LPFOLDERPROPS;
 
