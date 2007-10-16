@@ -1325,7 +1325,7 @@ HRESULT OEAPIMessageStoreOE::GetFolderTransactionInfo(IDatabase* database, HTRAN
 
 	transInfo->rename = FALSE;
 	if(transInfo->parentId1 == transInfo->parentId2 && transInfo->folderId1 == transInfo->folderId2) {
-		if(_tcscmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
+		if(folInfo1.szFolderName != NULL && folInfo2.szFolderName != NULL && _tcscmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
 			transInfo->rename = TRUE;
 		}
 	}
@@ -1867,7 +1867,7 @@ HRESULT OEAPIMessageStoreWM::GetFolderTransactionInfo(IDatabase* database, HTRAN
 
 	transInfo->rename = FALSE;
 	if(transInfo->parentId1 == transInfo->parentId2 && transInfo->folderId1 == transInfo->folderId2) {
-		if(_tcscmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
+		if(folInfo1.szFolderName != NULL && folInfo2.szFolderName != NULL && _tcscmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
 			transInfo->rename = TRUE;
 		}
 	}
