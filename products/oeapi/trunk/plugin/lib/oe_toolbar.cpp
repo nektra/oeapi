@@ -947,6 +947,7 @@ BOOL OEPluginTopLevelWndMgr::ResetToolbars()
 		oldRebarProc_ = NULL;
 	}
 
+	initialized_ = FALSE;
 	mainWindow_ = NULL;
 
 	OEPluginToolbarList::iterator it = toolbars_.begin();
