@@ -28,7 +28,28 @@ class OEStoreManager;
 
 typedef std::map<DWORD, DWORD> FolderIdMessageIdMap;
 
-extern OEStoreManager *pThis;
+template<class T>
+struct TlsPtr {
+	const T* operator = (T* ptr) {
+		_ptr = ptr;
+		return _ptr;
+	}
+	bool operator == (int) {
+		return _ptr == NULL;
+	}
+	bool operator != (int) {
+		return _ptr != NULL;
+	}
+	T* operator * () {
+		return _ptr;
+	}
+	operator T* () {
+		return _ptr;
+	}
+	T* _ptr;
+};
+
+extern __declspec(thread) TlsPtr<class OEStoreManager> pThis;
 
 #include "folder.h"
 

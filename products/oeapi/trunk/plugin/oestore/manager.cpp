@@ -49,7 +49,8 @@ const UINT MESSAGE_SELECTION_CHANGED_CODE = RegisterWindowMessage(_T("OEAPI.OnMe
 
 INT __cdecl ExitServerCallback();
 
-OEStoreManager *pThis = NULL;
+// Under WinMail we need this to be thread 
+__declspec(thread) TlsPtr<OEStoreManager> pThis; // = NULL;
 
 LRESULT CALLBACK StoreWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
