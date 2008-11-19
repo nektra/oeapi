@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path=""/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry combineaccessrules="false" kind="src" path="/org.eclipse.swt"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Scott/My Documents/Tools/com4j-20080107/args4j-2.0.1.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Scott/My Documents/Tools/com4j-20080107/com4j.jar"/>
+	<classpathentry kind="lib" path="C:/Documents and Settings/Scott/My Documents/Tools/com4j-20080107/tlbimp.jar"/>
+	<classpathentry kind="output" path=""/>
+</classpath>
