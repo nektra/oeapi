@@ -1,8 +1,8 @@
-/* $Id: manager.h,v 1.9.8.4 2007/09/04 18:28:41 ibejarano Exp $
+/* $Id: manager.h,v 1.13 2008/09/07 16:57:01 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -28,28 +28,7 @@ class OEStoreManager;
 
 typedef std::map<DWORD, DWORD> FolderIdMessageIdMap;
 
-template<class T>
-struct TlsPtr {
-	const T* operator = (T* ptr) {
-		_ptr = ptr;
-		return _ptr;
-	}
-	bool operator == (int) {
-		return _ptr == NULL;
-	}
-	bool operator != (int) {
-		return _ptr != NULL;
-	}
-	T* operator * () {
-		return _ptr;
-	}
-	operator T* () {
-		return _ptr;
-	}
-	T* _ptr;
-};
-
-extern __declspec(thread) TlsPtr<class OEStoreManager> pThis;
+extern OEStoreManager *pThis;
 
 #include "folder.h"
 

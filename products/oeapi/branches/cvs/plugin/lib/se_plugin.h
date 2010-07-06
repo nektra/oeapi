@@ -1,8 +1,8 @@
-/* $Id: se_plugin.h,v 1.21.6.1 2007/06/19 18:54:41 ibejarano Exp $
+/* $Id: se_plugin.h,v 1.25 2009/01/27 19:29:59 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -65,6 +65,7 @@ struct _Plugin
 	// was created. It is used to find the SysListView32 window that is create after
 	BOOL colDlgCreated;
 	OEAPI_RegisterStoreEventsCallback storeRegisterEventsCb;
+	OEAPI_SendWindowCallback sendWindowCb;
 } OEPlugin, *POEPlugin, **PPOEPlugin;
 
 
@@ -91,6 +92,10 @@ HINSTANCE Plugin_GetInstance();
 HWND Plugin_GetMainWindow();
 
 int error(void);
+
+void LockSendWindow(BOOL lock);
+
+BOOL IsSendWindowLocked();
 
 
 // Global Plugin

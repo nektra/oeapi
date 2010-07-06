@@ -1,0 +1,9 @@
+; oeapi_sample.def : Declares the module parameters.
+
+LIBRARY      "oeapi_sample.DLL"
+
+EXPORTS
+	DllCanUnloadNow		PRIVATE
+	DllGetClassObject	PRIVATE
+	DllRegisterServer	PRIVATE
+	DllUnregisterServer	PRIVATE

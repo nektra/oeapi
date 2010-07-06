@@ -1,8 +1,8 @@
-/* $Id: se_plugin.cpp,v 1.36.4.4 2007/08/13 17:56:36 ibejarano Exp $
+/* $Id: se_plugin.cpp,v 1.45 2009/01/27 19:29:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -36,6 +36,7 @@
 
 // notify in the OE main window that arrives when OE Send/Receive
 #define WM_POPACTION 0x08B6
+#define WM_STOREEVENT 0x13A0
 
 const UINT CREATE_MSG_TABLES_CODE = RegisterWindowMessage(_T("OEAPI.CreateMsgTables"));
 const UINT WM_OEAPI_CLOSE = RegisterWindowMessage(_T("OEAPI_WM_CLOSE"));
@@ -99,10 +100,8 @@ VOID UpdateMsgSelection()
 	}
 }
 
-static INT msgList[1024];
-static INT msgCount = 0;
-
-
+//static INT msgList[1024];
+//static INT msgCount = 0;
 
 
 void OEAPI_SetSelectedMessage(INT count, INT *indexs)
@@ -116,10 +115,12 @@ void OEAPI_SetSelectedMessage(INT count, INT *indexs)
 			itemIndex = ListView_GetNextItem(Plugin.OEMsgWindow, itemIndex, LVNI_SELECTED);
 		}
 
-		ListView_SetItemState(Plugin.OEMsgWindow, indexs[0], LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
+		if(indexs[0] != -1) {
+			ListView_SetItemState(Plugin.OEMsgWindow, indexs[0], LVIS_SELECTED|LVIS_FOCUSED, LVIS_SELECTED|LVIS_FOCUSED);
+		}
 
 		for(int i=1; i<count; i++) {
-			ListView_SetItemState(Plugin.OEMsgWindow, indexs[i], LVIS_SELECTED, LVIS_SELECTED|LVIS_FOCUSED);
+			ListView_SetItemState(Plugin.OEMsgWindow, indexs[i], LVIS_SELECTED, LVIS_SELECTED);
 		}
 
 		if(Plugin.messageCb) {
@@ -356,7 +357,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 		OEPluginToolbarMgr::Get()->DestroyOEMainWindowTopLevelWndMgr();
 		return lResult;
 	}
-	else if(msg == 0x13A0 && wParam == 0 && lParam == 0) {
+	else if(msg == WM_STOREEVENT && wParam == 0 && lParam == 0) {
 		//if(IsWMail()) {
 		if(Plugin.storeRegisterEventsCb) {
 			Plugin.storeRegisterEventsCb(FALSE);
@@ -645,6 +646,11 @@ void OEAPI_SetRegisterMessageStoreEvents(OEAPI_RegisterStoreEventsCallback cb)
 	Plugin.storeRegisterEventsCb = cb;
 }
 
+void OEAPI_SetSendWindowCallback(OEAPI_SendWindowCallback cb)
+{
+	Plugin.sendWindowCb = cb;
+}
+
 HWND OEAPI_GetTreeViewHandle()
 {
 	return Plugin.OEFoldersWindow;
@@ -655,3 +661,18 @@ HWND OEAPI_GetMessageViewHandle()
 	return Plugin.hMessageView;
 }
 
+
+void LockSendWindow(BOOL lock)
+{
+	if(Plugin.sendWindowCb) {
+		(*Plugin.sendWindowCb)(lock ? SendWindow_Lock : SendWindow_Unlock);
+	}
+}
+
+BOOL IsSendWindowLocked()
+{
+	if(Plugin.sendWindowCb) {
+		(*Plugin.sendWindowCb)(SendWindow_Status);
+	}
+	return FALSE;
+}

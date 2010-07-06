@@ -70,6 +70,50 @@ TODO (URGENT):
 - There are problems with subbuttons with pictures (leaks).
 - Add caching pictures to buttons (handle the case of subbuttons).
 
+v3.2.4
+- New: Calling SetSelectedMsgID(-1) now deselect all message (#1004).
+- Fix: OnMsgWndClosed event was not triggered for message preview's window (#1051).
+- Fix: Send/Receive button sometimes didn't work on windows mail (#1053).
+- Fix: Calling GetToolbar on messages preview's windows cause an access violation (#1054).
+- Fix: OEToolbar::Destroy didn't work on messages window toolbars (#1055).
+- Fix: Modifying msg with SetBodyText ends with =00 appearing in the msg source (#1050).
+
+v3.2.3
+- New: Add a sample implementation of OnDatabaseChange event to C# dll demo plugin.
+- New: C# dll demo load toolbar's images from resources.
+- New: New methods OEMessage::IsReadOnly/SetReadOnly, to open and check if the message was readonly.
+- New: New method OEMessage::GetFlags returns flags which describe message composition.
+- Fix: SendMessage didn't work in x64 in WinMail (#1001).
+- Fix: Clone didn't copy account info in WinMail (#1005).
+- Fix: Calling ActivateGlobalNotification caused OE to not shutdown.
+- Fix: Sometimes selecting a non local folder caused a folder switch event, in WinMail.
+- Fix: Sometimes C# demo failed to load a folder's messages, or displayed incorrect information.
+- Fix: Sending one message with VC demo running sends twice (#1030).
+- Fix: SendMessage works even when OE is set to Work Offline (#1029).
+- Fix: SaveAsFile appends instead of overwriting when file exists (#1028).
+- Fix: OEFolder::DeleteMessage(msgId, TRUE) show a confirmation dialog in Vista 64 (#1006).
+- Fix: OnDatabaseChange case OE_TR_DELETE_FOLDER is called twice (#1038).
+
+v3.2.2
+- New: GetBcc/SetBcc in OEMsgWnd.
+- New: OEAPI standard have a new freeware license.
+- Fix: SendMessage not working under OE (#833).
+- Fix: Missing message's listview headers (#818).
+- Fix: WinMail crash when deleting folder (#827).
+- Fix: Compact all folder crash under OE (#832).
+- Fix: GetFilename/GetBodyProp incorrectly retrieve unicode characters (#875).
+- Fix: WinMail crash while opening newsgroups folders (#8).
+- Fix: Compilation as Unicode application (partial).
+- Fix: Compilation for Vista x64.
+- Fix: OESTORE message events trigger only for the first message under WinMail (#939).
+- Fix: OEMessage::Delete work the same in OE and WinMail.
+- Fix: Documentation cleanup.
+- Fix: SendMessage work the same in OE and WinMail.
+- Fix: C# demo have problems with folder with a large number of messages.
+- Fix: SetBody in OEMsgWnd if WinMail is configured to create text only messages.
+- Fix: SetImageNormal/SetImageMouseOver/SetPicture/SetPictureMouseOver incorrectly 
+  set image normal as mouseover (#962).
+- Fix: SetShown doesn't work from OnInitOEAPI (#982).
 
 v3.2.1
 - Fix: SendAndReceiveMessages works in WinMail.
@@ -81,7 +125,7 @@ v3.2.1
 - Fix: Can't permanently a mail under WinMail (dll addins only).
 - Fix: Unread count not updated under WinMail.
 - Fix: Corrupt message while modifying headers under OE6.
-- Fix: Remove OEAPI folder on Vista.
+- Fix: Remove OEAPI folder on Vista (setup).
 - Fix: WinMail crash if main windows is closed/opened while a message window remain open.
 - New: OnDatabaseChange folder rename/move events 
 - New: Remove VC Demo from OEAPI project.

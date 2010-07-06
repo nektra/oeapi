@@ -1,8 +1,8 @@
-/* $Id: oeapi.h,v 1.25.4.3 2007/08/08 22:39:33 ibejarano Exp $
+/* $Id: oeapi.h,v 1.32 2009/01/27 19:29:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -47,6 +47,11 @@ struct MsgWndStyles {
 	} WNDSTYLE ;
 };
 
+enum {
+	SendWindow_Lock = 1,
+	SendWindow_Unlock = 2,
+	SendWindow_Status = 3,
+};
 
 extern const UINT CREATE_MSG_TABLES_CODE;
 
@@ -107,6 +112,8 @@ typedef INT (__cdecl *OEAPI_MsgWndSendBtnCallback)(HWND, BOOL);
 typedef INT (__cdecl *OEAPI_HeaderOrderRegeneratedCallback)(INT,INT *);
 
 typedef VOID (__cdecl *OEAPI_RegisterStoreEventsCallback)(BOOL);
+
+typedef INT (__cdecl *OEAPI_SendWindowCallback)(INT);
 
 /**
 Return TRUE if any message is selected int the Messages List View
@@ -232,9 +239,14 @@ This function keeps the selection and adds index to it.
 void OEAPI_AddSelectedMessage(INT index);
 
 /**
-Set WinMail register events callback
+Set message store events callback
 */
 void OEAPI_SetRegisterMessageStoreEvents(OEAPI_RegisterStoreEventsCallback cb);
+
+/**
+Set send window events callback
+*/
+void OEAPI_SetSendWindowCallback(OEAPI_SendWindowCallback cb);
 
 /**
 Returns the folder tree view handle.

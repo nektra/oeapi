@@ -1,8 +1,8 @@
-/* $Id: std.cpp,v 1.3 2007/01/03 11:05:46 ibejarano Exp $
+/* $Id: std.cpp,v 1.4 2008/09/07 16:57:02 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/

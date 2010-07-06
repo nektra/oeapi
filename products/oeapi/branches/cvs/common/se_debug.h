@@ -1,8 +1,8 @@
-/* $Id: se_debug.h,v 1.9 2007/04/26 15:05:23 ibejarano Exp $
+/* $Id: se_debug.h,v 1.10 2008/09/07 16:55:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/

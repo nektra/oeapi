@@ -1,8 +1,8 @@
-/* $Id: folder.h,v 1.19 2007/05/28 19:31:17 ibejarano Exp $
+/* $Id: folder.h,v 1.20 2008/09/07 16:57:00 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -186,7 +186,7 @@ public:
 	TOEMessagePtr GetFirstMessage();
 	TOEMessagePtr GetNextMessage();
 	TOEMessagePtr GetMessage(DWORD msgId);
-	TOEMessagePtr CreateMessage(const bstr_t &msgSource, BOOL unread);
+	TOEMessagePtr CreateMessage(const bstr_t &msgSource, DWORD unread);
 	BOOL DeleteMessage(DWORD msgId, BOOL permanent);
 
 	BOOL MarkAsRead(DWORD msgId);

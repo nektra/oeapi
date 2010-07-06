@@ -1,8 +1,8 @@
-/* $Id: user_interface.cpp,v 1.41.4.1 2007/08/08 22:39:36 ibejarano Exp $
+/* $Id: user_interface.cpp,v 1.51 2009/01/28 18:17:12 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -211,7 +211,7 @@ bstr_t TOEMenuItem::GetText()
 //------------------------------------------------------------------//
 void TOEMenuItem::SetText(const bstr_t& text)
 {
-	GetMenuMgr()->SetMenuItemText(id_, text.s_str().c_str());
+	GetMenuMgr()->SetMenuItemText(id_, text.t_str().c_str());
 }
 
 //---------------------------------------------------------------------------//
@@ -964,13 +964,13 @@ long TOEToolbar::GetHandle()
 
 	toolbar->Unlock();
 
-	return HandleToLong(hToolbar);
+	return (LONG)hToolbar;
 }
 
 //---------------------------------------------------------------------------//
 void TOEToolbar::Destroy()
 {
-	OEPluginToolbar *toolbar = OEPluginToolbarMgr::Get()->GetToolbar(id_);
+	OEPluginToolbar *toolbar = GetToolbarObject();
 	if(toolbar) {
 		delete toolbar;
 	}

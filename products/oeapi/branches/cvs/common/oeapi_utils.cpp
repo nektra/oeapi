@@ -1,8 +1,8 @@
-/* $Id: oeapi_utils.cpp,v 1.22.4.2 2007/08/13 17:37:28 ibejarano Exp $
+/* $Id: oeapi_utils.cpp,v 1.27 2008/09/07 16:55:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -98,7 +98,7 @@ BOOL GetDefaultAccountSettingsOE(AccountInfoOE* info)
 	{
 		if(reg.Open(HKEY_CURRENT_USER, _T("SOFTWARE\\Microsoft\\Internet Account Manager"), KEY_READ) != ERROR_SUCCESS)
 		{
-			debug_print(DEBUG_INFO, "GetDefaultAccountSettings: Can't find default id\n");
+			debug_print(DEBUG_INFO, _T("GetDefaultAccountSettings: Can't find default id.\n"));
 			return ret;
 		}
 	}
@@ -108,7 +108,7 @@ BOOL GetDefaultAccountSettingsOE(AccountInfoOE* info)
 
 	if(reg.QueryValue(_T("Default Mail Account"), &dwType, (LPBYTE)info->accountId, &dwSize) != ERROR_SUCCESS)
 	{
-		debug_print(DEBUG_INFO, "GetDefaultAccountSettings: Can't read account id\n");
+		debug_print(DEBUG_INFO, _T("GetDefaultAccountSettings: Can't read account id.\n"));
 		return ret;
 	}
 	std::basic_stringstream<TCHAR> account;
@@ -118,7 +118,7 @@ BOOL GetDefaultAccountSettingsOE(AccountInfoOE* info)
 
 	if(subKey.Open(reg, account.str().c_str(), KEY_ALL_ACCESS) != ERROR_SUCCESS)
 	{
-		debug_print(DEBUG_INFO, "GetDefaultAccountSettings: Can't open account\n");
+		debug_print(DEBUG_INFO, _T("GetDefaultAccountSettings: Can't open account.\n"));
 		return ret;
 	}
 
@@ -126,7 +126,7 @@ BOOL GetDefaultAccountSettingsOE(AccountInfoOE* info)
 
 	if(subKey.QueryValue(_T("Account Name"), &dwType, (LPBYTE)info->accountName, &dwSize) != ERROR_SUCCESS)
 	{
-		debug_print(DEBUG_INFO, "GetDefaultAccountSettings: Can't read acount name\n");
+		debug_print(DEBUG_INFO, _T("GetDefaultAccountSettings: Can't read acount name.\n"));
 		return ret;
 	}
 
@@ -138,7 +138,7 @@ BOOL GetDefaultAccountSettingsOE(AccountInfoOE* info)
 //---------------------------------------------------------------------------//
 // TODO: Cleanup WinMail profile reading 
 typedef HRESULT (STDAPICALLTYPE * PCREATEXMLREADER)(REFIID riid, void ** ppvObject, IMalloc * pMalloc);
-typedef HRESULT (STDAPICALLTYPE * PSHCREATESTREAMONFILEA)(LPCSTR pszFile, DWORD grfMode, struct IStream **ppstm);
+typedef HRESULT (STDAPICALLTYPE * PSHCREATESTREAMONFILE)(LPCTSTR pszFile, DWORD grfMode, struct IStream **ppstm);
 
 
 class WinMailProfileReader {
@@ -160,13 +160,18 @@ public:
 		if(hXmlLite_ == NULL) {
 			hXmlLite_ = ::LoadLibrary(_T("xmllite.dll"));
 			if(hXmlLite_) {
-				pCreateXmlReader_ = (PCREATEXMLREADER)GetProcAddress(hXmlLite_, _T("CreateXmlReader"));
+				// GetProcAddress 2nd parameter is LPCSTR
+				pCreateXmlReader_ = (PCREATEXMLREADER)GetProcAddress(hXmlLite_, "CreateXmlReader");
 			}
 		}
 		if(hShlwapi_ == NULL) {
 			hShlwapi_ = ::LoadLibrary(_T("shlwapi.dll"));
 			if(hShlwapi_) {
-				pSHCreateStreamOnFileA_ = (PSHCREATESTREAMONFILEA)GetProcAddress(hShlwapi_, _T("SHCreateStreamOnFileA"));
+#ifdef UNICODE
+				pSHCreateStreamOnFile_ = (PSHCREATESTREAMONFILE)GetProcAddress(hShlwapi_, "SHCreateStreamOnFileW");
+#else
+				pSHCreateStreamOnFile_ = (PSHCREATESTREAMONFILE)GetProcAddress(hShlwapi_, "SHCreateStreamOnFileA");
+#endif
 			}
 		}
 		return (hShlwapi_ != NULL) && (hXmlLite_ != NULL);
@@ -179,9 +184,9 @@ public:
 		return E_FAIL;
 	}
 
-	HRESULT SHCreateStreamOnFile(LPCSTR pszFile, DWORD grfMode, struct IStream **ppstm) {
-		if(pSHCreateStreamOnFileA_) {
-			return pSHCreateStreamOnFileA_(pszFile, grfMode, ppstm);
+	HRESULT SHCreateStreamOnFile(LPCTSTR pszFile, DWORD grfMode, struct IStream **ppstm) {
+		if(pSHCreateStreamOnFile_) {
+			return pSHCreateStreamOnFile_(pszFile, grfMode, ppstm);
 		}
 		return E_FAIL;
 	}
@@ -190,13 +195,13 @@ private:
 	static HMODULE hXmlLite_;
 	static PCREATEXMLREADER pCreateXmlReader_;
 	static HMODULE hShlwapi_;
-	static PSHCREATESTREAMONFILEA pSHCreateStreamOnFileA_;
+	static PSHCREATESTREAMONFILE pSHCreateStreamOnFile_;
 };
 
 HMODULE WinMailProfileReader::hXmlLite_ = NULL;
 HMODULE WinMailProfileReader::hShlwapi_ = NULL;
 PCREATEXMLREADER WinMailProfileReader::pCreateXmlReader_ = NULL;
-PSHCREATESTREAMONFILEA WinMailProfileReader::pSHCreateStreamOnFileA_ = NULL;
+PSHCREATESTREAMONFILE WinMailProfileReader::pSHCreateStreamOnFile_ = NULL;
 
 WinMailProfileReader profileReader;
 
@@ -234,24 +239,34 @@ BOOL GetDefaultAccountSettingsWM(AccountInfoWM* info)
 		return FALSE;
 	}
 
-	TCHAR fullPath[2048];
+	std::basic_string<TCHAR> fullPath;
+	TCHAR tmp[2048];
 	if(dwType == REG_EXPAND_SZ) {
-		if(::ExpandEnvironmentStrings(storeRoot, fullPath, sizeof(fullPath)) == 0) {
+		if(::ExpandEnvironmentStrings(storeRoot, tmp, sizeof(tmp)/sizeof(TCHAR)) == 0) {
 			debug_print(DEBUG_ERROR, _T("GetDefaultAccountSettingsWM: Expand string failed %d.\n"), ::GetLastError());
 			return FALSE;
 		}
+		fullPath += tmp;
 	}
 	else {
-		_tcscpy_s(fullPath, sizeof(fullPath), storeRoot);
+		//_tcscpy_s(fullPath, sizeof(fullPath), storeRoot);
+		fullPath += storeRoot;
 	}
 
-	_tcscat_s(fullPath, sizeof(fullPath), _T("Local Folders\\"));
-	_tcscat_s(fullPath, sizeof(fullPath), info->accountId);
+	//_tcscat_s(fullPath, _T("Local Folders\\"));
+	fullPath += _T("Local Folders\\");
+	//_tcscat_s(fullPath, info->accountId);
+#ifdef UNICODE
+	MultiByteToWideChar(CP_ACP, 0, info->accountId, -1, tmp, sizeof(tmp)/sizeof(TCHAR));
+	fullPath += tmp; // .append(info->accountId);
+#else
+	fullPath += info->accountId;
+#endif
 
 	IStream* pStream = NULL;
 	HRESULT hr;
 
-	hr = profileReader.SHCreateStreamOnFile(fullPath, STGM_READ, &pStream);
+	hr = profileReader.SHCreateStreamOnFile(fullPath.c_str(), STGM_READ, &pStream);
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("GetDefaultAccountSettingsWM: SHCreateStreamOnFile failed %08x.\n"), hr);
 		return FALSE;

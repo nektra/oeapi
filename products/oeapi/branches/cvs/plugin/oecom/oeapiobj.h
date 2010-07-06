@@ -1,8 +1,8 @@
-/* $Id: oeapiobj.h,v 1.20.8.1 2007/07/23 19:56:37 ibejarano Exp $
+/* $Id: oeapiobj.h,v 1.26 2008/09/07 16:56:53 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -199,6 +199,11 @@ public:
 	Get the handle of OE main window.
 	*/
 	DWORD GetOEMainWindow();
+
+	/**
+	Get the handle of OE main window (x64).
+	*/
+	LONGLONG GetOEMainWindow2();
 
 	/**
 	Get the id of the oeapi

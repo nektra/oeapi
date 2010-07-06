@@ -1,8 +1,8 @@
-/* $Id: messagestore.h,v 1.19.6.8 2007/08/08 22:39:36 ibejarano Exp $
+/* $Id: messagestore.h,v 1.26 2008/09/07 16:56:53 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -115,6 +115,7 @@ public:
 	OEAPIMessageStore();
 	virtual ~OEAPIMessageStore();
 
+	static OEAPIMessageStore* CreateMessageStore();
 	static OEAPIMessageStore* Get() { return _OEAPIMessageStore; }
 
 	// IUnknown interface
@@ -269,7 +270,7 @@ private:
 
 ////////////////////////////////////////////////////////////////////////
 //
-typedef HRESULT ( STDMETHODCALLTYPE *NktOpenFolderWM)(IMessageStoreWMail * This, ULONG, ULONG, IMessageServer *, ULONG, IMessageFolder**);
+typedef HRESULT ( STDMETHODCALLTYPE *NktOpenFolderWM)(IMessageStoreWMail * This, ULONGLONG, IMessageServer *, ULONG, IMessageFolder**);
 
 class OEAPIMessageStoreWM : public OEAPIMessageStore
 {
@@ -311,7 +312,7 @@ private:
 	virtual HRESULT GetFolderTransactionInfo(IDatabase* database, HTRANSACTION__ ** hTransaction, OEAPITransInfo* transInfo);
 	virtual HRESULT GetMessageTransactionInfo(IDatabase* database, HTRANSACTION__ ** hTransaction, OEAPITransInfo* transInfo);
 
-	static HRESULT STDMETHODCALLTYPE OpenFolderHook(IMessageStoreWMail * This, ULONG, NktFOLDERID, IMessageServer *, ULONG, IMessageFolder**);
+	static HRESULT STDMETHODCALLTYPE OpenFolderHook(IMessageStoreWMail * This, ULONGLONG, IMessageServer *, ULONG, IMessageFolder**);
 	static ULONG STDMETHODCALLTYPE AddRefHook(NktIUnknown * This);
 
 private:

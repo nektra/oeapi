@@ -1,8 +1,8 @@
-/* $Id: oe_toolbar.cpp,v 1.52.4.8 2007/08/13 22:01:44 ibejarano Exp $
+/* $Id: oe_toolbar.cpp,v 1.60 2008/09/07 16:56:45 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -1551,6 +1551,10 @@ VOID OEPluginToolbar::CreateInWnd(HWND mainWindow)
 		rbBand.fMask |=  RBBIM_ID;
 
 		rbBand.fStyle = RBBS_CHILDEDGE | RBBS_USECHEVRON | RBBS_BREAK;
+		if(hidden_)
+		{
+			rbBand.fStyle |= RBBS_HIDDEN;
+		}
 
 		rbBand.hwndChild = handle_;
 		rbBand.cxMinChild = 0;
@@ -2154,7 +2158,7 @@ INT OEPluginToolbar::ReplaceHotImage(INT index, HBITMAP hbmp, HBITMAP hmask)
 	}
 	else {
 		// Update ImagesList
-		if (SendMessage(GetHandle(), TB_SETIMAGELIST, 0, (LPARAM) hotImageList) == 0) {
+		if (SendMessage(GetHandle(), TB_SETHOTIMAGELIST, 0, (LPARAM) hotImageList) == 0) {
 			debug_print(DEBUG_ERROR, _T("OEPluginToolbar::ReplaceHotImage: TB_SETIMAGELIST return 0.\n"));
 			return FALSE;
 		}
@@ -2910,9 +2914,9 @@ VOID OEPluginToolbarBtn::UpdateButtonInfo(int props)
 				::DeleteObject(hMask);
 			}
 			else {
-				bmpIndexNormal_ = toolbar_->AddImage(hBMP);
+				bmpIndexNormal_ = toolbar_->AddHotImage(hBMP);
 				if(bmpIndexNormal_ >= 0) {
-					toolbar_->AddHotImage(hBMP);
+					toolbar_->AddImage(hBMP);
 					btnInfo.cbSize = sizeof(TBBUTTONINFO);
 					btnInfo.dwMask = TBIF_IMAGE;
 					btnInfo.iImage = bmpIndexNormal_;

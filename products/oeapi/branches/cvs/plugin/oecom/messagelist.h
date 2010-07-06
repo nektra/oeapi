@@ -1,8 +1,8 @@
-/* $Id: messagelist.h,v 1.2.14.1 2007/08/08 22:39:36 ibejarano Exp $
+/* $Id: messagelist.h,v 1.9 2008/09/07 16:56:52 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -17,14 +17,32 @@
 #include "oeundoc.h"
 #include "nkt_hook.h"
 
+//////////////////////////////////////////////////////////////////////////////
 //----------------------------------------------------------------------------
-#ifndef _WIN64
-typedef HRESULT (STDMETHODCALLTYPE *NktSetFolder)(NktIMessageList* , DWORD , DWORD , DWORD , DWORD , DWORD );
-typedef HRESULT (STDMETHODCALLTYPE *NktSetFolderWMail)(NktIMessageList* , DWORD , DWORD , DWORD , DWORD , DWORD , DWORD );
-#else
-typedef HRESULT (STDMETHODCALLTYPE *NktSetFolder)(NktIMessageList* , ULONGLONG , LPVOID , DWORD , LPVOID, LPVOID);
-typedef HRESULT (STDMETHODCALLTYPE *NktSetFolderWMail)(NktIMessageList* , ULONGLONG , LPVOID , DWORD , DWORD , LPVOID, LPVOID);
-#endif
+
+class NktMessageList
+{
+public:
+	NktMessageList() {};
+	virtual ~NktMessageList() {};
+
+	virtual void SetHook() = 0;
+	virtual void RemoveHook() = 0;
+
+	virtual HRESULT GetMessageList(IUnknown** msgList) = 0;
+	virtual void ReleaseObjects() = 0;
+	virtual void SetMessageList(IUnknown* msgList) = 0;
+	virtual DWORD GetMessageIndex(DWORD msgId) = 0;
+	virtual DWORD GetMessageId(DWORD index) = 0;
+	virtual BOOL IsNull() = 0;
+
+protected:
+	NktMethodHooker<NktIMessageList> _hook;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------
 
 class OEAPIMessageList {
 public:
@@ -34,20 +52,23 @@ public:
 	void Init();
 	void Uninit();
 
-protected:
-	HRESULT GetMessageList(IUnknown** msgList);
-#ifndef _WIN64
-	static HRESULT STDMETHODCALLTYPE SetFolderHook(NktIMessageList* , DWORD , DWORD , DWORD , DWORD , DWORD );
-	static HRESULT STDMETHODCALLTYPE SetFolderHookWMail(NktIMessageList* , DWORD , DWORD, DWORD , DWORD , DWORD , DWORD );
-#else
-	static HRESULT STDMETHODCALLTYPE SetFolderHook(NktIMessageList* , ULONGLONG , LPVOID , DWORD , LPVOID, LPVOID);
-	static HRESULT STDMETHODCALLTYPE SetFolderHookWMail(NktIMessageList* , ULONGLONG , LPVOID , DWORD , DWORD , LPVOID, LPVOID);
-#endif
+	void SetMessageList(IUnknown* msgList);
+	void ReleaseObjects();
+
+	BOOL IsNull();
+
+	DWORD GetMessageId(DWORD index);
+	DWORD GetMessageIndex(DWORD msgId);
+
+//protected:
+	//HRESULT GetMessageList(IUnknown** msgList);
+
 
 private:
-	NktMethodHooker<NktIMessageList> _hook;
-	static NktSetFolder _oldSetFolder;
-	static NktSetFolderWMail _oldSetFolderWMail;
+	//NktMethodHooker<NktIMessageList> _hook;
+	//static NktSetFolder _oldSetFolder;
+	//static NktSetFolderWMail _oldSetFolderWMail;
+	NktMessageList* _msgList;
 };
 
 typedef CountedPtr<OEAPIMessageList> OEAPIMessageListPtr;

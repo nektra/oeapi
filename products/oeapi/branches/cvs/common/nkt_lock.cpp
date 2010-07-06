@@ -1,8 +1,8 @@
-/* $Id: nkt_lock.cpp,v 1.4.4.2 2007/08/08 22:39:30 ibejarano Exp $
+/* $Id: nkt_lock.cpp,v 1.8 2008/09/07 16:55:57 ibejarano Exp $
  *
  * Author: Ismael Bejarano <ismael.bejarano@nektra.com>
  *
- * Copyright (c) 2006-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2006-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/

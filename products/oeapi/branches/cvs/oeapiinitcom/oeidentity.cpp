@@ -1,8 +1,8 @@
-/* $Id: oeidentity.cpp,v 1.5 2007/05/15 17:17:36 ibejarano Exp $
+/* $Id: oeidentity.cpp,v 1.6 2008/09/07 16:56:33 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/

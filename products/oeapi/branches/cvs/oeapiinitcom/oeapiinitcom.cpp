@@ -1,8 +1,8 @@
-/* $Id: oeapiinitcom.cpp,v 1.18.6.3 2007/08/13 17:51:24 ibejarano Exp $
+/* $Id: oeapiinitcom.cpp,v 1.23 2008/09/07 16:56:33 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -44,7 +44,7 @@ int g_initializedObjects = 0;
 int counter = 0;
 HINSTANCE hInst = NULL;
 
-DWORD _stdcall ServerProc(void *obj);
+DWORD _stdcall OEAPIInitServerProc(void *obj);
 
 const UINT OEAPI_INIT_MESSAGE_CODE = RegisterWindowMessage(_T("OEAPI.OnInit"));
 const UINT OEAPI_SHUTDOWN_MESSAGE_CODE = RegisterWindowMessage(_T("OEAPI.OnShutdown"));
@@ -102,7 +102,7 @@ public:
 		}
 
 		::SetWindowLongPtr(hwnd_, GWLP_USERDATA, (LONG_PTR)this);
-		hThread_ = ::CreateThread(0, 0, ::ServerProc, this, 0, &serverID);
+		hThread_ = ::CreateThread(0, 0, ::OEAPIInitServerProc, this, 0, &serverID);
 		if(hThread_ == NULL) {
 			debug_print(DEBUG_ERROR, _T("OEAPIInit::OEAPIInit: Error CreateThread\n"));
 		}
@@ -243,7 +243,7 @@ HWND CreateCallbackWindow()
 }
 
 
-DWORD _stdcall ServerProc(void *obj)
+DWORD _stdcall OEAPIInitServerProc(void *obj)
 {
 	coclass_implementation<OEAPIInit> *oeapi = (coclass_implementation<OEAPIInit> *) obj;
 	HANDLE initEventHandle;

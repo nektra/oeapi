@@ -1,8 +1,8 @@
-/* $Id: oemsgwnd.h,v 1.11.6.1 2007/06/25 19:05:43 ibejarano Exp $
+/* $Id: oemsgwnd.h,v 1.15 2008/09/07 16:56:54 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -59,6 +59,16 @@ public:
 	void SetCc(const comet::bstr_t &subject);
 
 	/**
+	Get the 'Cc' address list of the message.
+	*/
+	comet::bstr_t GetBcc();
+
+	/**
+	Set the 'Cc' address list of the message.
+	*/
+	void SetBcc(const comet::bstr_t &subject);
+
+	/**
 	Cancel send process of the message window.<br>
 	This function should be called inside the event IOEAPIObjEvents::OnSendButtonMsgWndClicked
 	to cancel the 'Send' action started by the user or by code.<br>
@@ -99,7 +109,7 @@ public:
 	/**
 	Set the body of the message part of the window.
 	This function works in the same way of the SetBody function but it sets the body in
-	a different way. This function is recommended if you want to modify a outgoing message
+	a different way. This function is recommended if you want to modify an outgoing message
 	because some mail clients experience problems showing html messages set with the
 	SetBody function.
 	*/

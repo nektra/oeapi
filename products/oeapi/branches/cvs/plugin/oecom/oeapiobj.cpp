@@ -1,8 +1,8 @@
-/* $Id: oeapiobj.cpp,v 1.24.4.1 2007/07/23 19:56:36 ibejarano Exp $
+/* $Id: oeapiobj.cpp,v 1.32 2009/01/28 14:09:19 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -154,7 +154,13 @@ void TOEAPIObj::SendMessage(int folderId, int msgId)
 //---------------------------------------------------------------------------//
 DWORD TOEAPIObj::GetOEMainWindow()
 {
-	return (DWORD) HandleToLong(OEAPI_GetOEMainWindowHandle());
+	return (DWORD) OEAPI_GetOEMainWindowHandle();
+}
+
+//---------------------------------------------------------------------------//
+LONGLONG TOEAPIObj::GetOEMainWindow2()
+{
+	return (LONGLONG) OEAPI_GetOEMainWindowHandle();
 }
 
 //---------------------------------------------------------------------------//
@@ -351,6 +357,11 @@ void TOEAPIObj::SetSelectedMessageID(DWORD msgId)
 
 	int index = OEAPIManager::Get()->GetMessageIndex(msgId);
 	if(index != -1) {
+		OEAPI_SetSelectedMessage(1, &index);
+	}
+	else if(msgId == -1)
+	{
+		//index = 0;
 		OEAPI_SetSelectedMessage(1, &index);
 	}
 }
@@ -761,7 +772,7 @@ void TOEAPIObj::OnMsgWndClosed(long msgWndId, BOOL isMainWindow)
 #if !defined(STATIC_LIBRARY)
 	TOEMsgWndPtr msgWnd = GetMsgWnd(msgWndId);
 
-	if(!msgWnd.is_null()) {
+	if(isMainWindow || !msgWnd.is_null()) {
 		try {
 			connection_point.Fire_OnMsgWndClosed(msgWndId, isMainWindow);
 		}

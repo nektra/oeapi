@@ -30,8 +30,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oecom", "plugin\oecom\oecom
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{00907C49-617B-4736-85EC-B12D4A7AD74E} = {00907C49-617B-4736-85EC-B12D4A7AD74E}
 		{505DB289-BC5B-486C-9727-7BFC8E99D22D} = {505DB289-BC5B-486C-9727-7BFC8E99D22D}
+		{00907C49-617B-4736-85EC-B12D4A7AD74E} = {00907C49-617B-4736-85EC-B12D4A7AD74E}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oehook", "oehook\oehook.vcproj", "{215D83C7-E3A8-4A85-9DCE-B86EDAF3B91A}"
@@ -46,6 +46,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oestore", "PLUGIN\oestore\o
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
+		{A1B84277-EF63-4F93-95B8-AD1C86233C30} = {A1B84277-EF63-4F93-95B8-AD1C86233C30}
 		{215D83C7-E3A8-4A85-9DCE-B86EDAF3B91A} = {215D83C7-E3A8-4A85-9DCE-B86EDAF3B91A}
 	EndProjectSection
 EndProject

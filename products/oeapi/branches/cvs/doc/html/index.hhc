@@ -1,0 +1,66 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<HTML><HEAD></HEAD><BODY>
+<OBJECT type="text/site properties">
+<param name="FrameName" value="right">
+</OBJECT>
+<UL>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI Documentation"><param name="Local" value="index.html"><param name="ImageNumber" value="11"></OBJECT>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Deploying OEAPI"><param name="Local" value="deploying.html"><param name="ImageNumber" value="11"></OBJECT>
+  <UL>
+  </UL>
+<LI><OBJECT type="text/sitemap"><param name="Name" value=".NET Guideline"><param name="Local" value="dotnet.html"><param name="ImageNumber" value="11"></OBJECT>
+  <UL>
+  </UL>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Class List"><param name="Local" value="annotated.html"><param name="ImageNumber" value="1"></OBJECT>
+  <UL>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEAPIObj"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_a_p_i_obj.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEAPIObjEvents"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_a_p_i_obj_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEButton"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_button.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEButtonEvents"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_button_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEMenu"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_menu.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEMenuEvents"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_menu_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEMenuItem"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_menu_item.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEMenuItemEvents"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_menu_item_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEMsgWnd"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_msg_wnd.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEMsgWndEvents"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_msg_wnd_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEToolbar"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_toolbar.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::IOEToolbarEvents"><param name="Local" value="interface_o_e_a_p_i_1_1_i_o_e_toolbar_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::OEAPIObj"><param name="Local" value="class_o_e_a_p_i_1_1_o_e_a_p_i_obj.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::OEButton"><param name="Local" value="class_o_e_a_p_i_1_1_o_e_button.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::OEMenu"><param name="Local" value="class_o_e_a_p_i_1_1_o_e_menu.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::OEMenuItem"><param name="Local" value="class_o_e_a_p_i_1_1_o_e_menu_item.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::OEMsgWnd"><param name="Local" value="class_o_e_a_p_i_1_1_o_e_msg_wnd.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI::OEToolbar"><param name="Local" value="class_o_e_a_p_i_1_1_o_e_toolbar.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPIINITCOM::IOEAPIInit"><param name="Local" value="interface_o_e_a_p_i_i_n_i_t_c_o_m_1_1_i_o_e_a_p_i_init.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPIINITCOM::IOEAPIInitState"><param name="Local" value="interface_o_e_a_p_i_i_n_i_t_c_o_m_1_1_i_o_e_a_p_i_init_state.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPIINITCOM::IOEIdentity"><param name="Local" value="interface_o_e_a_p_i_i_n_i_t_c_o_m_1_1_i_o_e_identity.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPIINITCOM::IOEInitEvents"><param name="Local" value="interface_o_e_a_p_i_i_n_i_t_c_o_m_1_1_i_o_e_init_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPIINITCOM::OEAPIInit"><param name="Local" value="class_o_e_a_p_i_i_n_i_t_c_o_m_1_1_o_e_a_p_i_init.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPIINITCOM::OEAPIInitState"><param name="Local" value="class_o_e_a_p_i_i_n_i_t_c_o_m_1_1_o_e_a_p_i_init_state.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPIINITCOM::OEIdentity"><param name="Local" value="class_o_e_a_p_i_i_n_i_t_c_o_m_1_1_o_e_identity.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE::IOEFolder"><param name="Local" value="interface_o_e_s_t_o_r_e_1_1_i_o_e_folder.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE::IOEFolderEvents"><param name="Local" value="interface_o_e_s_t_o_r_e_1_1_i_o_e_folder_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE::IOEFolderManager"><param name="Local" value="interface_o_e_s_t_o_r_e_1_1_i_o_e_folder_manager.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE::IOEFolderManagerEvents"><param name="Local" value="interface_o_e_s_t_o_r_e_1_1_i_o_e_folder_manager_events.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE::IOEMessage"><param name="Local" value="interface_o_e_s_t_o_r_e_1_1_i_o_e_message.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE::OEFolder"><param name="Local" value="class_o_e_s_t_o_r_e_1_1_o_e_folder.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE::OEFolderManager"><param name="Local" value="class_o_e_s_t_o_r_e_1_1_o_e_folder_manager.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE::OEMessage"><param name="Local" value="class_o_e_s_t_o_r_e_1_1_o_e_message.html"><param name="ImageNumber" value="11"></OBJECT>
+  </UL>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Class Members"><param name="Local" value="functions.html"><param name="ImageNumber" value="11"></OBJECT>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Namespace List"><param name="Local" value="namespaces.html"><param name="ImageNumber" value="1"></OBJECT>
+  <UL>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPI"><param name="Local" value="namespace_o_e_a_p_i.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OEAPIINITCOM"><param name="Local" value="namespace_o_e_a_p_i_i_n_i_t_c_o_m.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="OESTORE"><param name="Local" value="namespace_o_e_s_t_o_r_e.html"><param name="ImageNumber" value="11"></OBJECT>
+  </UL>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="Namespace Members"><param name="Local" value="namespacemembers.html"><param name="ImageNumber" value="11"></OBJECT>
+<LI><OBJECT type="text/sitemap"><param name="Name" value="File List"><param name="Local" value="files.html"><param name="ImageNumber" value="1"></OBJECT>
+  <UL>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="oeapiinitcom.idl"><param name="Local" value="oeapiinitcom_8idl.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="oecom.idl"><param name="Local" value="oecom_8idl.html"><param name="ImageNumber" value="11"></OBJECT>
+  <LI><OBJECT type="text/sitemap"><param name="Name" value="oestore.idl"><param name="Local" value="oestore_8idl.html"><param name="ImageNumber" value="11"></OBJECT>
+  </UL>
+</UL>
+</BODY>
+</HTML>

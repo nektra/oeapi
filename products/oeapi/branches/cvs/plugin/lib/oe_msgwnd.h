@@ -1,8 +1,8 @@
-/* $Id: oe_msgwnd.h,v 1.10.8.4 2007/08/22 20:10:16 ibejarano Exp $
+/* $Id: oe_msgwnd.h,v 1.17 2009/01/27 19:29:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -195,28 +195,34 @@ public:
 	BOOL SetBodyHTML(const comet::bstr_t &body);
 
 	/**
-	Get the first address of the msg wnd. By default is 'To:'.
-	Does not work.
+	Get the first address of the msg wnd. 
 	*/
 	comet::bstr_t GetTo();
 
 	/**
-	Set the first address of the msg wnd. By default is 'To:'.
-	Does not work.
+	Set the first address of the msg wnd. 
 	*/
 	BOOL SetTo(const comet::bstr_t &address);
 
 	/**
-	Get the second address of the msg wnd. By default is 'Cc:'.
-	Does not work.
+	Get the second address of the msg wnd.
 	*/
 	comet::bstr_t GetCc();
 
 	/**
-	Set the second address of the msg wnd. By default is 'To:'.
-	Does not work.
+	Set the second address of the msg wnd.
 	*/
 	BOOL SetCc(const comet::bstr_t &address);
+
+	/**
+	Get the third address of the msg wnd. 
+	*/
+	comet::bstr_t GetBcc();
+
+	/**
+	Set the third address of the msg wnd. 
+	*/
+	BOOL SetBcc(const comet::bstr_t &address);
 
 	/**
 	Cancel send process of the message window.
@@ -228,16 +234,24 @@ public:
 
 	/**
 	*/
-	void SetSendEvent(BOOL sent) { sentEvent_ = sent; }
+	void SetPendingSendEvent(BOOL pending) { pendingSentEvent_ = pending; }
 
 	/**
 	*/
-	BOOL GetSendEvent() { return sentEvent_; }
+	BOOL GetPendingSendEvent() { return pendingSentEvent_; }
 
 	/**
 	Return TRUE if the Send process wasn cancelled.
 	*/
 	BOOL SendCancelled() { return sendCancelled_; }
+
+	/**
+	*/ 
+	void SetMessageSent(BOOL sent) { messageSent_ = sent; }
+
+	/**
+	*/ 
+	BOOL GetMessageSent() { return messageSent_; }
 
 	/**
 	Get the subject of the msg wnd.
@@ -297,7 +311,7 @@ public:
 	/**
 	Get the handle of the window associated to the object as a integer.
 	*/
-	INT GetID() { return (INT) HandleToLong(GetWindowHandle()); }
+	INT GetID() { return (INT) GetWindowHandle(); }
 
 	/**
 	Get the handle of the window associated to the object.
@@ -410,7 +424,8 @@ private:
 
 	WNDSTYLE wndStyle_;
 
-	BOOL sentEvent_;
+	BOOL pendingSentEvent_;
+	BOOL messageSent_;
 };
 
 
