@@ -1,9 +1,0 @@
-; oestore.def : Declares the module parameters.
-
-LIBRARY      "oestore.DLL"
-
-EXPORTS
-	DllCanUnloadNow     PRIVATE
-	DllGetClassObject   PRIVATE
-	DllRegisterServer   PRIVATE
-	DllUnregisterServer	PRIVATE
