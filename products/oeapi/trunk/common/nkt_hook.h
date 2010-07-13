@@ -1,4 +1,4 @@
-/* $Id: nkt_hook.h,v 1.1.2.2 2007/07/30 21:17:43 ibejarano Exp $
+/* $Id: nkt_hook.h,v 1.5 2008/02/19 04:47:50 ibejarano Exp $
  *
  * Author: Ismael Bejarano (ismael.bejarano@nektra.com)
  *
@@ -54,9 +54,9 @@ protected:
 			*oldValue = *address;
 		}
 		DWORD oldProtect, thunkProtect;
-		::VirtualProtect(address, 4, PAGE_EXECUTE_READWRITE, &oldProtect);
+		::VirtualProtect(address, sizeof(void*), PAGE_EXECUTE_READWRITE, &oldProtect);
 		*address = value;
-		::VirtualProtect(address, 4, oldProtect, &thunkProtect);
+		::VirtualProtect(address, sizeof(void*), oldProtect, &thunkProtect);
 	}
 };
 

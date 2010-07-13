@@ -1,0 +1,43 @@
+HKCR
+{
+	oeapi_sample.atl_addin.1 = s 'atl_addin Class'
+	{
+		CLSID = s '{6D4D32D9-3499-4615-A04F-CAB011A914B1}'
+	}
+	oeapi_sample.atl_addin = s 'atl_addin Class'
+	{
+		CLSID = s '{6D4D32D9-3499-4615-A04F-CAB011A914B1}'
+		CurVer = s 'oeapi_sample.atl_addin.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {6D4D32D9-3499-4615-A04F-CAB011A914B1} = s 'atl_addin Class'
+		{
+			ProgID = s 'oeapi_sample.atl_addin.1'
+			VersionIndependentProgID = s 'oeapi_sample.atl_addin'
+			ForceRemove 'Programmable'
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			val AppID = s '%APPID%'
+			'TypeLib' = s '{99380F4A-3FC5-45DC-BDBD-65E32B8A54FF}'
+		}
+	}
+}
+HKCU
+{
+	Software
+	{
+		Nektra
+		{
+			OEAPI
+			{
+				Plugins
+				{
+					val oeapi_sample = s 'oeapi_sample.atl_addin'
+				}
+			}
+		}
+	}
+}

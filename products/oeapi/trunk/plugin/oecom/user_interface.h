@@ -1,8 +1,8 @@
-/* $Id: user_interface.h,v 1.29 2007/05/23 17:47:57 ibejarano Exp $
+/* $Id: user_interface.h,v 1.36 2008/09/07 16:56:54 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/

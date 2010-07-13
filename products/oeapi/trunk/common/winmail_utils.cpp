@@ -1,8 +1,8 @@
-/* $Id: winmail_utils.cpp,v 1.4 2007/04/20 21:59:08 ibejarano Exp $
+/* $Id: winmail_utils.cpp,v 1.5 2008/09/07 16:55:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2006-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2006-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/

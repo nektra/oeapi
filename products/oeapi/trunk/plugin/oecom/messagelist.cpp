@@ -1,8 +1,8 @@
-/* $Id: messagelist.cpp,v 1.13.6.1 2007/08/08 22:39:35 ibejarano Exp $
+/* $Id: messagelist.cpp,v 1.20 2008/09/07 16:56:52 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -14,334 +14,475 @@
 #include "main.h"	// for OEAPIManager
 
 
-//DWORD pIMessageList_SetFolder;
-//FARPROC pSetFolder_afterPrelude;
-//FARPROC pOldSetFolder;
+#define NKT_INVALID_FOLDERID_WM ((ULONGLONG)-1LL)
 
+#ifdef _WIN64
+#  define NKT_INVALID_FOLDERID_OE ((ULONGLONG)-1LL)
+#else
+#  define NKT_INVALID_FOLDERID_OE ((DWORD)-1)
+#endif
 
-//IMessageListVista *msgList;
+//----------------------------------------------------------------------------
 
-//__declspec (naked) void SetFolderPatched()
-//{
-//	_asm {
-//		mov     edi, edi
-//		push    ebp
-//		mov     ebp, esp
-//
-//		jmp pSetFolder_afterPrelude
-//	}
-//}
+#ifdef _WIN64
+typedef HRESULT (STDMETHODCALLTYPE *NktSetFolder)(NktIMessageList* , ULONGLONG , LPVOID , DWORD , LPVOID, LPVOID);
+#else
+typedef HRESULT (STDMETHODCALLTYPE *NktSetFolder)(NktIMessageList* , DWORD , DWORD , DWORD , DWORD , DWORD );
+#endif
 
-//FARPROC oldRet;
-//DWORD dwFolderId;
-//IUnknown *msgList;
-//LPVOID vtableSetFolder;
-//
-//__declspec (naked) void SetFolderPrelude()
-//{
-//	_asm {
-//		cmp [esp+8], -1
-//		jne get_msg_list
-//
-//		jmp [pOldSetFolder]
-//
-//get_msg_list:
-//		push eax
-//		mov eax, [esp+8]
-//		mov msgList, eax
-//		mov eax, [esp+0ch]
-//		mov dwFolderId, eax
-//		pop eax
-//	}
-//
-//	_asm {
-//		push eax
-//		mov eax, [esp+4]
-//		mov oldRet, eax
-//		mov eax, offset retCreateList
-//		mov [esp+4], eax
-//		pop eax
-//
-//		jmp [pOldSetFolder]
-//
-//retCreateList:
-//		pushad
-//	}
-//
-//	OEAPIManager::Get()->SetMsgList(msgList, dwFolderId);
-//
-//	_asm {
-//		popad
-//		jmp oldRet
-//	}
-//}
+#ifdef _WIN64
+typedef HRESULT (STDMETHODCALLTYPE *NktSetFolderWMail)(NktIMessageList* , ULONGLONG , LPVOID , DWORD, LPVOID, LPVOID);
+#else
+typedef HRESULT (STDMETHODCALLTYPE *NktSetFolderWMail)(NktIMessageList* , ULONGLONG, DWORD , DWORD , DWORD , DWORD );
+#endif
 
-NktSetFolder OEAPIMessageList::_oldSetFolder = NULL;
-NktSetFolderWMail OEAPIMessageList::_oldSetFolderWMail = NULL;
+//////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------
+
+class NktMessageListOE : public NktMessageList
+{
+public:
+	NktMessageListOE();
+	virtual ~NktMessageListOE();
+
+	virtual void SetHook();
+	virtual void RemoveHook();
+
+	virtual HRESULT GetMessageList(IUnknown** msgList);
+	virtual void ReleaseObjects();
+	virtual void SetMessageList(IUnknown* msgList);
+	virtual DWORD GetMessageIndex(DWORD msgId);
+	virtual DWORD GetMessageId(DWORD index);
+	virtual BOOL IsNull();
+
+#ifdef _WIN64
+	static HRESULT STDMETHODCALLTYPE SetFolderHook(NktIMessageList* , ULONGLONG , LPVOID , DWORD , LPVOID, LPVOID);
+#else
+	static HRESULT STDMETHODCALLTYPE SetFolderHook(NktIMessageList* , DWORD , DWORD , DWORD , DWORD , DWORD );
+#endif
+
+private:
+	IMessageList* _msgList;
+	IMessageTable* _msgTable;
+	static NktSetFolder _oldSetFolder;
+};
+
+//----------------------------------------------------------------------------
+NktSetFolder NktMessageListOE::_oldSetFolder = NULL;
+
+//----------------------------------------------------------------------------
+NktMessageListOE::NktMessageListOE()
+:_msgList(NULL), _msgTable(NULL)
+{
+}
+
+//----------------------------------------------------------------------------
+NktMessageListOE::~NktMessageListOE()
+{
+	ReleaseObjects();
+}
+
+//----------------------------------------------------------------------------
+void NktMessageListOE::SetHook()
+{
+	HRESULT hr;
+
+	IUnknown* msgList = NULL; 
+	hr = GetMessageList(&msgList);
+
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("NktMessageListOE::SetHook: GetMessageList %08x.\n"), hr);
+		return;
+	}
+
+	if(msgList) {
+		_oldSetFolder = _hook.Init((NktIMessageList*)msgList, SetFolderHook, &NktIMessageListVtbl::SetFolder);	
+		msgList->Release();
+	}
+}
+
+//----------------------------------------------------------------------------
+void NktMessageListOE::RemoveHook()
+{
+	_hook.Uninit();
+}
+
+//----------------------------------------------------------------------------
+HRESULT NktMessageListOE::GetMessageList(IUnknown** msgList)
+{
+	HRESULT hr;
+	hr = CoCreateInstance(CLSID_IMessageList, NULL,
+		CLSCTX_INPROC_SERVER, IID_IMessageList, (LPVOID*) msgList);
+	return hr;
+}
+
+//----------------------------------------------------------------------------
+void NktMessageListOE::ReleaseObjects()
+{
+	if(_msgTable) {
+		_msgTable->Release();
+		_msgTable = NULL;
+	}
+	if(_msgList) {
+		_msgList->Release();
+		_msgList = NULL;
+	}
+}
+
+//----------------------------------------------------------------------------
+void NktMessageListOE::SetMessageList(IUnknown* ml)
+{
+	ReleaseObjects();
+	if(ml) {
+		HRESULT hr;
+		IMessageTable* msgTable = NULL;
+		IMessageList* msgList = static_cast<IMessageList*>(ml);
+		_msgList = msgList;
+		_msgList->AddRef();
+		hr = _msgList->GetMessageTable(&msgTable);
+		if(FAILED(hr)) {
+			debug_print(DEBUG_ERROR, _T("NktMessageListOE::SetMessageList: GetMessageTable failed %08x.\n"), hr);
+			return;
+		}
+		_msgTable = msgTable;
+	}
+}
+
+//----------------------------------------------------------------------------
+DWORD NktMessageListOE::GetMessageIndex(DWORD msgId)
+{
+	DWORD index = -1;
+	if(_msgTable) {
+		HRESULT hr;
+		hr = _msgTable->GetRowIndex(msgId, &index);
+		if(FAILED(hr)) {
+			debug_print(DEBUG_ERROR, _T("NktMessageListOE::GetMessageIndex: GetRowIndex failed %08x.\n"), hr);
+			return -1;
+		}
+	}
+	return index;
+}
+
+//----------------------------------------------------------------------------
+DWORD NktMessageListOE::GetMessageId(DWORD index)
+{
+#ifdef _WIN64
+	ULONGLONG msgId = -1;
+#else
+	DWORD msgId = -1;
+#endif
+	if(_msgTable) {
+		HRESULT hr;
+		hr = _msgTable->GetRowMessageId(index, (LPDWORD)&msgId);
+		if(FAILED(hr)) {
+			debug_print(DEBUG_ERROR, _T("NktMessageListOE::GetMessageId: GetRowMessageId failed %08x.\n"), hr);
+			return -1;
+		}
+	}
+	return msgId;
+}
+
+//----------------------------------------------------------------------------
+BOOL NktMessageListOE::IsNull()
+{
+	return _msgList == NULL || _msgTable == NULL;
+}
+
+//----------------------------------------------------------------------------
+#ifndef _WIN64
+HRESULT STDMETHODCALLTYPE NktMessageListOE::SetFolderHook(NktIMessageList* msgList, DWORD dwFolderId, DWORD arg1, DWORD arg2, DWORD arg3, DWORD arg4)
+#else
+HRESULT STDMETHODCALLTYPE NktMessageListOE::SetFolderHook(NktIMessageList* msgList, ULONGLONG dwFolderId, LPVOID arg1, DWORD arg2, LPVOID arg3, LPVOID arg4)
+#endif
+{
+	HRESULT hr = _oldSetFolder(msgList, dwFolderId, arg1, arg2, arg3, arg4);
+	if(SUCCEEDED(hr) && dwFolderId != NKT_INVALID_FOLDERID_OE) {
+		OEAPIManager::Get()->SetMsgList((IUnknown*)msgList, dwFolderId);
+	}
+	return hr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------
+
+class NktMessageListWM : public NktMessageList
+{
+public:
+	NktMessageListWM();
+	virtual ~NktMessageListWM();
+
+	virtual void SetHook();
+	virtual void RemoveHook();
+
+	virtual HRESULT GetMessageList(IUnknown** msgList);
+	virtual void ReleaseObjects();
+	virtual void SetMessageList(IUnknown* msgList);
+	virtual DWORD GetMessageIndex(DWORD msgId);
+	virtual DWORD GetMessageId(DWORD index);
+	virtual BOOL IsNull();
+
+#ifdef _WIN64
+	static HRESULT STDMETHODCALLTYPE SetFolderHook(NktIMessageList* , ULONGLONG , LPVOID , DWORD , LPVOID, LPVOID);
+#else
+	static HRESULT STDMETHODCALLTYPE SetFolderHook(NktIMessageList* , ULONGLONG , DWORD, DWORD , DWORD , DWORD);
+#endif
+
+private:
+	IMessageListWMail* _msgList;
+	IMessageTableWMail* _msgTable;
+	static NktSetFolderWMail _oldSetFolder;
+};
+
+//----------------------------------------------------------------------------
+NktSetFolderWMail NktMessageListWM::_oldSetFolder = NULL;
+
+//----------------------------------------------------------------------------
+NktMessageListWM::NktMessageListWM()
+:_msgList(NULL), _msgTable(NULL)
+{
+}
+
+//----------------------------------------------------------------------------
+NktMessageListWM::~NktMessageListWM()
+{
+	ReleaseObjects();
+}
+
+//----------------------------------------------------------------------------
+void NktMessageListWM::SetHook()
+{
+	HRESULT hr;
+
+	IUnknown* msgList = NULL; 
+	hr = GetMessageList(&msgList);
+
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("NktMessageListOE::SetHook: GetMessageList %08x.\n"), hr);
+		return;
+	}
+
+	if(msgList) {
+		_oldSetFolder = _hook.Init((NktIMessageList*)msgList, SetFolderHook, &NktIMessageListVtbl::SetFolder);	
+		msgList->Release();
+	}
+}
+
+//----------------------------------------------------------------------------
+void NktMessageListWM::RemoveHook()
+{
+	_hook.Uninit();
+}
+
+//----------------------------------------------------------------------------
+HRESULT NktMessageListWM::GetMessageList(IUnknown** msgList)
+{
+	HRESULT hr = E_FAIL;
+
+	IClassFactory* clsFactory;
+	TCHAR msoepath[1024];
+
+	// Note: Here we assume that HMODULE == 0 is winmail.exe or msimn.exe
+	GetModuleFileName(0, msoepath, sizeof(msoepath)/sizeof(TCHAR));
+	TCHAR* p = _tcsrchr(msoepath, '\\');
+	*p = '\0';
+	_tcscat_s(msoepath, sizeof(msoepath), _T("\\msoe.dll"));
+	HINSTANCE hLib = LoadLibrary(msoepath);
+	if(hLib == NULL) {
+		debug_print(DEBUG_ERROR, _T("NktMessageListWM::GetMessageList: Failed LoadLibrary.\n"));
+		return hr;
+	}
+
+	LPFNGETCLASSOBJECT pGetClassObject;
+	pGetClassObject = (LPFNGETCLASSOBJECT)GetProcAddress(hLib, "DllGetClassObject");
+	if(pGetClassObject == NULL) {
+		debug_print(DEBUG_ERROR, _T("NktMessageListWM::GetMessageList: Failed GetProcAddress.\n"));
+		FreeLibrary(hLib);		
+		return hr;
+	}
+
+	debug_print(DEBUG_TRACE, _T("NktMessageListWM::GetMessageList: GetProcAddress %08p.\n"), pGetClassObject);
+
+	hr = pGetClassObject(CLSID_IMessageList, IID_IClassFactory, (LPVOID*)&clsFactory);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("NktMessageListWM::GetMessageList: Failed DllGetClassObject.\n"));
+		FreeLibrary(hLib);		
+		return hr;
+	}
+
+	hr = clsFactory->CreateInstance(NULL, IID_IMessageListWMail, (LPVOID*)msgList);
+	clsFactory->Release();
+	FreeLibrary(hLib);		
+
+	return hr;
+}
+
+//----------------------------------------------------------------------------
+void NktMessageListWM::ReleaseObjects()
+{
+	if(_msgTable) {
+		_msgTable->Release();
+		_msgTable = NULL;
+	}
+	if(_msgList) {
+		_msgList->Release();
+		_msgList = NULL;
+	}
+}
+
+//----------------------------------------------------------------------------
+void NktMessageListWM::SetMessageList(IUnknown* ml)
+{
+	ReleaseObjects();
+	if(ml) {
+		HRESULT hr;
+		IMessageTableWMail* msgTable = NULL;
+		IMessageListWMail* msgList = static_cast<IMessageListWMail*>(ml);
+		_msgList = msgList;
+		_msgList->AddRef();
+		hr = _msgList->GetMessageTable((IMessageTable**)&msgTable);
+		if(FAILED(hr)) {
+			debug_print(DEBUG_ERROR, _T("NktMessageListOE::SetMessageList: GetMessageTable failed %08x.\n"), hr);
+			return;
+		}
+		_msgTable = msgTable;
+	}
+}
+
+//----------------------------------------------------------------------------
+DWORD NktMessageListWM::GetMessageIndex(DWORD msgId)
+{
+	DWORD index = -1;
+	if(_msgTable) {
+		HRESULT hr;
+		hr = _msgTable->GetRowIndex(msgId, &index);
+		if(FAILED(hr)) {
+			debug_print(DEBUG_ERROR, _T("NktMessageListOE::GetMessageIndex: GetRowIndex failed %08x.\n"), hr);
+			return -1;
+		}
+	}
+	return index;
+}
+
+//----------------------------------------------------------------------------
+DWORD NktMessageListWM::GetMessageId(DWORD index)
+{
+	ULONGLONG msgId = -1;
+	if(_msgTable) {
+		HRESULT hr;
+		hr = _msgTable->GetRowMessageId(index, &msgId);
+		if(FAILED(hr)) {
+			debug_print(DEBUG_ERROR, _T("NktMessageListOE::GetMessageId: GetRowMessageId failed %08x.\n"), hr);
+			return -1;
+		}
+	}
+	return msgId;
+}
+
+//----------------------------------------------------------------------------
+BOOL NktMessageListWM::IsNull()
+{
+	return _msgList == NULL || _msgTable == NULL;
+}
+
+//----------------------------------------------------------------------------
+#ifdef _WIN64
+HRESULT STDMETHODCALLTYPE NktMessageListWM::SetFolderHook(NktIMessageList* msgList, ULONGLONG dwFolderId, LPVOID arg1, DWORD arg2, LPVOID arg3, LPVOID arg4)
+#else
+HRESULT STDMETHODCALLTYPE NktMessageListWM::SetFolderHook(NktIMessageList* msgList, ULONGLONG dwFolderId, DWORD arg1, DWORD arg2, DWORD arg3, DWORD arg4)
+#endif
+{
+	HRESULT hr = _oldSetFolder(msgList, dwFolderId, arg1, arg2, arg3, arg4);
+	if(SUCCEEDED(hr) && dwFolderId != NKT_INVALID_FOLDERID_WM) {
+		OEAPIManager::Get()->SetMsgList((IUnknown*)msgList, dwFolderId);
+	}
+	return hr;
+}
+
+//////////////////////////////////////////////////////////////////////////////
 
 //----------------------------------------------------------------------------
 OEAPIMessageList::OEAPIMessageList()
 {
-	//vtableSetFolder = NULL;
+	if(IsWMail()) {
+		_msgList = new NktMessageListWM();
+	}
+	else {
+		_msgList = new NktMessageListOE();
+	}
 }
 
 //----------------------------------------------------------------------------
 OEAPIMessageList::~OEAPIMessageList()
 {
 	Uninit();
-	//if(vtableSetFolder) {
-	//	DWORD oldProtectionMask, oldProtectionMask2;
-
-	//	if(VirtualProtect(vtableSetFolder, 4, PAGE_EXECUTE_READWRITE, &oldProtectionMask) == FALSE) {
-	//		debug_print(DEBUG_ERROR, _T("OEAPIMessageList::~OEAPIMessageList: VirtualProtect\n"));
-	//		return;
-	//	}
-
-	//	*reinterpret_cast<void**>(vtableSetFolder) = (void*)pOldSetFolder;
-
-	//	//_asm {
-	//	//	push eax
-	//	//	push edx
-
-	//	//	mov edx, [vtableSetFolder]
-	//	//	mov eax, [pOldSetFolder]
-	//	//	mov [edx], eax
-
-	//	//	pop edx
-	//	//	pop eax
-	//	//}
-
-	//	if(VirtualProtect(vtableSetFolder, 4, oldProtectionMask, &oldProtectionMask2) == FALSE) {
-	//		debug_print(DEBUG_ERROR, _T("OEAPIMessageList::~OEAPIMessageList: VirtualProtect\n"));
-	//		return;
-	//	}
-	//}
+	if(_msgList) {
+		delete _msgList;
+		_msgList = NULL;
+	}
 }
 
 
-//----------------------------------------------------------------------------
-HRESULT OEAPIMessageList::GetMessageList(IUnknown** msgList)
-{
-	HRESULT hr = E_FAIL;
-	if(IsWMail()) {
-		IClassFactory* clsFactory;
-		TCHAR msoepath[1024];
-
-		// Note: Here we assume that HMODULE == 0 is winmail.exe or msimn.exe
-		GetModuleFileName(0, msoepath, sizeof(msoepath)/sizeof(TCHAR));
-		TCHAR* p = _tcsrchr(msoepath, '\\');
-#if _MSC_VER >= 1400
-		*p = '\0';
-		_tcscat_s(msoepath, sizeof(msoepath), _T("\\msoe.dll"));
-#else
-		_tcscat(msoepath, _T("\\msoe.dll"));
-#endif
-		HINSTANCE hLib = LoadLibrary(msoepath);
-		if(hLib == NULL) {
-			debug_print(DEBUG_ERROR, _T("OEAPIMessageList::Init: Failed LoadLibrary.\n"));
-			return hr;
-		}
-
-		LPFNGETCLASSOBJECT pGetClassObject;
-		pGetClassObject = (LPFNGETCLASSOBJECT)GetProcAddress(hLib, _T("DllGetClassObject"));
-		if(pGetClassObject == NULL) {
-			debug_print(DEBUG_ERROR, _T("OEAPIMessageList::Init: Failed GetProcAddress.\n"));
-			FreeLibrary(hLib);		
-			return hr;
-		}
-
-		debug_print(DEBUG_TRACE, _T("OEAPIMessageList::Init: GetProcAddress %08p.\n"), pGetClassObject);
-
-		hr = pGetClassObject(CLSID_IMessageList, IID_IClassFactory, (LPVOID*)&clsFactory);
-		if(FAILED(hr)) {
-			debug_print(DEBUG_ERROR, _T("OEAPIMessageList::Init: Failed DllGetClassObject.\n"));
-			FreeLibrary(hLib);		
-			return hr;
-		}
-
-		hr = clsFactory->CreateInstance(NULL, IID_IMessageListWMail, (LPVOID*)msgList);
-		clsFactory->Release();
-		FreeLibrary(hLib);		
-	}
-	else {
-		hr = CoCreateInstance(CLSID_IMessageList, NULL,
-			CLSCTX_INPROC_SERVER, IID_IMessageList, (LPVOID*) msgList);
-	}
-
-	return hr;
-}
+////----------------------------------------------------------------------------
+//HRESULT OEAPIMessageList::GetMessageList(IUnknown** msgList)
+//{
+//	return _msgList->GetMessageList(msgList);
+//}
 
 //----------------------------------------------------------------------------
 void OEAPIMessageList::Init()
 {
-	IUnknown* msgList = NULL; 
-	HRESULT hr = GetMessageList(&msgList);
-	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageList::Init: Failed CoCreateInstance.\n"));
-		return;
-	}
+	_msgList->SetHook();
 
-	if(msgList) {
-		if(IsWMail()) {
-			_oldSetFolderWMail = _hook.Init((NktIMessageList*)msgList, SetFolderHookWMail, &NktIMessageListVtbl::SetFolder);
-		}
-		else {
-			_oldSetFolder = _hook.Init((NktIMessageList*)msgList, SetFolderHook, &NktIMessageListVtbl::SetFolder);
-		}
-		msgList->Release();
-	}
+	//IUnknown* msgList = NULL; 
+	//HRESULT hr = GetMessageList(&msgList);
+	//if(FAILED(hr)) {
+	//	debug_print(DEBUG_ERROR, _T("OEAPIMessageList::Init: Failed CoCreateInstance.\n"));
+	//	return;
+	//}
+
+	//if(msgList) {
+	//	if(IsWMail()) {
+	//		_oldSetFolderWMail = _hook.Init((NktIMessageList*)msgList, SetFolderHookWMail, &NktIMessageListVtbl::SetFolder);
+	//	}
+	//	else {
+	//		_oldSetFolder = _hook.Init((NktIMessageList*)msgList, SetFolderHook, &NktIMessageListVtbl::SetFolder);
+	//	}
+	//	msgList->Release();
+	//}
 }
 
 //----------------------------------------------------------------------------
 void OEAPIMessageList::Uninit()
 {
-	_hook.Uninit();
-}
-
-	//	pop edx
-	//	pop eax
-	//}
-
-//----------------------------------------------------------------------------
-#ifndef _WIN64
-HRESULT STDMETHODCALLTYPE OEAPIMessageList::SetFolderHook(NktIMessageList* msgList, DWORD dwFolderId, DWORD dw2, DWORD dw3, DWORD dw4, DWORD dw5)
-#else
-HRESULT STDMETHODCALLTYPE OEAPIMessageList::SetFolderHook(NktIMessageList* msgList, ULONGLONG dwFolderId, LPVOID dw2, DWORD dw3, LPVOID dw4, LPVOID dw5)
-#endif
-{
-	HRESULT hr = _oldSetFolder(msgList, dwFolderId, dw2, dw3, dw4, dw5);
-#ifndef _WIN64
-	if(dwFolderId != (ULONG)-1) {
-#else
-	if(dwFolderId != (ULONGLONG)-1LL) {
-#endif
-		OEAPIManager::Get()->SetMsgList((IUnknown*)msgList, dwFolderId);
-	}
-	return hr;
+	_msgList->RemoveHook();
 }
 
 //----------------------------------------------------------------------------
-#ifndef _WIN64
-HRESULT STDMETHODCALLTYPE OEAPIMessageList::SetFolderHookWMail(NktIMessageList* msgList, DWORD dwFolderId, DWORD dw1, DWORD dw2, DWORD dw3, DWORD dw4, DWORD dw5)
-#else
-HRESULT STDMETHODCALLTYPE OEAPIMessageList::SetFolderHookWMail(NktIMessageList* msgList, ULONGLONG dwFolderId, LPVOID dw1, DWORD dw2, DWORD dw3, LPVOID dw4, LPVOID dw5)
-#endif
+void OEAPIMessageList::ReleaseObjects()
 {
-	HRESULT hr = _oldSetFolderWMail(msgList, dwFolderId, dw1, dw2, dw3, dw4, dw5);
-	if(dwFolderId != (DWORD)-1) {
-		OEAPIManager::Get()->SetMsgList((IUnknown*)msgList, dwFolderId);
-	}
-	return hr;
+	_msgList->ReleaseObjects();
 }
 
-//
-//	// TODO: Check if this works
-//	vtableSetFolder = (void*)(*reinterpret_cast<unsigned char**>(msgList) + 0x10);
-//	//_asm {
-//	//	push eax
-//	//	push edx
-//
-//	//	// get SetFolder address
-//	//	mov edx,dword ptr [msgList]
-//	//	mov eax,dword ptr [edx]
-//
-//	//	add eax, 10h
-//	//	mov [vtableSetFolder], eax
-//
-//	//	pop edx
-//	//	pop eax
-//	//}
-//
-//
-//	msgList->Release();
-//
-//	DWORD oldProtectionMask, oldProtectionMask2;
-//
-//	if(VirtualProtect(vtableSetFolder, 4, PAGE_EXECUTE_READWRITE, &oldProtectionMask) == FALSE) {
-//		debug_print(DEBUG_ERROR, _T("OEAPIMessageList::Init: VirtualProtect.\n"));
-//		return;
-//	}
-//
-//	pOldSetFolder = (FARPROC)*reinterpret_cast<void**>(vtableSetFolder);
-//	*reinterpret_cast<void**>(vtableSetFolder) = (void*)SetFolderPrelude;
-//
-//	//_asm {
-//	//	push eax
-//	//	push edx
-//
-//	//	// get SetFolder address
-//	//	mov edx, [vtableSetFolder]
-//	//	mov eax, [edx]
-//	//	mov [pOldSetFolder], eax
-//	//	mov eax, offset SetFolderPrelude
-//	//	mov [edx], eax
-//
-//	//	pop edx
-//	//	pop eax
-//	//}
-//
-//	if(VirtualProtect(vtableSetFolder, 4, oldProtectionMask, &oldProtectionMask2) == FALSE) {
-//		debug_print(DEBUG_ERROR, _T("OEAPIMessageList::Init: VirtualProtect.\n"));
-//		return;
-//	}
-//
-//
+//----------------------------------------------------------------------------
+void OEAPIMessageList::SetMessageList(IUnknown* msgList)
+{
+	_msgList->SetMessageList(msgList);
+}
 
+//----------------------------------------------------------------------------
+DWORD OEAPIMessageList::GetMessageIndex(DWORD msgId)
+{
+	return _msgList->GetMessageIndex(msgId);
+}
 
+//----------------------------------------------------------------------------
+DWORD OEAPIMessageList::GetMessageId(DWORD index)
+{
+	return _msgList->GetMessageId(index);
+}
 
-//	_asm {
-//		// get SetFolder address
-//		mov edx,dword ptr [msgList]
-//		mov eax,dword ptr [edx]
-//
-//		mov	edi, [eax+10h]
-//		mov pIMessageList_SetFolder, edi
-//	}
-//
-//	msgList->Release();
-//
-//	MEMORY_BASIC_INFORMATION mbiStart, mbiFinish;
-//	DWORD oldProtectionMaskStart, oldProtectionMaskFinish;
-//
-//	VirtualQuery((LPCVOID) pIMessageList_SetFolder, &mbiStart, sizeof(MEMORY_BASIC_INFORMATION));
-//	if(VirtualProtect(mbiStart.AllocationBase, mbiStart.RegionSize,
-//					PAGE_EXECUTE_READWRITE, &oldProtectionMaskStart) == FALSE) {
-//		debug_print(DEBUG_ERROR, _T("StartServer: VirtualProtect\n"));
-//		return;
-//	}
-//
-//	VirtualQuery((LPCVOID) (pIMessageList_SetFolder+4), &mbiFinish, sizeof(MEMORY_BASIC_INFORMATION));
-//	if(VirtualProtect(mbiFinish.AllocationBase, mbiFinish.RegionSize,
-//					PAGE_EXECUTE_READWRITE, &oldProtectionMaskFinish) == FALSE) {
-//		debug_print(DEBUG_ERROR, _T("StartServer: VirtualProtect\n"));
-//		return;
-//	}
-//
-//	_asm {
-//		mov edi, pIMessageList_SetFolder
-//
-//		mov byte PTR [edi], 0xe9
-//		mov eax, edi
-//		add eax, 5
-//		mov ecx, offset SetFolderPrelude
-//		sub ecx, eax
-//		inc edi
-//		mov [edi], ecx
-//		add edi, 4
-//		mov pSetFolder_afterPrelude, edi
-//	}
-//
-//	if(VirtualProtect(mbiStart.AllocationBase, mbiStart.RegionSize,
-//					PAGE_EXECUTE_READWRITE, &oldProtectionMaskStart) == FALSE) {
-//		debug_print(DEBUG_ERROR, _T("StartServer: VirtualProtect\n"));
-//		return;
-//	}
-//
-//	if(VirtualProtect(mbiFinish.AllocationBase, mbiFinish.RegionSize,
-//					PAGE_EXECUTE_READWRITE, &oldProtectionMaskFinish) == FALSE) {
-//		debug_print(DEBUG_ERROR, _T("StartServer: VirtualProtect\n"));
-//		return;
-//	}
-//}
-
-
+//----------------------------------------------------------------------------
+BOOL OEAPIMessageList::IsNull()
+{
+	return _msgList->IsNull();
+}

@@ -1,8 +1,8 @@
-/* $Id: main.h,v 1.37.4.8 2007/08/30 19:40:12 ibejarano Exp $
+/* $Id: main.h,v 1.49 2009/01/28 16:13:16 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -25,7 +25,7 @@
 //#include "oestate_helpers.inl"
 
 #define OEAPI_MSG_BASE 100
-#define OEAPI_VERSION 3210
+#define OEAPI_VERSION 3230
 
 class OEMenuItemRepr;
 
@@ -338,27 +338,36 @@ public:
 	This function process events and filter user input until the GUIFlag is set.
 	It's used to stop the GUI until a event is processed by OEAPI clients.
 	*/
-	void WaitGUIEvent();
+	void WaitGUIEvent(HANDLE hEvent);
 
 	/**
 	Set GUI flag false. Call this function before triggering a event.
 	*/
-	void ResetGUIFlag() { guiFlag_ = FALSE; }
+	//void ResetGUIFlag(); // { guiFlag_ = FALSE; }
 
 	/**
 	Set GUI flag true. Set this flag after the event was processed.
 	*/
-	void SetGUIFlag() { guiFlag_ = TRUE; }
+	//void SetGUIFlag(); // { guiFlag_ = TRUE; }
+
+	/**
+	*/
+	//void MsgWaitEvent(HANDLE hEvent);
 
 	/**
 	Test if the GUI flag is set.
 	*/
-	BOOL IsGUIFlagSet() { return guiFlag_; }
+	//BOOL IsGUIFlagSet() { return guiFlag_; }
 
 	/**
 	Get the value of the key value where is stored OE 'Send Mail Immediately' property.
 	*/
 	BOOL GetSendMailImmediatelyKeyValue();
+
+	/**
+	Get the value of the key value 'Offline mode' property.
+	*/
+	BOOL GetOfflineMode();
 
 	/**
 	Get first selected msgId in the current folder. If the folder is not local it returns
@@ -505,7 +514,7 @@ public:
 
 	void StartSynchroPending();
 
-	void ForceSynchroPending(BOOL receive = TRUE);
+	//void ForceSynchroPending(BOOL receive = TRUE);
 
 	/**
 	Create a message in Outbox folder to be sent.
@@ -633,12 +642,16 @@ public:
 	/**
 	Set that synchronization is pending or not.
 	*/
-	void SetSynchroPending(BOOL pending, LPARAM lparam = NULL);
+	//void SetSynchroPending(BOOL pending, LPARAM lparam = NULL);
+
+	/**
+	*/ 
+	void PushPendingSendCommand(LPARAM lParam);
 
 	/**
 	Get if synchronization is pending.
 	*/
-	BOOL IsSynchroPending() { return synchroPending_; }
+	BOOL IsSynchroPending() { return !synchroPendingParams_.empty(); }
 
 #ifdef ENTERPRISE_VERSION
 	/**
@@ -703,6 +716,16 @@ public:
 		}
 	}
 
+	void NotifyMessageWindowClosed(DWORD msgWndId, BOOL isMainWindow);
+
+	BOOL GetHideSendWindow() { return hideSendWindow_; }
+
+	void SetHideSendWindow(BOOL hide) { hideSendWindow_ = hide; }
+
+	BOOL IsSendWindowLocked() { return lockCountSendWindow_ > 0; }
+
+	void LockSendWindow(BOOL block); //  { blockSendWindow_ = block; }
+
 protected:
 	OEAPIManager();
 
@@ -758,7 +781,11 @@ private:
 	CRITICAL_SECTION eventCS_;
 
 	// flag indicates that there is a OE GUI thread pending event 
-	BOOL guiFlag_;
+	//BOOL guiFlag_;
+	//HANDLE guiEvent_;
+	HANDLE msgWndCloseEvent_;
+	HANDLE databaseEvent_;
+	HANDLE folderChangeEvent_;
 
 	// UI critical section
 	CRITICAL_SECTION uiCS_;
@@ -785,20 +812,26 @@ private:
 	LONG draftFolderId_;
 
 	IStoreNamespace *pSN_;
-	IMessageList *msgList_;
-	IMessageListWMail *msgListWMail_;
-	IMessageTable *msgTable_;
+	//IMessageList *msgList_;
+	//IMessageListWMail *msgListWMail_;
+	//IMessageTable *msgTable_;
+	//IMessageTableWMail *msgTableWMail_;
 
 //	BOOL folderSelPending_;
 
+	BOOL hideSendWindow_;
+	//BOOL lockSendWindow_;
+	volatile LONG lockCountSendWindow_;
+
 	// window used to send a message to send messages in Outbox inmediately.
 	HWND hSendDlg_;
-	LPARAM SendRecvLparam_;
+	//LPARAM SendRecvLparam_;
 
 	// flag indicates that OE is synchronizing with the server.
 	BOOL synchroInProcess_;
 	// flag indicates that a synchronization was requested by API while OE was synchronizing.
-	BOOL synchroPending_;
+	//BOOL synchroPending_;
+	std::list<LPARAM> synchroPendingParams_;
 
 	//BOOL folderEventFinished_;
 
@@ -819,7 +852,7 @@ private:
 
 	//HANDLE _afterIStoreNamespaceRelease;
 
-	OEAPIMessageListPtr oeapiMsgList_;
+	OEAPIMessageListPtr msgList_;
 	OEAPIMessageStorePtr msgStore_;
 };
 

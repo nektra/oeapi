@@ -1,8 +1,8 @@
-/* $Id: oe_menu.cpp,v 1.10.4.1 2007/08/08 22:39:32 ibejarano Exp $
+/* $Id: oe_menu.cpp,v 1.15 2008/09/07 16:56:45 ibejarano Exp $
  *
  * Author: Ismael Bejarano (ismael.bejarano@nektra.com)
  *
- * Copyright (c) 2006-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2006-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -629,12 +629,12 @@ OEPluginMenuMgr::OEPluginMenuMgr(HWND hWnd, WNDSTYLE wndStyle /* = menu_main_wnd
 	}
 	else {
 		COMET_ASSERT(hWnd != NULL);
-		LONG index = HandleToLong(GetProp(hWnd, _T("OEAPI_MenuNextId")));
+		LONG index = (LONG)GetProp(hWnd, _T("OEAPI_MenuNextId"));
 		
 		if(index == 0) {
 			index = 50101;
 		}
-		SetProp(hWnd, _T("OEAPI_MenuNextId"), LongToHandle(index + 1000));
+		SetProp(hWnd, _T("OEAPI_MenuNextId"), (HANDLE)(index + 1000));
 		_index = index;
 	}
 	_wndStyle = wndStyle;

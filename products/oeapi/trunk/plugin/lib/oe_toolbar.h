@@ -1,8 +1,8 @@
-/* $Id: oe_toolbar.h,v 1.29.4.3 2007/08/13 18:06:20 ibejarano Exp $
+/* $Id: oe_toolbar.h,v 1.35 2008/09/07 16:56:46 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/

@@ -13,7 +13,7 @@ int APIENTRY WinMain(HINSTANCE hInstance,
                      LPSTR     lpCmdLine,
                      int       nCmdShow)
 {
- 	HMODULE hOehook = LoadLibrary("oehook.dll");
+ 	HMODULE hOehook = LoadLibrary(_T("oehook.dll"));
 	if(hOehook == NULL) {
 		debug_print(DEBUG_ERROR, _T("Launcher: Cannot load oehook.dll\n"));
 		return 1;

@@ -1,8 +1,8 @@
-/* $Id: nkt_utils.h,v 1.5.6.2 2007/07/31 21:29:40 ibejarano Exp $
+/* $Id: nkt_utils.h,v 1.12 2008/09/07 16:55:57 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -271,16 +271,26 @@ private:
 };
 
 template <typename T> 
-class NktBuffer
+class NktDynamicArray
 {
 public:
-	NktBuffer() : _ptr(NULL) {}
-	NktBuffer(T* ptr) : _ptr(ptr) {}
-	explicit NktBuffer(size_t size) : _ptr(NULL) { alloc(size); }
+	NktDynamicArray() : _ptr(NULL) {}
+	NktDynamicArray(T* ptr) : _ptr(ptr) {}
+	explicit NktDynamicArray(size_t size) : _ptr(NULL) { alloc(size); }
 
-	~NktBuffer()
+	~NktDynamicArray()
 	{
 		release();
+	}
+
+	T& operator [] (int idx)
+	{
+		return _ptr[idx];
+	}
+
+	const T& operator [] (int idx) const
+	{
+		return _ptr[idx];
 	}
 
 	T* alloc(size_t size)

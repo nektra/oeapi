@@ -388,7 +388,6 @@ enum tagSPECIALFOLDER
 
     }	SPECIALFOLDER;
 
-#ifndef _WIN64
 typedef struct  tagFOLDERPROPS
     {
     DWORD cbSize;
@@ -399,18 +398,6 @@ typedef struct  tagFOLDERPROPS
     DWORD cMessage;
     CHAR szName[ 256 ];
     }	FOLDERPROPS;
-#else
-typedef struct  tagFOLDERPROPS
-    {
-    DWORD cbSize;
-    ULONGLONG dwFolderId;
-    INT cSubFolders;
-    SPECIALFOLDER sfType;
-    DWORD cUnread;
-    DWORD cMessage;
-    CHAR szName[256];
-    }	FOLDERPROPS;
-#endif
 
 typedef struct tagFOLDERPROPS __RPC_FAR *LPFOLDERPROPS;
 
@@ -955,6 +942,7 @@ typedef enum tagIMSGPRIORITY {
 #define MSG_LAST                     0x0080  // ** Keep this puppy updated!! **
 #define MSG_EXTERNAL_FLAGS           0x00FE
 #define MSG_FLAGS                    0x000f
+
 typedef struct  tagMESSAGEPROPS
     {
     DWORD cbSize;

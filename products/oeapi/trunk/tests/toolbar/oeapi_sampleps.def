@@ -1,0 +1,9 @@
+
+LIBRARY      "oeapi_samplePS"
+
+EXPORTS
+	DllGetClassObject       PRIVATE
+	DllCanUnloadNow         PRIVATE
+	GetProxyDllInfo         PRIVATE
+	DllRegisterServer		PRIVATE
+	DllUnregisterServer		PRIVATE

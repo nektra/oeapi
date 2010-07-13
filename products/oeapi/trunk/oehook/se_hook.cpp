@@ -1,8 +1,8 @@
-/* $Id: se_hook.cpp,v 1.23.4.1.4.1 2007/08/22 20:10:08 ibejarano Exp $
+/* $Id: se_hook.cpp,v 1.28 2008/09/07 16:56:39 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -330,7 +330,7 @@ LRESULT WINAPI CBTProc (int nCode, WPARAM wParam, LPARAM lParam)
 	//						dbgprint(file);
 							if(g_hSEPlugin != NULL) {
 	//							debug_print(DEBUG_ERROR, _T("\nOk\n"));
-								pStartServer = (StartServer_t) GetProcAddress(g_hSEPlugin, _T("StartServer"));
+								pStartServer = (StartServer_t) GetProcAddress(g_hSEPlugin, "StartServer");
 
 								if(pStartServer == NULL) {
 									debug_print(DEBUG_ERROR, _T("CBTProc: Error GetProcAddress\n"));
@@ -418,7 +418,7 @@ BOOL WINAPI DllMain(HINSTANCE hinstDll, DWORD fdwReason, LPVOID lpvReserved)
 					// test if this oecom.dll is newer than any other loaded (its version is greater)
 					hOecom = LoadLibrary(file);
 					if(hOecom != NULL) {
-						pGetLibraryVersion = (GetLibraryVersion_t) GetProcAddress(hOecom, _T("GetLibraryVersion"));
+						pGetLibraryVersion = (GetLibraryVersion_t) GetProcAddress(hOecom, "GetLibraryVersion");
 						if(pGetLibraryVersion != NULL) {
 							g_OecomVersion = pGetLibraryVersion();
 						}

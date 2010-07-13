@@ -1,8 +1,8 @@
-/* $Id: message.h,v 1.14.6.2 2007/07/30 21:17:52 ibejarano Exp $
+/* $Id: message.h,v 1.19 2008/11/10 21:04:19 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -15,6 +15,25 @@
 
 #include "auto_ptr.h"
 
+#include "oeapi_props.h"
+
+struct WinMailAccountInfo
+{
+	const WinMailAccountInfo& operator = (const WinMailAccountInfo& info)
+	{
+		_accountId = info._accountId;
+		_accountName = info._accountName;
+		_displayFrom = info._displayFrom;
+		_sender = info._sender;
+		return *this;
+	}
+
+public:
+	std::string _accountId;
+	std::wstring _accountName;
+	std::wstring _displayFrom;
+	std::string _sender;
+};
 
 //---------------------------------------------------------------------------//
 #ifdef STATIC_LIBRARY
@@ -85,7 +104,7 @@ public:
 	BOOL MarkAsUnread();
 	BOOL Delete(BOOL permanent);
 
-	DWORD GetID() { if(props_) return props_->dwMessageId; else return -1; }
+	DWORD GetID() { if(props_) return props_->GetID(); else return -1; }
 	DWORD GetFolderID() { return folderId_; }
 
 	BOOL IsNull() { return props_ == NULL; }
@@ -205,13 +224,31 @@ public:
 	*/
 	bstr_t GetFilename(long bodyHandle);
 
+    /**
+	*/
+    ULONGLONG GetBodySize(long par_bodyHandle);
+    /**
+	*/
+    com_ptr<IUnknown> GetBodyStream(long par_bodyHandle);
+
+    /**
+	*/
+    void SetReadOnly(long );
+    /**
+	*/
+    long IsReadOnly();
+
+	/**
+	*/
+	DWORD GetFlags();
+
 	// Internal
 	/**
 	Set the folderId and msgId of the message.
 	Until this point the message is empty.
 	*/
 	void SetMessageProps(DWORD folderId, IStoreFolder *pSF, DWORD msgId, IMessageFolder* folder);
-	void SetMessageProps(DWORD folderId, IStoreFolder *pSF, LPMESSAGEPROPS props, IMessageFolder* folder);
+	void SetMessageProps(DWORD folderId, IStoreFolder *pSF, NktMessageProps* props, IMessageFolder* folder);
 
 	/**
 	This object takes ownership of the pMimeMsg object. You need to call SetFolderID too.
@@ -234,6 +271,8 @@ public:
 	static com_ptr<IOEMessage> newInstance();
 #endif // STATIC_LIBRARY
 
+	void SetAccountInfo(const WinMailAccountInfo& accountInfo) { accountInfo_ = accountInfo; }
+
 protected:
 	BOOL OpenMessage();
 	BOOL OpenStoreMessage();
@@ -243,10 +282,15 @@ protected:
 
 	BOOL FixMessageHeader();
 
+	bool ReadAccountInfo(WinMailAccountInfo& info);
+
+	bool SaveAccountInfo(WinMailAccountInfo& info);
+
 private:
 	IStoreFolder *pSF_;
 	IStream *pTextStream_;
-	LPMESSAGEPROPS props_;
+	//LPMESSAGEPROPS props_;
+	NktMessageProps* props_;
 	IMimeMessage *pMimeMsg_;
 	DWORD state_;
 	IMimeAllocator *pAllocator_;
@@ -262,7 +306,11 @@ private:
 	HBODY *bodyAttachs_;
 	ULONG attachCount_;
 	ULONG curAttach_;
+	LONG access_;
 
 	IMessageFolder* msgFolder_;
+
+	// Account info
+	WinMailAccountInfo accountInfo_;
 };
 

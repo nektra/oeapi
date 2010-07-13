@@ -1,0 +1,49 @@
+
+Terms and conditions
+
+Company Information
+
+AGREEMENT BETWEEN YOU AND NEKTRA 
+
+
+Nektra OEAPI Evaluation Software License Agreement
+Nektra, Software License Agreement 
+EVALUATION LICENSE AGREEMENT
+
+THIS LICENSE AGREEMENT (THE "AGREEMENT") IS A LEGAL AGREEMENT BETWEEN YOU (EITHER AN INDIVIDUAL OR A LEGAL ENTITY) AND NEKTRA FOR THE SOFTWARE PRODUCT IDENTIFIED ABOVE, WHICH INCLUDES COMPUTER SOFTWARE AND ELECTRONIC DOCUMENTATION ("SOFTWARE"). PLEASE READ THE FOLLOWING LICENSE AGREEMENT CAREFULLY BEFORE USING THE SOFTWARE. BY INSTALLING, COPYING, OR OTHERWISE USING THE SOFTWARE YOU AGREE TO BE BOUND BY THE TERMS AND CONDITIONS OF THIS AGREEMENT. IF YOU DO NOT ACCEPT THE TERMS OF THIS AGREEMENT, YOU ARE NOT AUTHORISED TO INSTALL, COPY OR USE THE SOFTWARE.
+
+
+1. DEFINITIONS
+The following terms shall have the following meanings:
+"Documentation" means the technical publications prepared and delivered to Licensee by Nektra relating to use of the Software, such as reference and tutorial manuals.
+"License Key(s)" means the code(s) transferred from Nektra to Licensee allowing Licensee to use the Software.
+"License Key Information Form" means the form completed by Licensee and submitted to Nektra setting forth the information requested by Nektra for the transfer of the License Key.
+"Licensee" means the individual or entity licensing the Software hereunder as listed on the License Key Information Form.
+"Software" means those items of software, in object code format only, proprietary to Nektra and/or its suppliers, that Licensee has ordered from Nektra pursuant to the License Key Information Form. 
+
+
+2. EVALUATION LICENSE TERMS
+Nektra grants to Licensee a non-exclusive, internal, royalty-free, non-transferable license to use on a single machine in single-developer mode the evaluation version of the Software for evaluation and trial purposes only. This license begins when the Licensee installs the Software and ends 15 days after its installation (the "Evaluation Period"). When the license expires, Licensee must stop using the Software; the Software will automatically become non-functional at the end of the Evaluation Period. The Software shall be used only for evaluation purposes and may not be used or disclosed for any other purposes, including without limitation, external distribution or Software development. Licensee is forbidden from using the Software for any use other than as explicitly set forth herein.
+
+
+3. LIMITED WARRANTY/LIMITATIONS ON LIABILITY
+3.1. No Warranties. The Software is provided "AS-IS". Nektra hereby disclaims all representations and warranties, express or implied, with respect to the Software, including without limitation, warranties of fitness for a particular use or purpose, merchantability and non-infringement. Nektra makes no warranties that the Software will operate without interruption or be error-free. Nektra makes no representations about the suitability of the Software or about the accuracy of any content or information made accessible by the Software. The entire risk as to the quality and performance of the Software is borne by Licensee. Should the Software prove defective, Licensee and not Nektra shall assume the entire cost of any service and repair.
+3.2. Limitations on Liability. The Software is provided gratuitously and, therefore, neither Nektra nor anyone else who has been involved in the creation, production or delivery of this product shall be liable for any lost of revenue, profit or data, or for damages (including direct, indirect, incidental, punitive, consequential and special damages) under any theory of liability (including tort, contract, or any other theory) arising out of Licensee's or any third party's use, download, distribution or of inability to use Software or in any other way arising out of this Agreement, even if advised of the possibility of such damages. Nektra will in no event be liable for illegal use of Software.
+
+
+4. OWNERSHIP
+The Software is protected by copyright laws and international copyright treaties, as well as other intellectual property laws and treaties. Title, ownership rights, and all intellectual property rights in and to the Software and Documentation shall remain with Nektra and/or its licensors. Licensee agrees not to modify the Software, reproduce or distribute the Software except as expressly authorised herein, create derivative works of, or attempt to decipher, translate, decompile, disassemble, reverse engineer the Software or otherwise attempt to derive the source code of the Software or assist or encourage any third party in doing so.
+
+
+5. TERM
+This Agreement will take effect upon transfer of the License Key from Nektra to Licensee, and will remain in force until expiration of the Evaluation Period. The evaluation license can be terminated by Nektra if Licensee fails to comply with the terms and conditions of this agreement. At the conclusion of the evaluation period Licensee must return all media and documentation to Nektra and destroy all copies of Software as well as all copies of derived files and documentation. Expiration of this Agreement will not affect the provisions disclaiming Nektra's liability, which provisions shall survive any expiration or termination of this Agreement.
+
+
+6. GOVERNING LAW
+This Agreement shall be governed by and construed in accordance with the laws of England.
+
+
+7. MISCELLANEOUS
+7.1. If any term, condition, or provision in this Agreement is found to be invalid, unlawful or unenforceable to any extent, the remaining terms, conditions and provisions will continue to be valid and enforceable to the fullest extent permitted by law.
+7.2. This Agreement represents the entire agreement of the parties with respect to the subject matter of this Agreement and supersedes all previous communications, representations, understandings and agreements; either oral or written, between the parties with respect to said subject matter.
+7.3. This Agreement may not be amended, except in writing, signed by both parties. No terms, provisions or conditions of any purchase order, acknowledgement or other business form that Licensee may use in connection with the acquisition or licensing of the Software will have any effect on the rights, duties or obligations of the parties under, or otherwise modify, this Agreement, regardless of any failure of Nektra to object to such terms, provisions or conditions.

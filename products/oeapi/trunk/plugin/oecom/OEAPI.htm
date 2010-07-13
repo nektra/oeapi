@@ -1,0 +1,658 @@
+<!DOCTYPE HTML PUBLIC -//W3C//DTD HTML 4.0 Transitional//EN>
+<html><head><title>OEAPI</title><meta name=GENERATOR content=tlb2h></head>
+<body>
+<h1>OEAPI</h2>
+<h2>Content:</h2>
+<h3>Coclasses:</h3>
+<table>
+<tr><td>OEMenuItem</td><td><i>OEMenuItem coclass</i></td></tr>
+<tr><td>OEMsgWnd</td><td><i>OEMsgWnd coclass</i></td></tr>
+<tr><td>OEMenu</td><td><i>OEMenu coclass</i></td></tr>
+<tr><td>OEButton</td><td><i>OEButton coclass</i></td></tr>
+<tr><td>OEToolbar</td><td><i>OEToolbar coclass</i></td></tr>
+<tr><td>OEAPIObj</td><td><i>OEAPIObj coclass</i></td></tr>
+</table>
+<h3>Interfaces:</h3>
+<table>
+<tr><td><a href="#IOEAPIObj">IOEAPIObj</a></td><td><i>IOEAPIObj interface</i></td></tr>
+<tr><td><a href="#IOEAPIObjEvents">IOEAPIObjEvents</a></td><td><i>IOEAPIObjEvents Interface</i></td></tr>
+<tr><td><a href="#IOEButton">IOEButton</a></td><td><i>IOEButton interface</i></td></tr>
+<tr><td><a href="#IOEButtonEvents">IOEButtonEvents</a></td><td><i>IOEButtonEvents Interface</i></td></tr>
+<tr><td><a href="#IOEMenu">IOEMenu</a></td><td><i>IOEMenu interface</i></td></tr>
+<tr><td><a href="#IOEMenuEvents">IOEMenuEvents</a></td><td><i>IOEMenuEvents Interface</i></td></tr>
+<tr><td><a href="#IOEMenuItem">IOEMenuItem</a></td><td><i>IOEMenuItem interface</i></td></tr>
+<tr><td><a href="#IOEMenuItemEvents">IOEMenuItemEvents</a></td><td><i>IOEMenuItemEvents Interface</i></td></tr>
+<tr><td><a href="#IOEMsgWnd">IOEMsgWnd</a></td><td><i>IOEMsgWnd interface</i></td></tr>
+<tr><td><a href="#IOEMsgWndEvents">IOEMsgWndEvents</a></td><td><i>IOEMsgWndEvents Interface</i></td></tr>
+<tr><td><a href="#IOEToolbar">IOEToolbar</a></td><td><i>IOEToolbar interface</i></td></tr>
+<tr><td><a href="#IOEToolbarEvents">IOEToolbarEvents</a></td><td><i>IOEToolbarEvents Interface</i></td></tr>
+</table>
+<h2>Details:</h2><hr>
+<h3><a name=IOEAPIObj>IOEAPIObj</a></h3>
+<p>IOEAPIObj interface</p>
+<p>long GetID();
+
+<br>
+<i>Get the id.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenu>IOEMenu</a>&gt; GetMenu(long index);
+
+<br>
+<i>Get a menu by index.</i></p>
+<p>com_ptr&lt;<a href=#IOEMsgWnd>IOEMsgWnd</a>&gt; GetMsgWnd(long msgWndId);
+
+<br>
+<i>Get the message window by id.</i></p>
+<p>com_ptr&lt;<a href=#IOEToolbar>IOEToolbar</a>&gt; CreateToolbarInMsgWnd(enum <a href=#tagWNDSTYLE>tagWNDSTYLE</a> wndStyle);
+
+<br>
+<i>Create a toolbar in the send message window. It will appear when the user creates / replies / forwards an email.</i></p>
+<p>com_ptr&lt;<a href=#IOEToolbar>IOEToolbar</a>&gt; GetOEToolbarInMsgWnd(enum <a href=#tagWNDSTYLE>tagWNDSTYLE</a> wndStyle);
+
+<br>
+<i>Get the OE toolbar in msg wnd. It will appear when the user creates / replies / forwards an email.</i></p>
+<p>long GetFirstMsgWndID();
+
+<br>
+<i>Get the first msg window id of the OEAPIObj.</i></p>
+<p>long GetNextMsgWndID();
+
+<br>
+<i>Get the next msg window id of the OEAPIObj.</i></p>
+<p>long GetActiveMsgWndID();
+
+<br>
+<i>Get the next msg window id of the OEAPIObj.</i></p>
+<p>void SendKey(long keyCode, long controlCode, long setForeground);
+
+<br>
+<i>Send a Key to the msg window.</i></p>
+<p>com_ptr&lt;<a href=#IOEToolbar>IOEToolbar</a>&gt; CreateToolbar();
+
+<br>
+<i>Create a toolbar.</i></p>
+<p>com_ptr&lt;<a href=#IOEToolbar>IOEToolbar</a>&gt; GetOEToolbar();
+
+<br>
+<i>Get Outlook Express' toolbar.</i></p>
+<p>long GetFirstToolbarID();
+
+<br>
+<i>Get the first toolbar of the OEAPIObj.</i></p>
+<p>long GetNextToolbarID();
+
+<br>
+<i>Get the next toolbar's id of the OEAPIObj.</i></p>
+<p>com_ptr&lt;<a href=#IOEToolbar>IOEToolbar</a>&gt; GetToolbar(long toolbarId);
+
+<br>
+<i>Get toolbar of the OEAPIObj by id.</i></p>
+<p>void RemoveAllToolbars();
+
+<br>
+<i>Remove all the toolbars created with this object.</i></p>
+<p>long GetFirstMenuItemID();
+
+<br>
+<i>Get first menu item's id created in this OEAPIObj. If you use GetMenu and then create the items, you can list the items using this function too.</i></p>
+<p>long GetNextMenuItemID();
+
+<br>
+<i>Get next menu item's id created in this OEAPIObj.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; GetMenuItem(long itemId);
+
+<br>
+<i>Get the menu item object.</i></p>
+<p>void RemoveAllMenuItems();
+
+<br>
+<i>Remove all the menu items created with this object or any OEMenu obtained using GetMenu in this object.</i></p>
+<p>void SendAndReceiveMessages();
+
+<br>
+<i>Send messages in Outbox folder and receive pending messages in server. Equivalent to press the 'Send/Receive' button, except that it does not display the progress dialog.</i></p>
+<p>void SendMessage(long folderId, long msgId);
+
+<br>
+<i>While OE/WM is running, makes a copy of the the specified message in the Outbox folder, and modifies this copy to be able to be sent.</i></p>
+<p>long GetOEMainWindow();
+
+<br>
+<i>Get the handle of OE's main window.</i></p>
+<p>long GetSelectedFolderID();
+
+<br>
+<i>Get the selected folder's id.</i></p>
+<p>long GetFirstSelectedMessageID();
+
+<br>
+<i>Get the first selected message's id in the current folder. Returns -1 if the selected folder is not local.</i></p>
+<p>long GetNextSelectedMessageID();
+
+<br>
+<i>Get the next selected message's id in the current folder. If no more selected messages it returns -1.</i></p>
+<p>long GetCurrentMessageID();
+
+<br>
+<i>Get the current message's id of the current folder. Current message is displayed in the bottom part of OE.</i></p>
+<p>void SetSelectedMessageID(long msgId);
+
+<br>
+<i>Set the next selected message by id in the current folder. This function clears the previous selection. After calling this function, only msgId will be selected.</i></p>
+<p>void AddSelectedMessageID(long msgId);
+
+<br>
+<i>Add a message by id to the current selection. After calling this function, the previous selection is kept and msgId is added to the selection.</i></p>
+<p>long IsAnyMessageSelected();
+
+<br>
+<i>Returns TRUE if there is any message selected in the messages' listview.</i></p>
+<p>void SetSelectedFolderID(long selFolderId);
+
+<br>
+<i>Select folder by id.</i></p>
+<p>void OpenCurrentMessage();
+
+<br>
+<i>Display current message in a new window. Equivalent to double-click the message.</i></p>
+<p>void ComposeMessage();
+
+<br>
+<i>Open a new message window to compose a message. Equivalent to press 'Create Mail' button.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenu>IOEMenu</a>&gt; GetMsgWndMenu(enum <a href=#tagWNDSTYLE>tagWNDSTYLE</a> wndStyle, long index);
+
+<br>
+<i>Get a msg wnd menu by index.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; GetMsgWndMenuItem(enum <a href=#tagWNDSTYLE>tagWNDSTYLE</a> wndStyle, long itemId);
+
+<br>
+<i>Get a msg wnd menu item object.</i></p>
+<hr>
+<h3><a name=IOEAPIObjEvents>IOEAPIObjEvents</a></h3>
+<p>IOEAPIObjEvents Interface</p>
+<p>void OnToolbarButtonClicked(long toolbarId, long buttonId);
+
+<br>
+<i>Event triggered when a toolbar button is clicked.</i></p>
+<p>void OnMenuItemClicked(long menuIndex, long menuItemId);
+
+<br>
+<i>Event triggered when a menu item is clicked.</i></p>
+<p>void OnFolderSelectionChanged(long folderId);
+
+<br>
+<i>Event triggered when the selected folder changes.</i></p>
+<p>void OnMessageSelectionChanged();
+
+<br>
+<i>Event triggered when the message selection changes in the current folder.</i></p>
+<p>void OnCurrentMessageChanged(long msgId);
+
+<br>
+<i>Event triggered when the current message (that is displayed in OE's Preview Pane) changes.</i></p>
+<p>void OnMessageDownloadStarted();
+
+<br>
+<i>Event triggered when OE starts downloading and uploading messages from the server.</i></p>
+<p>void OnMessageDownloadFinished();
+
+<br>
+<i>Event triggered when OE finishes downloading and uploading messages from the server.</i></p>
+<p>void OnNewMessageInOutbox(long msgId);
+
+<br>
+<i>Event triggered when a message is created in Outbox folder and OE is prepared to send it. After this function returns, the message is sent.</i></p>
+<p>void OnToolbarButtonMsgWndClicked(long toolbarId, long buttonId, long msgWndId);
+
+<br>
+<i>Event triggered when a button of this toolbar is clicked in a message window.</i></p>
+<p>void OnSendButtonMsgWndClicked(long msgWndId);
+
+<br>
+<i>Event triggered when the 'Send' button is clicked in a message window.</i></p>
+<p>void OnNewMsgWnd(long msgWndId);
+
+<br>
+<i>Event triggered when a message window is created.</i></p>
+<p>void OnMsgWndClosed(long msgWndId, long isMainWindow);
+
+<br>
+<i>Event triggered when a message window is closed.</i></p>
+<p>void OnDatabaseChange(enum <a href=#tagOE_DATABASE_TRANSACTION>tagOE_DATABASE_TRANSACTION</a> dt, long folderId, long objId, long newParentId);
+
+<br>
+<i>Event triggered when a message or folder changes.</i></p>
+<p>void OnMsgWndMenuItemClicked(long menuIndex, long menuItemId, long msgWndId);
+
+<br>
+<i>Event triggered when a menu item is pressed on a message window.</i></p>
+<hr>
+<h3><a name=IOEButton>IOEButton</a></h3>
+<p>IOEButton interface</p>
+<p>void Create(long toolbarId, const bstr_t&amp; name, const bstr_t&amp; bmpNormal, const bstr_t&amp; bmpMouseOver);
+
+<br>
+<i>Create a button in the specified toolbar. The bmpNormal is the image displayed in the button and the bmpMouseOver is optional to display a different image when the mouse is over.</i></p>
+<p>void CreateSeparator(long toolbarId);
+
+<br>
+<i>Create a button with separator style.</i></p>
+<p>void Destroy();
+
+<br>
+<i>Destroy the button.</i></p>
+<p>com_ptr&lt;<a href=#IOEButton>IOEButton</a>&gt; CreateSubButton(const bstr_t&amp; name, const bstr_t&amp; bmpNormal, const bstr_t&amp; bmpMouseOver);
+
+<br>
+<i>Create a sub button that is displayed if the drop down arrow is clicked by the user.</i></p>
+<p>long GetID();
+
+<br>
+<i>Get the button's id.</i></p>
+<p>void SetEnabled(long enabled);
+
+<br>
+<i>Set if the button is enabled or not.</i></p>
+<p>void SetShown(long show);
+
+<br>
+<i>Set if the button is shown or not.</i></p>
+<p>void SetName(const bstr_t&amp; name);
+
+<br>
+<i>Set the button's name.</i></p>
+<p>void SetImageNormal(const bstr_t&amp; bmpNormal);
+
+<br>
+<i>Set the image displayed in the button.</i></p>
+<p>void SetImageMouseOver(const bstr_t&amp; bmp);
+
+<br>
+<i>Set the image displayed in the button when the mouse pointer is over the button.</i></p>
+<p>long GetFirstSubButtonID();
+
+<br>
+<i>Get first sub button's id.</i></p>
+<p>long GetNextSubButtonID();
+
+<br>
+<i>Get next sub button's id.</i></p>
+<p>com_ptr&lt;<a href=#IOEButton>IOEButton</a>&gt; GetSubButtonByIndex(long index);
+
+<br>
+<i>Get sub button using the order in which they were created.</i></p>
+<p>long IsSeparator();
+
+<br>
+<i>Returns TRUE if it is a separator.</i></p>
+<p>void SetPopupStyle(long popup);
+
+<br>
+<i>Set the button as with popup style or not.</i></p>
+<p>void SetCheckStyle(long check);
+
+<br>
+<i>Set button style to check.</i></p>
+<p>void SetChecked(long checked);
+
+<br>
+<i>For check style buttons, set button as checked.</i></p>
+<p>long IsChecked();
+
+<br>
+<i>Returns TRUE if the button is checked.</i></p>
+<p>void SetTooltip(const bstr_t&amp; tooltip);
+
+<br>
+<i>Set button's tooltip. To be displayed, the toolbar must have EnableTooltips set to TRUE before the button's creation.</i></p>
+<p>long IsVisible();
+
+<br>
+<i>Returns TRUE if the button is visible.</i></p>
+<p>long IsEnabled();
+
+<br>
+<i>Returns TRUE if the button is enabled.</i></p>
+<p>bstr_t GetName();
+
+<br>
+<i>Get the button's name.</i></p>
+<p>com_ptr&lt;<a href=#IOEButton>IOEButton</a>&gt; CreateSubSeparator();
+
+<br>
+<i>Create a sub buttons separator that is displayed if the drop down arrow is clicked by the user.</i></p>
+<p>void SetPicture(const com_ptr&lt;<a href=#::IPictureDisp>::IPictureDisp</a>&gt;&amp; normal);
+
+<br>
+<i>Set button's picture (normal state).</i></p>
+<p>void SetPictureMouseOver(const com_ptr&lt;<a href=#::IPictureDisp>::IPictureDisp</a>&gt;&amp; over);
+
+<br>
+<i>Set button's picture to be shown when mouse is over it.</i></p>
+<hr>
+<h3><a name=IOEButtonEvents>IOEButtonEvents</a></h3>
+<p>IOEButtonEvents Interface</p>
+<p>void OnClick();
+
+<br>
+<i>Event triggered when the button is clicked.</i></p>
+<p>void OnMsgWndClick(long msgWndId);
+
+<br>
+<i>Event triggered when the button is clicked in a message window.</i></p>
+<hr>
+<h3><a name=IOEMenu>IOEMenu</a></h3>
+<p>IOEMenu interface</p>
+<p>long GetIndex();
+
+<br>
+<i>Get the menu's index.</i></p>
+<p>com_ptr&lt;<a href="#IOEMenuItem">IOEMenuItem</a>&gt; CreateItem(const bstr_t&amp; name);
+
+<br>
+<i>Create a menu item.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; CreateItemBefore(const bstr_t&amp; name, const bstr_t&amp; before, long subString);
+
+<br>
+<i>Create a menu item before an existing menu item that has the specified string as it's text.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; CreateSeparator();
+
+<br>
+<i>Create a menu items' separator.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; CreateSeparatorBefore(const bstr_t&amp; before, long subString);
+
+<br>
+<i>Create a separator before an existing menu item that has the specified string as it's text.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; CreateItemAt(const bstr_t&amp; name, long position);
+
+<br>
+<i>Create a menu item at the specified position.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; CreateSeparatorAt(long position);
+
+<br>
+<i>Create a menu separator at the specified position.</i></p>
+<hr>
+<h3><a name=IOEMenuEvents>IOEMenuEvents</a></h3>
+<p>IOEMenuEvents Interface</p>
+<p>void OnItemClicked(long itemId);
+
+<br>
+<i>Event triggered when an item of this menu is clicked.</i></p>
+<p>void OnMsgWndItemClicked(long itemId, long msgWndId);
+
+<br>
+<i>Event triggered when an item of this menu is clicked.</i></p>
+<hr>
+<h3><a name=IOEMenuItem>IOEMenuItem</a></h3>
+<p>IOEMenuItem interface</p>
+<p>long GetID();
+
+<br>
+<i>Get the menu item id.</i></p>
+<p>void Create(long menuId, const bstr_t&amp; name);
+
+<br>
+<i>Create a menu item.</i></p>
+<p>void Destroy();
+
+<br>
+<i>Destroy menu item.</i></p>
+<p>void CreateBefore(long menuId, const bstr_t&amp; name, const bstr_t&amp; before, long subString);
+
+<br>
+<i>Create a menu item before an existing menu item that has the specified string as text.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; CreateSubItem(const bstr_t&amp; name);
+
+<br>
+<i>Create a sub item of this menu item.</i></p>
+<p>void SetEnabled(long enabled);
+
+<br>
+<i>Set the menu item as enabled or not.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; CreateSeparator();
+
+<br>
+<i>Create a separator as child of this menu item.</i></p>
+<p>void SetCheck(long check);
+
+<br>
+<i>Set the menu item as with check style.</i></p>
+<p>void SetChecked(long checked);
+
+<br>
+<i>Set the checked property for check style menu items.</i></p>
+<p>long IsChecked();
+
+<br>
+<i>For check style menu items, returns TRUE when it is checked.</i></p>
+<p>void SetVisible(long visible);
+
+<br>
+<i>Set the menu item as visible or not.</i></p>
+<p>long IsVisible();
+
+<br>
+<i>Returns TRUE if the menu item is visible.</i></p>
+<p>long IsEnabled();
+
+<br>
+<i>Returns TRUE if the menu item is enabled.</i></p>
+<p>void SetText(const bstr_t&amp; name);
+
+<br>
+<i>Set menu item's text.</i></p>
+<p>bstr_t GetText();
+
+<br>
+<i>Get menu item's text.</i></p>
+<p>void CreateAt(long menuId, const bstr_t&amp; name, long position);
+
+<br>
+<i>Create a menu item at the specified position.</i></p>
+<hr>
+<h3><a name=IOEMenuItemEvents>IOEMenuItemEvents</a></h3>
+<p>IOEMenuItemEvents Interface</p>
+<p>void OnClick();
+
+<br>
+<i>Event triggered when the menu is clicked.</i></p>
+<p>void OnMsgWndClick(long msgWndId);
+
+<br>
+<i>Event triggered when the menu is clicked.</i></p>
+<hr>
+<h3><a name=IOEMsgWnd>IOEMsgWnd</a></h3>
+<p>IOEMsgWnd interface</p>
+<p>bstr_t GetTo();
+
+<br>
+<i>Get the 'To' address list of the message.</i></p>
+<p>void SetTo(const bstr_t&amp; address);
+
+<br>
+<i>Set the first address of the message. By default 'To:'.</i></p>
+<p>bstr_t GetCc();
+
+<br>
+<i>Get the 'Cc' address list of the message.</i></p>
+<p>void SetCc(const bstr_t&amp; address);
+
+<br>
+<i>Set the 'Cc' address list of the message.</i></p>
+<p>void CancelSend();
+
+<br>
+<i>Cancel send process of the message window. This function should be called inside the event IOEAPIObjEvents::OnSendButtonMsgWndClicked to cancel the 'Send' action started by the user or by the code.</i></p>
+<p>bstr_t GetSubject();
+
+<br>
+<i>Get the message's subject.</i></p>
+<p>void SetSubject(const bstr_t&amp; subject);
+
+<br>
+<i>Set the message's subject.</i></p>
+<p>bstr_t GetBody();
+
+<br>
+<i>Get the body of the message part of the window.</i></p>
+<p>long GetBodyLength();
+
+<br>
+<i>Get the body length of the message part of the window in characters not including the NULL termination.</i></p>
+<p>void SetBody(const bstr_t&amp; body);
+
+<br>
+<i>Set the source of the message part of the window.</i></p>
+<p>void SetBodyHTML(const bstr_t&amp; body);
+
+<br>
+<i>Set the source of the message part of the window. This function is recommended if you want to modify an outgoing message.</i></p>
+<p><a href=#tagWNDSTYLE>tagWNDSTYLE</a> GetWndStyle();
+
+<br>
+<i>Get the window style.</i></p>
+<p>void SendMail();
+
+<br>
+<i>Press the 'Send' button of the window. Only valid for windows with wnd style different than OE_MSG_DETAIL_WND.</i></p>
+<p>void SendKey(long keyCode, long controlCode, long setForeground);
+
+<br>
+<i>Send a Key to the message window.</i></p>
+<p>long GetID();
+
+<br>
+<i>Get message window's id.</i></p>
+<p>com_ptr&lt;<a href=#IOEToolbar>IOEToolbar</a>&gt; GetToolbarByIndex(long toolbarIndex);
+
+<br>
+<i>Get message window's toolbar by index.</i></p>
+<p>com_ptr&lt;<a href=#IOEToolbar>IOEToolbar</a>&gt; GetToolbar(long toolbarId);
+
+<br>
+<i>Get message window's toolbar by id.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenu>IOEMenu</a>&gt; GetMenu(long menuIdx);
+
+<br>
+<i>Get message window's menu by index.</i></p>
+<p>com_ptr&lt;<a href=#IOEMenuItem>IOEMenuItem</a>&gt; GetMenuItem(long itemId);
+
+<br>
+<i>Get message window's menu item by id</i></p>
+<p>com_ptr&lt;IDispatch&gt; GetIHTMLDocument2();
+
+<br>
+<i>Get IHTMLDocument2 interface of this message window.</i></p>
+<p>bstr_t GetBcc();
+
+<br>
+<i>Get the 'Bcc' address list of the message.</i></p>
+<p>void SetBcc(const bstr_t&amp; address);
+
+<br>
+<i>Set the 'Bcc' address list of the message.</i></p>
+<hr>
+<h3><a name=IOEMsgWndEvents>IOEMsgWndEvents</a></h3>
+<p>IOEMsgWndEvents Interface</p>
+<p>void OnToolbarButtonClicked(long toolbarId, long buttonId);
+
+<br>
+<i>Event triggered when a toolbar button is clicked.</i></p>
+<p>void OnMenuItemClicked(long menuIndex, long menuItemId);
+
+<br>
+<i>Event triggered when a menu item is clicked.</i></p>
+<p>void OnClose(long isMainWindow);
+
+<br>
+<i>Event triggered when a message window is closed.</i></p>
+<hr>
+<h3><a name=IOEToolbar>IOEToolbar</a></h3>
+<p>IOEToolbar interface</p>
+<p>void SetShown(long show);
+
+<br>
+<i>Show or hide toolbar.</i></p>
+<p>com_ptr&lt;<a href=#IOEButton>IOEButton</a>&gt; CreateButton(const bstr_t&amp; name, const bstr_t&amp; bmpNormal, const bstr_t&amp; bmpMouseOver);
+
+<br>
+<i>Create a button in the toolbar. The bmpNormal is the image displayed in the button and the bmpMouseOver is optional to display a different image when the mouse is over.</i></p>
+<p>com_ptr&lt;<a href=#IOEButton>IOEButton</a>&gt; CreateSeparator();
+
+<br>
+<i>Create a toolbar separator.</i></p>
+<p>long GetID();
+
+<br>
+<i>Get the toolbar's id.</i></p>
+<p>void Create(long oeapiId);
+
+<br>
+<i>Create toolbar.</i></p>
+<p>void CreateInMsgWnd(enum <a href=#tagWNDSTYLE>tagWNDSTYLE</a> wndStyle, long oeapiId);
+
+<br>
+<i>Create a toolbar in the send message window. It will appear when the user creates / replies / forwards an email.</i></p>
+<p>void Destroy();
+
+<br>
+<i>Destroy the toolbar.</i></p>
+<p>void SetLargeButtons(long largeBtns);
+
+<br>
+<i>If TRUE the toolbar displays large buttons.</i></p>
+<p>long GetFirstButtonID();
+
+<br>
+<i>Get the toolbar's first button.</i></p>
+<p>long GetNextButtonID();
+
+<br>
+<i>Get the toolbar's next button.</i></p>
+<p>com_ptr&lt;<a href=#IOEButton>IOEButton</a>&gt; GetButton(long buttonId);
+
+<br>
+<i>Get the button object by id.</i></p>
+<p>com_ptr&lt;<a href=#IOEButton>IOEButton</a>&gt; GetButtonByIndex(long index);
+
+<br>
+<i>Get button using the order in which they were created.</i></p>
+<p>long GetHandle();
+
+<br>
+<i>Get toolbar handle.</i></p>
+<p>void SetMaxTextRows(long rows);
+
+<br>
+<i>Set the toolbar buttons' maximum text rows. Setting it to 0 shows no text.</i></p>
+<p>void EnableTooltips(long bEnable);
+
+<br>
+<i>Enable tooltips. For tooltips to be displayed, this option must be set right after toolbar creation, before creating the toolbar's buttons.</i></p>
+<p>void SetMaskColor(long color);
+
+<br>
+<i>Set the toolbar buttons images' transparent color.</i></p>
+<p>long GetMaskColor();
+
+<br>
+<i>Get toolbar buttons images' transparent color.</i></p>
+<p>long SetPictureSize(long cx, long cy);
+
+<br>
+<i>Set the toolbar pictures' size in pixels.</i></p>
+<p>long GetPictureSize(long&amp; cx, long&amp; cy);
+
+<br>
+<i>Get the toolbar pictures' size in pixels.</i></p>
+<hr>
+<h3><a name=IOEToolbarEvents>IOEToolbarEvents</a></h3>
+<p>IOEToolbarEvents Interface</p>
+<p>void OnButtonClicked(long buttonId);
+
+<br>
+<i>Event triggered when a button of this toolbar is clicked.</i></p>
+<p>void OnButtonMsgWndClicked(long buttonId, long msgWndId);
+
+<br>
+<i>Event triggered when a button of this toolbar is clicked in a message window.</i></p>
+</body></html>

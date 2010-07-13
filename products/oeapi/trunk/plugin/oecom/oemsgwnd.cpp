@@ -1,8 +1,8 @@
-/* $Id: oemsgwnd.cpp,v 1.16.6.1 2007/06/25 19:05:42 ibejarano Exp $
+/* $Id: oemsgwnd.cpp,v 1.22 2009/01/28 18:17:55 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -96,6 +96,26 @@ void TOEMsgWnd::SetCc(const bstr_t &address)
 {
 	if(msgWnd_) {
 		msgWnd_->SetCc(address);
+	}
+}
+
+//---------------------------------------------------------------------------//
+bstr_t TOEMsgWnd::GetBcc()
+{
+	bstr_t ret;
+
+	if(msgWnd_) {
+		ret = msgWnd_->GetBcc();
+	}
+
+	return ret;
+}
+
+//---------------------------------------------------------------------------//
+void TOEMsgWnd::SetBcc(const bstr_t &address)
+{
+	if(msgWnd_) {
+		msgWnd_->SetBcc(address);
 	}
 }
 
@@ -226,16 +246,15 @@ void TOEMsgWnd::SendKey(long keyCode, long controlCode, BOOL setForeground)
 TOEToolbarPtr TOEMsgWnd::GetToolbarByIndex(int toolbarIdx)
 {
 	TOEToolbarPtr ret;
-	if(msgWnd_)
-	{
-		OEPluginToolbar *toolbar = msgWnd_->GetTopLevelWndMgr()->GetToolbarByIndex(toolbarIdx);
-		if(toolbar)
-		{
+	if(msgWnd_) {
+		OEPluginTopLevelWndMgr* mgr = msgWnd_->GetTopLevelWndMgr();
+		OEPluginToolbar *toolbar = mgr ? mgr->GetToolbarByIndex(toolbarIdx) : NULL;
+		if(toolbar) {
 			ret = TOEToolbar::newInstance();
 			TOEToolbar *ttool = (TOEToolbar *) ret.get();
 			if(ttool) {
 				ttool->SetID(toolbar->GetID());
-				ttool->SetMsgWndMgr(msgWnd_->GetTopLevelWndMgr());
+				ttool->SetMsgWndMgr(mgr);
 				// ttool->SetOEAPIID(id_);
 			}
 			toolbar->Unlock();
@@ -248,16 +267,16 @@ TOEToolbarPtr TOEMsgWnd::GetToolbarByIndex(int toolbarIdx)
 TOEToolbarPtr TOEMsgWnd::GetToolbar(int toolbarId)
 {
 	TOEToolbarPtr ret;
-	if(msgWnd_)
-	{
-		OEPluginToolbar *toolbar = msgWnd_->GetTopLevelWndMgr()->GetToolbar(toolbarId);
+	if(msgWnd_) {
+		OEPluginTopLevelWndMgr* mgr = msgWnd_->GetTopLevelWndMgr();
+		OEPluginToolbar *toolbar = mgr ? mgr->GetToolbar(toolbarId) : NULL;
 		if(toolbar)
 		{
 			ret = TOEToolbar::newInstance();
 			TOEToolbar *ttool = (TOEToolbar *) ret.get();
 			if(ttool) {
 				ttool->SetID(toolbar->GetID());
-				ttool->SetMsgWndMgr(msgWnd_->GetTopLevelWndMgr());
+				ttool->SetMsgWndMgr(mgr);
 				ttool->SetOEAPIID(oeapiId_);
 			}
 			toolbar->Unlock();
@@ -309,7 +328,7 @@ TOEMenuItemPtr TOEMsgWnd::GetMenuItem(int itemId)
 void TOEMsgWnd::SetID(int id)
 {
 	// GetMsgWnd return a locked msg wnd
-	msgWnd_ = MsgWndMgr.GetMsgWnd((HWND)LongToHandle(id));
+	msgWnd_ = MsgWndMgr.GetMsgWnd((HWND)id);
 	if(msgWnd_ == NULL) {
 //		debug_print(DEBUG_ERROR, _T("TOEMsgWnd::SetID: Invalid window.\n"));
 	}

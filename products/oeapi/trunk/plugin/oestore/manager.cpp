@@ -1,8 +1,8 @@
-/* $Id: manager.cpp,v 1.20.6.7 2007/09/04 18:28:41 ibejarano Exp $
+/* $Id: manager.cpp,v 1.26 2008/10/28 20:27:44 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -27,6 +27,7 @@ typedef com_server< OESTORE::type_library > SERVER;
 #include "manager.h"
 
 #include "se_debug.h"
+#include "msoeapi.h"
 #include "oeapi_utils.h"
 
 #ifdef EVALUATION_VERSION
@@ -36,7 +37,7 @@ typedef com_server< OESTORE::type_library > SERVER;
 // there is a auto-generated oeapi.h in this project, so we must specify the path
 #include "../lib/oeapi.h"
 
-static DWORD serverID = 0;
+//static DWORD serverID = 0;
 
 // HINSTANCE of the dll
 //HINSTANCE hInst = NULL;
@@ -49,8 +50,7 @@ const UINT MESSAGE_SELECTION_CHANGED_CODE = RegisterWindowMessage(_T("OEAPI.OnMe
 
 INT __cdecl ExitServerCallback();
 
-// Under WinMail we need this to be thread 
-__declspec(thread) TlsPtr<OEStoreManager> pThis; // = NULL;
+OEStoreManager *pThis = NULL;
 
 LRESULT CALLBACK StoreWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -360,28 +360,30 @@ DWORD OEStoreManager::GetMaxMsgID(TOEFolderPtr folderPtr)
 {
 	DWORD maxId = -1;
 	TOEFolder *folder;
-	HENUMSTORE hEnum;
+	HENUMSTORE hEnum = HENUMSTORE_INVALID;
 	HRESULT hr;
-	MESSAGEPROPS msgProps;
+	NktMessageProps* msgProps = NULL;
 
 	folder = (TOEFolder *) folderPtr.get();
 
 	if(folder->GetSF() != NULL) {
-		msgProps.cbSize = sizeof(MESSAGEPROPS);
+		msgProps = NktMessageProps::Create(folder->GetSF());
 
-		hr = folder->GetSF()->GetFirstMessage(MSGPROPS_FAST, 0, MESSAGEID_FIRST, &msgProps, &hEnum);
+		hr = msgProps->GetFirstMessage(MSGPROPS_FAST, MESSAGEID_FIRST, &hEnum);
 
 		while(SUCCEEDED(hr) && hr != S_FALSE) {
-			maxId = msgProps.dwMessageId;
+			maxId = msgProps->GetID();
 
-			folder->GetSF()->FreeMessageProps(&msgProps);
-
-			hr = folder->GetSF()->GetNextMessage(hEnum, MSGPROPS_FAST, &msgProps);
+			hr = msgProps->GetNextMessage(hEnum, MSGPROPS_FAST);
 		}
 
-		if(SUCCEEDED(hr)) {
+		if(hEnum != HENUMSTORE_INVALID) {
 			folder->GetSF()->GetMessageClose(hEnum);
 		}
+	}
+
+	if(msgProps) {
+		delete msgProps;
 	}
 
 	return maxId;
@@ -768,17 +770,16 @@ BOOL OEStoreManager::OpenFolder(INT id, INT specialId, IStoreFolder* pSF, TOEFol
 			folder->pSF_->AddRef();
 		}
 
-		FOLDERPROPS props;
-		props.cbSize = sizeof(FOLDERPROPS);
+		std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(folder->pSF_));
 
-		hr = folder->pSF_->GetFolderProps(0, &props);
+		hr = props->GetFolderProps();
 		if(FAILED(hr)) {
 			debug_print(DEBUG_ERROR, _T("OEStoreManager::OpenFolder: GetFolderProps %08x.\n"), hr);
 			return FALSE;
 		}
 
 		folder->id_ = id;
-		folder->specialId_ = props.sfType;
+		folder->specialId_ = props->GetSpecialID();
 
 		OpenStorageFolder(folder->id_, &folder->msgFolder_);		
 		//if(msgStore_) {
@@ -793,16 +794,16 @@ BOOL OEStoreManager::OpenFolder(INT id, INT specialId, IStoreFolder* pSF, TOEFol
 			debug_print(DEBUG_ERROR, _T("OEStoreManager::OpenFolder: OpenSpecialFolder %08x.\n"), hr);
 			return FALSE;
 		}
-		FOLDERPROPS props;
-		props.cbSize = sizeof(FOLDERPROPS);
+		
+		std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(folder->pSF_));
 
-		hr = folder->pSF_->GetFolderProps(0, &props);
+		hr = props->GetFolderProps();
 		if(FAILED(hr)) {
 			debug_print(DEBUG_ERROR, _T("OEStoreManager::OpenFolder: GetFolderProps %08x.\n"), hr);
 			return FALSE;
 		}
 
-		folder->id_ = props.dwFolderId;
+		folder->id_ = props->GetID();
 		folder->specialId_ = specialId;
 
 		OpenStorageFolder(folder->id_, &folder->msgFolder_);

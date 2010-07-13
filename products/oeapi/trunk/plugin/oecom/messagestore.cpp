@@ -1,8 +1,8 @@
-/* $Id: messagestore.cpp,v 1.27.6.15 2007/09/04 19:16:03 ibejarano Exp $
+/* $Id: messagestore.cpp,v 1.36 2008/11/16 19:39:06 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -102,10 +102,10 @@ OEAPIMessageStore* OEAPIMessageStore::_OEAPIMessageStore = NULL;
 class DatabaseNotifierTrampoline : public IDatabaseNotify 
 {
 public:
-	DatabaseNotifierTrampoline() : _listener(NULL) {}
+	DatabaseNotifierTrampoline() : _lock(true), _listener(NULL) {}
 	~DatabaseNotifierTrampoline() {}
 
-	void SetListener(IDatabaseNotify* listener) { _listener = listener; }
+	void SetListener(IDatabaseNotify* listener) { _lock.Enter(); _listener = listener; _lock.Leave(); }
 	IDatabaseNotify* GetListener() { return _listener; }
 
 	virtual HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, void __RPC_FAR *__RPC_FAR *ppvObject) 
@@ -124,19 +124,36 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE OnTransaction(HTRANSACTION__ *hTransaction, ULONG dwUser, IDatabase *database)
 	{
 		HRESULT hr = E_FAIL;
+		_lock.Enter();
 		if(_listener) {
 			hr = _listener->OnTransaction(hTransaction, dwUser, database);
 		}
+		_lock.Leave();
 		return hr;
 	}
 
 private:
 	IDatabaseNotify* _listener;
+	NktLock _lock;
 };
 
 DatabaseNotifierTrampoline tramp; 
 
+
 //////////////////////////////////////////////////////////////////////////
+//----------------------------------------------------------------------------
+OEAPIMessageStore* OEAPIMessageStore::CreateMessageStore()
+{
+	OEAPIMessageStore* msgStore = NULL;
+	if(IsWMail()) {
+		msgStore = new OEAPIMessageStoreWM();
+	}
+	else {
+		msgStore = new OEAPIMessageStoreOE();
+	}
+	return msgStore;
+}
+
 //----------------------------------------------------------------------------
 OEAPIMessageStore::OEAPIMessageStore()
 {
@@ -329,7 +346,7 @@ HRESULT OEAPIMessageStore::UnregisterMessageNotification(NktFOLDERID folderId)
 		VOID* param = it->second;
 		HRESULT hr = UnregisterMessageNotification(&tramp, param);
 		if(FAILED(hr)) {
-			debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::UnregisterMessageNotification: Unregister failed %d %08x\n."), folderId, hr);
+			debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::UnregisterMessageNotification: Unregister failed %d %08x.\n"), folderId, hr);
 		}
 		OEAPIFolderLRUList::iterator it2 = std::find(_foldersLRU.begin(), _foldersLRU.end(), folderId);
 		if(it2 != _foldersLRU.end()) {
@@ -550,7 +567,8 @@ HRESULT OEAPIMessageStore::NotifyFolderTransaction(HTRANSACTION__ *hTransaction,
 {
 	HRESULT hr;
 	OEAPITransInfo transInfo;
-
+	int count = 0;
+	debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::NotifyFolderTransaction: beg %08x %08x %08x.\n"), hTransaction, dwUser, database);
 	while(hTransaction) {
 		hr = GetFolderTransactionInfo(database, &hTransaction, &transInfo);
 		if(FAILED(hr)) {
@@ -599,29 +617,35 @@ HRESULT OEAPIMessageStore::NotifyFolderTransaction(HTRANSACTION__ *hTransaction,
 			case tr_insertrecord:
 			{
 				//RegisterMessageNotification(transInfo.folderId1);
-				//debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: New folder %d Parent %d.\n"), transInfo.folderId1, transInfo.parentId1);
+				debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: New folder %d Parent %d.\n"), transInfo.folderId1, transInfo.parentId1);
 				break;
 			}
 			case tr_updaterecord:
 			{
 				if(transInfo.parentId1 != transInfo.parentId2 && (transInfo.parentId1 + transInfo.parentId2) > 0) {
-					//debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Folder Moved %d Old Parent %d New Parent %d.\n"), transInfo.folderId1, transInfo.parentId1, transInfo.parentId2);
+					debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Folder Moved %d Old Parent %d New Parent %d.\n"), transInfo.folderId1, transInfo.parentId1, transInfo.parentId2);
+				}
+				else {
+					debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Unknown update folder %d Old Parent %d New Parent %d.\n"), transInfo.folderId1, transInfo.parentId1, transInfo.parentId2);
 				}
 				break;
 			}
 			case tr_deleterecord:
 			{
 				UnregisterMessageNotification(transInfo.folderId1);
-				//debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Deleted folder %d: parent id=%d.\n"), transInfo.folderId1, transInfo.parentId1);
+				debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Deleted folder %d: parent id=%d.\n"), transInfo.folderId1, transInfo.parentId1);
 				break;
 			}
 			default:
 			{
-				//debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: unknown transaction type %d.\n"), transInfo.transType);
+				debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: unknown transaction type %d.\n"), transInfo.transType);
 				break;
 			}
 		}
+		++count;
+		break;
 	}
+	debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::NotifyFolderTransaction: end %08x %08x %08x [%d].\n"), hTransaction, dwUser, database, count);
 	return S_OK;
 }
 
@@ -684,17 +708,17 @@ HRESULT OEAPIMessageStore::NotifyMessageTransaction(HTRANSACTION__ *hTransaction
 			switch(transInfo.transType) {
 				case tr_insertrecord:
 				{
-					//debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: New Message in folder %d: id=%d.\n"), folderId, transInfo.messageId1);
+					debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: New Message in folder %d: id=%d.\n"), folderId, transInfo.messageId1);
 					break;
 				}
 				case tr_updaterecord:
 				{
-					//debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Message updated in folder %d: id=%d arf=0x%08X/0x%08X.\n"), folderId, transInfo.messageId1, transInfo.arf1, transInfo.arf2);
+					debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Message updated in folder %d: id=%d arf=0x%08X/0x%08X.\n"), folderId, transInfo.messageId1, transInfo.arf1, transInfo.arf2);
 					break;
 				}
 				case tr_deleterecord:
 				{
-					//debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Deleted Message in folder %d: id=%d.\n"), folderId, transInfo.messageId1);
+					debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: Deleted Message in folder %d: id=%d.\n"), folderId, transInfo.messageId1);
 					break;
 				}
 //				case tr_rebuildindex:
@@ -714,7 +738,7 @@ HRESULT OEAPIMessageStore::NotifyMessageTransaction(HTRANSACTION__ *hTransaction
 //				}
 				default:
 				{
-					//debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: unknown transaction type %d.\n"), transInfo.transType);
+					debug_print(DEBUG_TRACE, _T("OEAPIMessageStore::OnTransaction: unknown transaction type %d.\n"), transInfo.transType);
 					break;
 				}
 			}
@@ -870,7 +894,8 @@ OEAPIMessageStoreOE::OpenFolderHook(IMessageStore * This, FOLDERID__ folderId, I
 {
 	HRESULT hr = _oldOpenFolder(This, folderId, server, reserved, folder);
 	if(SUCCEEDED(hr)) {
-		HRESULT hr2 = OEAPIMessageStoreOE::Get()->RegisterMessageNotification(folderId);
+		HRESULT hr2 = S_OK;
+		hr2 = OEAPIMessageStoreOE::Get()->RegisterMessageNotification(folderId);
 		if(FAILED(hr2)) {
 			debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::OpenFolderHook: Can't register notify %d %08x.\n"), folderId, hr2);
 		}
@@ -1004,7 +1029,7 @@ LONG OEAPIMessageStoreOE::GetMaxMessageId(NktFOLDERID folderId)
 	ULONG pos = 0;
 	hr = folder->SeekRowset(rowset, (enum tagSEEKROWSETTYPE)2, 0, &pos);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::GetMaxMessageId: Can't seek enumeration %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::GetMaxMessageId: Can't seek enumeration %08x.\n"), hr);
 		folder->CloseRowset(&rowset);
 		return maxId;
 	}
@@ -1012,7 +1037,7 @@ LONG OEAPIMessageStoreOE::GetMaxMessageId(NktFOLDERID folderId)
 	MESSAGEINFO msgInfo;
 	hr = folder->QueryRowset(rowset, pos, (LPVOID*)&msgInfo, NULL);
 	if(hr == S_OK) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::GetMaxMessageId: Can't query enumeration %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::GetMaxMessageId: Can't query enumeration %08x.\n"), hr);
 		folder->CloseRowset(&rowset);
 		return maxId;
 	}
@@ -1042,7 +1067,7 @@ HRESULT OEAPIMessageStoreOE::GetFolderType(NktFOLDERID folderId, FolderType *fol
 
 	hr = msgStore->GetFolderInfo(folderId, &folderInfo);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::GetFolderType: Error GetFolderInfo %08x."), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::GetFolderType: Error GetFolderInfo %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1073,7 +1098,7 @@ HRESULT OEAPIMessageStoreOE::GetParentId(NktFOLDERID folderId, NktFOLDERID* pare
 
 	hr = msgStore->GetFolderInfo(folderId, &folderInfo);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::GetFolderType: Error GetFolderInfo %08x."), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::GetFolderType: Error GetFolderInfo %08x.\n"), hr);
 	}
 	else if(parentId != NULL) {
 		*parentId = folderInfo.dwParentFolderId;
@@ -1096,7 +1121,7 @@ HRESULT OEAPIMessageStoreOE::RegisterFoldersNotification(IDatabaseNotify* listen
 
 	hr = msgStore->RegisterNotify(2, 1, OEAPI_FOLDER_EVENT, listener);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::RegisterFoldersNotification: Can't register global notification %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::RegisterFoldersNotification: Can't register global notification %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1115,14 +1140,14 @@ HRESULT OEAPIMessageStoreOE::UnregisterFoldersNotification(IDatabaseNotify* list
 
 	hr = GetMessageStore((void**)&msgStore);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::UnregisterFoldersNotification: Can't get message store %08x"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::UnregisterFoldersNotification: Can't get message store %08x.\n"), hr);
 		return hr;
 	}
 
 	 hr = msgStore->UnregisterNotify(listener);
 
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::UnregisterFoldersNotification: Can't unregister global notification %08x."), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::UnregisterFoldersNotification: Can't unregister global notification %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1216,7 +1241,7 @@ HRESULT OEAPIMessageStoreOE::DeleteMessage(NktFOLDERID folderId, NktMESSAGEID ms
 
 	hr = OpenFolder(folderId, &folder);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::DeleteMessage: Can't open folder %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::DeleteMessage: Can't open folder %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1313,7 +1338,7 @@ HRESULT OEAPIMessageStoreOE::GetFolderTransactionInfo(IDatabase* database, HTRAN
 							&folInfo2, &dummy, &transInfo->ordList);
 
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::OnTransaction: Error GetTransaction %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::OnTransaction: Error GetTransaction %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1325,7 +1350,7 @@ HRESULT OEAPIMessageStoreOE::GetFolderTransactionInfo(IDatabase* database, HTRAN
 
 	transInfo->rename = FALSE;
 	if(transInfo->parentId1 == transInfo->parentId2 && transInfo->folderId1 == transInfo->folderId2) {
-		if(folInfo1.szFolderName != NULL && folInfo2.szFolderName != NULL && _tcscmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
+		if(folInfo1.szFolderName != NULL && folInfo2.szFolderName != NULL && strcmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
 			transInfo->rename = TRUE;
 		}
 	}
@@ -1347,7 +1372,7 @@ HRESULT OEAPIMessageStoreOE::GetMessageTransactionInfo(IDatabase* database, HTRA
 	hr = database->GetTransaction(hTransaction, &transInfo->transType, &msgInfo1,
 							&msgInfo2, &dummy, &transInfo->ordList);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::OnTransaction: Error GetTransaction folderId: %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::OnTransaction: Error GetTransaction folderId: %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1427,7 +1452,7 @@ void OEAPIMessageStoreWM::Init()
 	hr = ::CoCreateInstance(CLSID_MessageStoreWMail, NULL, CLSCTX_INPROC_SERVER, IID_IUnknown, (void**)&pUnknown);
 
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::Init: CoCreateInstance failed %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::Init: CoCreateInstance failed %08x.\n"), hr);
 		return;
 	}
 
@@ -1436,7 +1461,7 @@ void OEAPIMessageStoreWM::Init()
 	pUnknown->Release();
 
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::Init: QueryInterface failed %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::Init: QueryInterface failed %08x.\n"), hr);
 		return;
 	}
 
@@ -1485,14 +1510,14 @@ bool OEAPIMessageStoreWM::CheckStore()
 
 //----------------------------------------------------------------------------
 HRESULT STDMETHODCALLTYPE 
-OEAPIMessageStoreWM::OpenFolderHook(IMessageStoreWMail * This, NktFOLDERID folderId, ULONG a, IMessageServer * server, ULONG reserved, IMessageFolder** folder)
+OEAPIMessageStoreWM::OpenFolderHook(IMessageStoreWMail * This, ULONGLONG folderId, IMessageServer * server, ULONG reserved, IMessageFolder** folder)
 {
-	HRESULT hr = _oldOpenFolder(This, folderId, a, server, reserved, folder);
-	if(SUCCEEDED(hr) && a == 0) {
-		HRESULT hr2 = E_FAIL;
+	HRESULT hr = _oldOpenFolder(This, folderId, server, reserved, folder);
+	if(SUCCEEDED(hr)) { //  && (folderId >> 32) == 0) {
+		HRESULT hr2 = S_OK;
 		hr2 = OEAPIMessageStoreOE::Get()->RegisterMessageNotification(folderId);
 		if(FAILED(hr2)) {
-			debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::OpenFolderHook: Can't register notify %d %08x.\n"), folderId, hr2);
+			debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::OpenFolderHook: Can't register notify %d %08x.\n"), folderId, hr2);
 		}
 	}
 	return hr;
@@ -1534,11 +1559,11 @@ HRESULT OEAPIMessageStoreWM::OpenFolder(NktFOLDERID folderId, IMessageFolder **p
 	}
 
 	if(_oldOpenFolder) {
-		hr = _oldOpenFolder(msgStore, folderId, 0, NULL, 0, ppfInfo);
+		hr = _oldOpenFolder(msgStore, folderId, NULL, 0, ppfInfo);
 	}
 	else {
 		//debug_print(DEBUG_TRACE, _T("-%d-%d.\n"),sizeof(folderId), sizeof(long));
-		hr = msgStore->OpenFolder(folderId, 0, NULL, 0, ppfInfo);
+		hr = msgStore->OpenFolder(folderId, NULL, 0, ppfInfo);
 	}
 
 	return hr;
@@ -1552,7 +1577,7 @@ HRESULT OEAPIMessageStoreWM::FreeRecord(void *ptr)
 
 	hr = GetMessageStore((void**)&msgStore);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreOE::FreeRecord: Error GetMessageStore %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::FreeRecord: Error GetMessageStore %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1573,7 +1598,7 @@ HRESULT OEAPIMessageStoreWM::GetEnumChildren(NktFOLDERID folderId, IEnumerateFol
 		return hr;
 	}
 
-	hr = msgStore->EnumChildren(folderId, 0, 1, ppEnum);
+	hr = msgStore->EnumChildren(folderId, 1, ppEnum);
 
 	return hr;
 }
@@ -1663,7 +1688,7 @@ HRESULT OEAPIMessageStoreWM::GetFolderType(NktFOLDERID folderId, FolderType *fol
 		return hr;
 	}
 
-	hr = msgStore->GetFolderInfo(folderId, 0, &folderInfo);
+	hr = msgStore->GetFolderInfo(folderId, &folderInfo);
 
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::GetFolderType: Error GetFolderInfo %08x.\n"), hr);
@@ -1696,9 +1721,9 @@ HRESULT OEAPIMessageStoreWM::GetParentId(NktFOLDERID folderId, NktFOLDERID* pare
 		return hr;
 	}
 
-	hr = msgStore->GetFolderInfo(folderId, 0, &folderInfo);
+	hr = msgStore->GetFolderInfo(folderId, &folderInfo);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::GetFolderType: Error GetFolderInfo %08x."), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::GetFolderType: Error GetFolderInfo %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1718,7 +1743,7 @@ HRESULT OEAPIMessageStoreWM::RegisterFoldersNotification(IDatabaseNotify* listen
 
 	hr = GetMessageStore((void**)&msgStore);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::RegisterFoldersNotification: Can't get message store %08x"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::RegisterFoldersNotification: Can't get message store %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1806,13 +1831,37 @@ HRESULT OEAPIMessageStoreWM::UnregisterMessageNotification(IDatabaseNotify* list
 //----------------------------------------------------------------------------
 HRESULT OEAPIMessageStoreWM::OpenMimeMessage(NktFOLDERID folderId, NktMESSAGEID msgId, IMimeMessage** ppMimeMsg)
 {
-	return E_NOTIMPL;
+	HRESULT hr;
+	IMessageFolderWMailPtr folder;
+
+	hr = OpenFolder(folderId, (IMessageFolder**)&folder);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::OpenMimeMessage: Can't open folder %08x.\n"), hr);
+		return hr;
+	}
+
+	hr = folder->OpenMessage(msgId, 0, ppMimeMsg, NULL);
+
+	return hr;
 }
 
 //----------------------------------------------------------------------------
 HRESULT OEAPIMessageStoreWM::SaveMimeMessage(NktFOLDERID folderId, ULONG state, IMimeMessage* pMimeMsg, NktMESSAGEID* pNewMsgId)
 {
-	return E_NOTIMPL;
+	HRESULT hr;
+	IMessageFolderWMailPtr folder;
+
+	hr = OpenFolder(folderId, (IMessageFolder**)&folder);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::OpenMimeMessage: Can't open folder %08x.\n"), hr);
+		return hr;
+	}
+
+	//MESSAGEID msgId = 0;
+	ULONGLONG msgId = 0;
+	hr = folder->SaveMessage(&msgId, 1, state, NULL, pMimeMsg, NULL);
+	*pNewMsgId = msgId;
+	return hr;
 }
 
 //----------------------------------------------------------------------------
@@ -1823,7 +1872,7 @@ HRESULT OEAPIMessageStoreWM::DeleteMessage(NktFOLDERID folderId, NktMESSAGEID ms
 
 	hr = OpenFolder(folderId, (IMessageFolder**)&folder);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::DeleteMessage: Can't open folder %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::DeleteMessage: Can't open folder %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1834,8 +1883,14 @@ HRESULT OEAPIMessageStoreWM::DeleteMessage(NktFOLDERID folderId, NktMESSAGEID ms
 	msgList.cMsgs = 1;
 	msgList.prgdwMsgId = msgId2;
 
+	// deletedFolderId_ == 6 in WinMail
+	if(folderId == 6) 
+	{
+		permanent = TRUE;
+	}
+
 	if(permanent) {
-		hr = folder->DeleteMessages(1, &msgList, NULL, &nullStoreCallback);
+		hr = folder->DeleteMessages(15, &msgList, NULL, &nullStoreCallback);
 	}
 	else {
 		hr = folder->DeleteMessages(0, &msgList, NULL, NULL);
@@ -1855,7 +1910,7 @@ HRESULT OEAPIMessageStoreWM::GetFolderTransactionInfo(IDatabase* database, HTRAN
 	hr = database->GetTransaction(hTransaction, &transInfo->transType, &folInfo1,
 								&folInfo2, &dummy, &transInfo->ordList);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::OnTransaction: Error GetTransaction %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::OnTransaction: Error GetTransaction %08x.\n"), hr);
 		return hr;
 	}
 
@@ -1867,7 +1922,7 @@ HRESULT OEAPIMessageStoreWM::GetFolderTransactionInfo(IDatabase* database, HTRAN
 
 	transInfo->rename = FALSE;
 	if(transInfo->parentId1 == transInfo->parentId2 && transInfo->folderId1 == transInfo->folderId2) {
-		if(folInfo1.szFolderName != NULL && folInfo2.szFolderName != NULL && _tcscmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
+		if(folInfo1.szFolderName != NULL && folInfo2.szFolderName != NULL && strcmp(folInfo1.szFolderName, folInfo2.szFolderName) != 0) {
 			transInfo->rename = TRUE;
 		}
 	}
@@ -1889,7 +1944,7 @@ HRESULT OEAPIMessageStoreWM::GetMessageTransactionInfo(IDatabase* database, HTRA
 	hr = database->GetTransaction(hTransaction, &transInfo->transType, &msgInfo1,
 								&msgInfo2, &dummy, &transInfo->ordList);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEAPIMessageStore::OnTransaction: Error GetTransaction folderId: %08x.\n"), hr);
+		debug_print(DEBUG_ERROR, _T("OEAPIMessageStoreWM::OnTransaction: Error GetTransaction folderId: %08x.\n"), hr);
 		return E_FAIL;
 	}
 

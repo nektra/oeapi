@@ -1,8 +1,8 @@
-/* $Id: folder.cpp,v 1.28.6.3 2007/08/28 22:13:24 ibejarano Exp $
+/* $Id: folder.cpp,v 1.33 2008/09/07 18:37:23 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -23,11 +23,11 @@
 #include "eval_utils.h"
 #endif // EVALUATION_VERSION
 
+#define OE_VALID_FLAGS 0xFFFF
+
 #include <comet/safearray.h>
 
 extern HINSTANCE hInst;
-
-#define HENUMSTORE_INVALID ((HENUMSTORE)-1)
 
 LRESULT CALLBACK FolderWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
@@ -88,33 +88,40 @@ LRESULT CALLBACK FolderWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPara
 	{
 		case WM_NEWMSGS:
 		{
-			DWORD id;
 			if(IsWMail()) {
-				id = *(DWORD*)wParam;
+				LPDWORD pId = (LPDWORD)wParam;
+				for(int i=0; i<(int)lParam; i++)
+				{
+					PostMessage(hwnd, uMsg+OEAPI_MSG_BASE, pId[i], lParam);
+				}
 			}
 			else {
+				DWORD id;
 				id = (DWORD)wParam;
+				PostMessage(hwnd, uMsg+OEAPI_MSG_BASE, id, lParam);
 			}
-			PostMessage(hwnd, uMsg+OEAPI_MSG_BASE, id, lParam);
 			break;
 		}
 		case WM_MARKEDASREAD:
 		case WM_MARKEDASUNREAD:
 		case WM_DELETEMSGS:
 		{
-			DWORD id;
-
-//			if(IsWMail()) {
-//				if(!CopyFromWinMail(&id, (const void *) wParam, sizeof(DWORD))) {
-//					debug_print(DEBUG_ERROR, _T("StoreWndProc: CopyFromWinMail Error.\n"));
-//					break;
-//				}
-//			}
-//			else {
+			if(IsWMail()) {
+				LPDWORD pId = (LPDWORD)wParam;
+				for(int i=0; i<(int)lParam; i++)
+				{
+					PostMessage(hwnd, uMsg+OEAPI_MSG_BASE, pId[i], lParam);
+				}
+			//	if(!CopyFromWinMail(&id, (const void *) wParam, sizeof(DWORD))) {
+			//		debug_print(DEBUG_ERROR, _T("StoreWndProc: CopyFromWinMail Error.\n"));
+			//		break;
+			//	}
+			}
+			else {
+				DWORD id;
 				id = *(DWORD*) wParam;
-//			}
-
-			PostMessage(hwnd, uMsg+OEAPI_MSG_BASE, id, 0);
+				PostMessage(hwnd, uMsg+OEAPI_MSG_BASE, id, 0);
+			}
 			break;
 		}
 		case WM_DELETEFOLDER:
@@ -320,10 +327,9 @@ TOEFolderPtr TOEFolder::GetFirstChild()
 		hEnumFolder_ = NULL;
 	}
 
-	FOLDERPROPS props;
-	props.cbSize = sizeof(FOLDERPROPS);
+	std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(OEStoreManager::Get()->GetSN()));
 
-	HRESULT hr = OEStoreManager::Get()->GetSN()->GetFirstSubFolder(id_, &props, &hEnumFolder_);
+	HRESULT hr = props->GetFirstSubFolder(id_, &hEnumFolder_);
 	if(FAILED(hr) || hr == 1 || hEnumFolder_ == NULL) {
 		TOEFolderPtr ret;
 		return ret;
@@ -331,7 +337,7 @@ TOEFolderPtr TOEFolder::GetFirstChild()
 
 	TOEFolderPtr ret(TOEFolder::newInstance());
 	TOEFolder *folder = (TOEFolder *) ret.get();
-	folder->SetID(props.dwFolderId);
+	folder->SetID(props->GetID());
 
 	return ret;
 }
@@ -348,10 +354,9 @@ TOEFolderPtr TOEFolder::GetNextChild()
 		return GetFirstChild();
 	}
 
-	FOLDERPROPS props;
-	props.cbSize = sizeof(FOLDERPROPS);
+	std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(OEStoreManager::Get()->GetSN()));
 
-	HRESULT hr = OEStoreManager::Get()->GetSN()->GetNextSubFolder(hEnumFolder_, &props);
+	HRESULT hr = props->GetNextSubFolder(hEnumFolder_);
 	if(FAILED(hr) || hr == 1 || hEnumFolder_ == NULL) {
 		if(hEnumFolder_) {
 			OEStoreManager::Get()->GetSN()->GetSubFolderClose(hEnumFolder_);
@@ -364,7 +369,7 @@ TOEFolderPtr TOEFolder::GetNextChild()
 
 	TOEFolderPtr ret(TOEFolder::newInstance());
 	TOEFolder *folder = (TOEFolder *) ret.get();
-	folder->SetID(props.dwFolderId);
+	folder->SetID(props->GetID());
 
 	return ret;
 }
@@ -372,7 +377,7 @@ TOEFolderPtr TOEFolder::GetNextChild()
 //---------------------------------------------------------------------------//
 bstr_t TOEFolder::Name()
 {
-	bstr_t ret = "";
+	bstr_t ret = OLESTR("");
 
 #ifdef EVALUATION_VERSION
 	if(!VerifyExpiration()) {
@@ -381,19 +386,19 @@ bstr_t TOEFolder::Name()
 #endif // EVALUATION_VERSION
 
 	if(id_ == FOLDERID_ROOT) {
-		ret = "Local Folders";
+		ret = OLESTR("Local Folders");
 	}
 	else if(pSF_) {
-		FOLDERPROPS props;
-		props.cbSize = sizeof(FOLDERPROPS);
+		std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(pSF_));
 
-		HRESULT hr = pSF_->GetFolderProps(0, &props);
+		HRESULT hr;
+		hr = props->GetFolderProps();
 		if(FAILED(hr)) {
 			debug_print(DEBUG_ERROR, _T("OEFolder::Name: GetFolderProps\n"));
-			return "";
+			return OLESTR("");
 		}
 
-		ret = props.szName;
+		ret = props->GetName();
 	}
 
 	return ret;
@@ -514,12 +519,11 @@ TOEMessagePtr TOEFolder::GetFirstMessage()
 		hEnumMsg_ = HENUMSTORE_INVALID;
 	}
 
-	LPMESSAGEPROPS pMsgProps = new MESSAGEPROPS;
-	pMsgProps->cbSize = sizeof(MESSAGEPROPS);
-	pMsgProps->dwFlags = 0;
+	NktMessageProps* pMsgProps = NULL;
+	pMsgProps = NktMessageProps::Create(pSF_);
 
-	//HRESULT hr = pSF_->GetFirstMessage(MSGPROPS_FAST, 0, MESSAGEID_FIRST, pMsgProps, &hEnumMsg_);
-	HRESULT hr = pSF_->GetFirstMessage(0, 0, MESSAGEID_FIRST, pMsgProps, &hEnumMsg_);
+	HRESULT hr;
+	hr = pMsgProps->GetFirstMessage(0, MESSAGEID_FIRST, &hEnumMsg_);
 	if(FAILED(hr) || hr == 1) {
 		hEnumMsg_ = HENUMSTORE_INVALID;
 		delete pMsgProps;
@@ -529,16 +533,13 @@ TOEMessagePtr TOEFolder::GetFirstMessage()
 	ret = TOEMessagePtr(TOEMessage::newInstance());
 	TOEMessage *msg = (TOEMessage *) ret.get();
 	if(msg == NULL) {
-		pSF_->FreeMessageProps(pMsgProps);
-		delete pMsgProps;
 		debug_print(DEBUG_ERROR, _T("OEFolder::GetFirstMessage: Invalid pointer\n"));
+		delete pMsgProps;
 		ret = NULL;
 		return ret;
 	}
 
 	msg->SetMessageProps(id_, pSF_, pMsgProps, msgFolder_);
-	//msg->SetMessageProps(id_, msgProps.dwMessageId);
-	//pSF_->FreeMessageProps(&msgProps);
 
 	return ret;
 }
@@ -568,13 +569,11 @@ TOEMessagePtr TOEFolder::GetNextMessage()
 		return GetFirstMessage();
 	}
 
-	LPMESSAGEPROPS pMsgProps = new MESSAGEPROPS;
-	pMsgProps->cbSize = sizeof(MESSAGEPROPS);
-	//pMsgProps->dwFlags = MSGPROPS_FAST;
-	pMsgProps->dwFlags = 0;
+	NktMessageProps* pMsgProps = NULL;
+	pMsgProps = NktMessageProps::Create(pSF_); 
 
-	//HRESULT hr = pSF_->GetNextMessage(hEnumMsg_, MSGPROPS_FAST, pMsgProps);
-	HRESULT hr = pSF_->GetNextMessage(hEnumMsg_, 0, pMsgProps);
+	HRESULT hr;
+	hr = pMsgProps->GetNextMessage(hEnumMsg_, 0);
 	if(FAILED(hr) || hr == 1) {
 		pSF_->GetMessageClose(hEnumMsg_);
 		hEnumMsg_ = HENUMSTORE_INVALID;
@@ -585,15 +584,13 @@ TOEMessagePtr TOEFolder::GetNextMessage()
 	ret = TOEMessagePtr(TOEMessage::newInstance());
 	TOEMessage *msg = (TOEMessage *) ret.get();
 	if(msg == NULL) {
-		pSF_->FreeMessageProps(pMsgProps);
-		delete pMsgProps;
 		debug_print(DEBUG_ERROR, _T("OEFolder::GetNextMessage: Invalid pointer\n"));
+		delete pMsgProps;
 		ret = NULL;
 		return ret;
 	}
 
 	msg->SetMessageProps(id_, pSF_, pMsgProps, msgFolder_);
-	// pSF_->FreeMessageProps(&msgProps);
 
 	return ret;
 }
@@ -614,10 +611,11 @@ TOEMessagePtr TOEFolder::GetMessage(DWORD msgId)
 		return ret;
 	}
 
-	LPMESSAGEPROPS pMsgProps = new MESSAGEPROPS;
-	pMsgProps->cbSize = sizeof(MESSAGEPROPS);
+	NktMessageProps* pMsgProps;
+	pMsgProps = NktMessageProps::Create(pSF_);
 
-	HRESULT hr = pSF_->GetMessageProps(msgId, 0, pMsgProps);
+	HRESULT hr;
+	hr = pMsgProps->GetMessageProps(msgId, 0);
 	if(FAILED(hr)) {
 		delete pMsgProps;
 		return ret;
@@ -626,21 +624,19 @@ TOEMessagePtr TOEFolder::GetMessage(DWORD msgId)
 	ret = TOEMessagePtr(TOEMessage::newInstance());
 	TOEMessage *msg = (TOEMessage *) ret.get();
 	if(msg == NULL) {
-		pSF_->FreeMessageProps(pMsgProps);
-		delete pMsgProps;
 		debug_print(DEBUG_ERROR, _T("OEFolder::GetMessage: Invalid msg pointer\n"));
+		delete pMsgProps;
 		ret = NULL;
 		return ret;
 	}
 
 	msg->SetMessageProps(id_, pSF_, pMsgProps, msgFolder_);
-	//pSF_->FreeMessageProps(&msgProps);
 
 	return ret;
 }
 
 //---------------------------------------------------------------------------//
-TOEMessagePtr TOEFolder::CreateMessage(const bstr_t &msgSource, BOOL unread)
+TOEMessagePtr TOEFolder::CreateMessage(const bstr_t &msgSource, DWORD status)
 {
 	TOEMessagePtr ret;
 
@@ -653,6 +649,14 @@ TOEMessagePtr TOEFolder::CreateMessage(const bstr_t &msgSource, BOOL unread)
 	if(pSF_ == NULL) {
 		debug_print(DEBUG_ERROR, _T("OEFolder::CreateMessage: invalid pointer\n"));
 		return ret;
+	}
+
+	DWORD flags = HIWORD(status);
+
+	if((flags & OE_VALID_FLAGS) != flags)
+	{
+		// Assume it is a BOOL
+		flags = (flags) ? MSG_UNREAD : 0;
 	}
 
 	HRESULT hr;
@@ -675,7 +679,7 @@ TOEMessagePtr TOEFolder::CreateMessage(const bstr_t &msgSource, BOOL unread)
 
 		hr = pStream->Commit(0); 
 
-		hr = pSF_->SaveMessage(IID_IStream, pStream, (unread == 0 ? 0 : MSG_UNREAD), &msgId);
+		hr = pSF_->SaveMessage(IID_IStream, pStream, flags, &msgId);
 		if(FAILED(hr)) {
 			debug_print(DEBUG_ERROR, _T("OEFolder::CreateMessage: SaveMessage.\n"));
 			return ret;
@@ -700,7 +704,7 @@ TOEMessagePtr TOEFolder::CreateMessage(const bstr_t &msgSource, BOOL unread)
 			return ret;
 		}
 
-		hr = pSF_->CommitStream(0, 0, (unread == 0 ? 0 : MSG_UNREAD), newMail, msgId, NULL);
+		hr = pSF_->CommitStream(0, 0, flags, newMail, msgId, NULL);
 		if(FAILED(hr)) {
 			debug_print(DEBUG_ERROR, _T("OEFolder::CreateMessage: CommitStream.\n"));
 			newMail->Release();
@@ -809,16 +813,16 @@ DWORD TOEFolder::GetSubFolderCount()
 		return -1;
 	}
 
-	FOLDERPROPS props;
-	props.cbSize = sizeof(FOLDERPROPS);
+	std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(pSF_));
 
-	HRESULT hr = pSF_->GetFolderProps(0, &props);
+	HRESULT hr;
+	hr = props->GetFolderProps();
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("OEFolder::GetUnreadCount: GetFolderProps\n"));
 		return -1;
 	}
 
-	return props.cSubFolders;
+	return props->GetSubFolders();
 }
 
 //---------------------------------------------------------------------------//
@@ -835,16 +839,15 @@ DWORD TOEFolder::GetUnreadCount()
 		return -1;
 	}
 
-	FOLDERPROPS props;
-	props.cbSize = sizeof(FOLDERPROPS);
+	std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(pSF_));
 
-	HRESULT hr = pSF_->GetFolderProps(0, &props);
+	HRESULT hr = props->GetFolderProps();
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("OEFolder::GetUnreadCount: GetFolderProps\n"));
 		return -1;
 	}
 
-	return props.cUnread;
+	return props->GetUnreadCount();
 }
 
 //---------------------------------------------------------------------------//
@@ -870,16 +873,15 @@ DWORD TOEFolder::GetMessageCount()
 		return -1;
 	}
 
-	FOLDERPROPS props;
-	props.cbSize = sizeof(FOLDERPROPS);
+	std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(pSF_));
 
-	HRESULT hr = pSF_->GetFolderProps(0, &props);
+	HRESULT hr = props->GetFolderProps();
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("OEFolder::GetMessageCount: GetFolderProps\n"));
 		return -1;
 	}
 
-	return props.cMessage;
+	return props->GetMessageCount();
 }
 
 //---------------------------------------------------------------------------//
@@ -1140,8 +1142,8 @@ TOEFolderPtr TOEFolderManager::GetNextFolder()
 		return GetFirstFolder();
 	}
 
-	FOLDERPROPS props;
-	props.cbSize = sizeof(FOLDERPROPS);
+	//FOLDERPROPS props;
+	//props.cbSize = sizeof(FOLDERPROPS);
 	HENUMSTORE hEnum;
 	DWORD oldFolderId = folder->GetID();
 
@@ -1151,14 +1153,14 @@ TOEFolderPtr TOEFolderManager::GetNextFolder()
 
 	// first, try to go in depth. If no childs, return the next sibling. If no next sibling return the sibling of the
 	// parent and then.
-	HRESULT hr = OEStoreManager::Get()->GetSN()->GetFirstSubFolder(oldFolderId, &props, &hEnum);
+	std::auto_ptr<NktFolderProps> props(NktFolderProps::Create(OEStoreManager::Get()->GetSN()));
+	HRESULT hr = props->GetFirstSubFolder(oldFolderId, &hEnum);
 	if(FAILED(hr) || hr == 1 || hEnum == NULL) {
 		while(!hEnumList_.empty() && curFolder_.get() == NULL) {
 			HENUMSTORE hEnum = hEnumList_.back();
-			FOLDERPROPS props;
-			props.cbSize = sizeof(FOLDERPROPS);
+			std::auto_ptr<NktFolderProps> props2(NktFolderProps::Create(OEStoreManager::Get()->GetSN()));
 
-			HRESULT hr = OEStoreManager::Get()->GetSN()->GetNextSubFolder(hEnum, &props);
+			HRESULT hr = props2->GetNextSubFolder(hEnum);
 			if(FAILED(hr) || hr == 1 || hEnum == NULL) {
 				OEStoreManager::Get()->GetSN()->GetSubFolderClose(hEnum);
 				hEnumList_.pop_back();
@@ -1172,7 +1174,7 @@ TOEFolderPtr TOEFolderManager::GetNextFolder()
 					return curFolder_;
 				}
 				else {
-					folder->SetID(props.dwFolderId);
+					folder->SetID(props2->GetID());
 				}
 			}
 		}
@@ -1187,7 +1189,7 @@ TOEFolderPtr TOEFolderManager::GetNextFolder()
 			return curFolder_;
 		}
 		else {
-			folder->SetID(props.dwFolderId);
+			folder->SetID(props->GetID());
 		}
 	}
 

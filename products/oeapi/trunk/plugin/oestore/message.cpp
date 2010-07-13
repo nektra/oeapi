@@ -1,8 +1,8 @@
-/* $Id: message.cpp,v 1.33.6.5 2007/09/04 18:28:41 ibejarano Exp $
+/* $Id: message.cpp,v 1.48 2009/01/29 16:18:30 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -28,6 +28,9 @@
 #pragma warning(disable:4812) 
 #endif
 
+#define WINMAIL_ACCESS_RO 100
+#define WINMAIL_ACCESS_RW 200
+
 ///////////////////////////////////////////////////////////////////////////////
 //---------------------------------------------------------------------------//
 TOEMessage::TOEMessage()
@@ -46,6 +49,9 @@ TOEMessage::TOEMessage()
 	state_ = 0;
 
 	bodyAttachs_ = NULL;
+	// 100 = ro, 
+	// 200 = rw exclusive may prevent WM from reading this file
+	access_ = 200;
 
 	hr = CoCreateInstance(CLSID_IMimeAllocator,
 							NULL, CLSCTX_INPROC_SERVER,
@@ -69,12 +75,13 @@ BOOL TOEMessage::Close()
 	HRESULT hr;
 
 	if(props_) {
-		if(pSF_) {
-			hr = pSF_->FreeMessageProps(props_);
-			if(FAILED(hr)) {
-				debug_print(DEBUG_ERROR, _T("OEMessage::~TOEMessage: Unable to free message props.\n"));
-			}
-		}
+		// We assume if props_ != NULL then pSF_ != NULL
+		//if(pSF_) {
+		//	//hr = pSF_->FreeMessageProps(props_);
+		//	//if(FAILED(hr)) {
+		//	//	debug_print(DEBUG_ERROR, _T("OEMessage::~TOEMessage: Unable to free message props.\n"));
+		//	//}
+		//}
 
 		delete props_;
 		props_ = NULL;
@@ -126,7 +133,7 @@ void TOEMessage::SetMessageProps(DWORD folderId, IStoreFolder *pSF, DWORD msgId,
 
 	if(pSF_ != NULL) {
 		if(props_) {
-			pSF_->FreeMessageProps(props_);
+			//pSF_->FreeMessageProps(props_);
 			delete props_;
 			props_ = NULL;
 		}
@@ -151,13 +158,13 @@ void TOEMessage::SetMessageProps(DWORD folderId, IStoreFolder *pSF, DWORD msgId,
 		pSF_->AddRef();
 	}
 
-	props_ = new MESSAGEPROPS;
-	props_->cbSize = sizeof(MESSAGEPROPS);
 
-	hr = pSF_->GetMessageProps(msgId, 0, props_);
+	props_ = NktMessageProps::Create(pSF_);
+	hr = props_->GetMessageProps(msgId, 0);
 	if(FAILED(hr)) {
-		props_ = NULL;
 		debug_print(DEBUG_ERROR, _T("OEMessage::SetMessageProps: GetMessageProps.\n"));
+		delete props_;
+		props_ = NULL;
 		return;
 	}
 
@@ -168,13 +175,14 @@ void TOEMessage::SetMessageProps(DWORD folderId, IStoreFolder *pSF, DWORD msgId,
 }
 
 //---------------------------------------------------------------------------//
-void TOEMessage::SetMessageProps(DWORD folderId, IStoreFolder *pSF, LPMESSAGEPROPS props, IMessageFolder* msgFolder)
+//void TOEMessage::SetMessageProps(DWORD folderId, IStoreFolder *pSF, LPMESSAGEPROPS props, IMessageFolder* msgFolder)
+void TOEMessage::SetMessageProps(DWORD folderId, IStoreFolder *pSF, NktMessageProps* props, IMessageFolder* msgFolder)
 {
 	folderId_ = folderId;
 
 	if(pSF_ != NULL) {
 		if(props_) {
-			pSF_->FreeMessageProps(props_);
+			//pSF_->FreeMessageProps(props_);
 			delete props_;
 			props_ = NULL;
 		}
@@ -214,7 +222,8 @@ BOOL TOEMessage::OpenMessage()
 		return SUCCEEDED(hr);
 	}
 
-	if(OpenStoreMessage()) {
+	// Note: To call OpenStoreMessage it is only required under WinMail
+	if(IsWMail() && OpenStoreMessage()) {
 		return TRUE; 
 	}
 
@@ -224,7 +233,7 @@ BOOL TOEMessage::OpenMessage()
 	}
 
 	// Open it as an IMimeMessage interface
-	hr = pSF_->OpenMessage(props_->dwMessageId,
+	hr = pSF_->OpenMessage(props_->GetID(), // props_->dwMessageId,
 							IID_IMimeMessage,
 							(LPVOID*)&pMimeMsg_);
 
@@ -234,7 +243,7 @@ BOOL TOEMessage::OpenMessage()
 		// If open this way stream can not be changed, the only workaround
 		// is to clone the message and make all changes before commit.
 		IStream* pStream = NULL;
-		hr = pSF_->OpenMessage(props_->dwMessageId,
+		hr = pSF_->OpenMessage(props_->GetID(), // ->dwMessageId,
 								IID_IStream,
 								(LPVOID*)&pStream);
 		if(SUCCEEDED(hr)) {
@@ -263,10 +272,10 @@ BOOL TOEMessage::OpenMessage()
 //---------------------------------------------------------------------------//
 BOOL TOEMessage::OpenStoreMessage()
 {
-	if(!IsWMail()) {
-		debug_print(DEBUG_INFO, _T("TOEMessage::OpenStoreMessage: WinMail required.\n"));
-		return FALSE;
-	}
+	//if(!IsWMail()) {
+	//	debug_print(DEBUG_INFO, _T("TOEMessage::OpenStoreMessage: WinMail required.\n"));
+	//	return FALSE;
+	//}
 
 	if(!msgFolder_) {
 		debug_print(DEBUG_INFO, _T("TOEMessage::OpenStoreMessage: Null msgFolder_.\n"));
@@ -295,9 +304,9 @@ BOOL TOEMessage::OpenStoreMessage()
 	HRESULT hr = E_FAIL;
 	ULONG address = -1;
 
-	if(IsWMail()) {
+	//if(IsWMail()) {
 		MESSAGEINFOWMAIL msgInfo = {0};
-		msgInfo.dwMessageId = props_->dwMessageId;
+		msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
 		hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
 		if(FAILED(hr)) {
 			debug_print(DEBUG_INFO, _T("TOEMessage::OpenStoreMessage: FindRecord failed %08x.\n"), hr);
@@ -305,7 +314,7 @@ BOOL TOEMessage::OpenStoreMessage()
 		}
 		address = msgInfo.dbFileAddress;
 		hr = msgFolder_->FreeRecord(&msgInfo);
-	}
+	//}
 
 	if(address == -1) {
 		debug_print(DEBUG_INFO, _T("TOEMessage::OpenStoreMessage: Can't read address.\n"));
@@ -313,9 +322,7 @@ BOOL TOEMessage::OpenStoreMessage()
 	}
 	
 	IStream* pStream = NULL;
-	// 100 = ro, 
-	// 200 = rw exclusive may prevent WM from reading this file
-	hr = msgFolder_->OpenStream((tagACCESSTYPE)200, address, &pStream);
+	hr = msgFolder_->OpenStream((tagACCESSTYPE)access_, address, &pStream);
 	if(FAILED(hr)) {
 		debug_print(DEBUG_INFO, _T("TOEMessage::OpenStoreMessage: OpenStream failed %08x %d.\n"), hr, address);
 		return FALSE;
@@ -367,7 +374,7 @@ bstr_t TOEMessage::GetSubject()
 		return "";
 	}
 
-	return props_->pszSubject;
+	return props_->GetSubject(); // props_->pszSubject;
 }
 
 //---------------------------------------------------------------------------//
@@ -378,7 +385,7 @@ bstr_t TOEMessage::GetNormalSubject()
 		return "";
 	}
 
-	return props_->pszNormalSubject;
+	return props_->GetNormalSubject(); // props_->pszNormalSubject;
 }
 
 //---------------------------------------------------------------------------//
@@ -389,7 +396,7 @@ bstr_t TOEMessage::GetDisplayTo()
 		return "";
 	}
 
-	return props_->pszDisplayTo;
+	return props_->GetDisplayTo(); // props_->pszDisplayTo;
 }
 
 //---------------------------------------------------------------------------//
@@ -400,7 +407,7 @@ bstr_t TOEMessage::GetDisplayFrom()
 		return "";
 	}
 
-	return props_->pszDisplayFrom;
+	return props_->GetDisplayFrom(); // props_->pszDisplayFrom;
 }
 
 //---------------------------------------------------------------------------//
@@ -411,7 +418,7 @@ DWORD TOEMessage::GetState()
 		return 0;
 	}
 
-	return props_->dwState;
+	return props_->GetState(); // props_->dwState;
 }
 
 //---------------------------------------------------------------------------//
@@ -422,7 +429,7 @@ DWORD TOEMessage::GetSourceLength()
 		return 0;
 	}
 
-	return props_->cbMessage;
+	return props_->GetSourceLength(); // props_->cbMessage;
 }
 
 //---------------------------------------------------------------------------//
@@ -544,7 +551,7 @@ bstr_t TOEMessage::GetSource(DWORD maxBytesToRead)
 	bstr_t ret;
 	HRESULT hr;
 	ULONG ulReaded = 0;
-	char *buffer = NULL;
+	CHAR *buffer = NULL;
 
 	if(props_ == NULL) {
 		debug_print(DEBUG_ERROR, _T("OEMessage::GetSource: NULL props_\n"));
@@ -552,7 +559,16 @@ bstr_t TOEMessage::GetSource(DWORD maxBytesToRead)
 	}
 
 	if(maxBytesToRead == -1) {
-		maxBytesToRead = props_->cbMessage + 1;
+		//maxBytesToRead = props_->cbMessage + 1;
+		maxBytesToRead = props_->GetSourceLength() + 1;
+	}
+
+	if(!pTextStream_ && pMimeMsg_) {
+		// Try to read IStream from IMimeMessage
+		hr = pMimeMsg_->GetMessageSource(&pTextStream_, 0);
+		if(FAILED(hr)) {
+			debug_print(DEBUG_WARNING, _T("OEMessage::GetSource: Can't read from IMimeMessage %08x.\n"), hr);
+		}
 	}
 
 	if(pTextStream_ == NULL) {
@@ -561,7 +577,8 @@ bstr_t TOEMessage::GetSource(DWORD maxBytesToRead)
 			return ret;
 		}
 
-		hr = pSF_->OpenMessage(props_->dwMessageId, IID_IStream, (VOID **) &pTextStream_);
+		//hr = pSF_->OpenMessage(props_->dwMessageId, IID_IStream, (VOID **) &pTextStream_);
+		hr = pSF_->OpenMessage(props_->GetID(), IID_IStream, (VOID **) &pTextStream_);
 		if(FAILED(hr)) {
 			debug_print(DEBUG_ERROR, _T("OEMessage::GetSource: OpenMessage\n"));
 			pTextStream_ = NULL;
@@ -569,7 +586,7 @@ bstr_t TOEMessage::GetSource(DWORD maxBytesToRead)
 		}
 	}
 
-	buffer = new char[maxBytesToRead+1];
+	buffer = new CHAR[maxBytesToRead+1];
 	if(buffer == NULL) {
 		debug_print(DEBUG_ERROR, _T("OEMessage::GetSource: Not enough memory.\n"));
 	}
@@ -613,7 +630,8 @@ BOOL TOEMessage::HasNormalPriority()
 		return FALSE;
 	}
 
-	return (props_->priority == IMSG_PRI_NORMAL);
+	//return (props_->priority == IMSG_PRI_NORMAL);
+	return (props_->GetPriority() == IMSG_PRI_NORMAL);
 }
 
 //---------------------------------------------------------------------------//
@@ -624,7 +642,8 @@ BOOL TOEMessage::HasLowPriority()
 		return FALSE;
 	}
 
-	return (props_->priority == IMSG_PRI_LOW);
+	//return (props_->priority == IMSG_PRI_LOW);
+	return (props_->GetPriority() == IMSG_PRI_LOW);
 }
 
 //---------------------------------------------------------------------------//
@@ -635,7 +654,8 @@ BOOL TOEMessage::HasHighPriority()
 		return FALSE;
 	}
 
-	return (props_->priority == IMSG_PRI_HIGH);
+	//return (props_->priority == IMSG_PRI_HIGH);
+	return (props_->GetPriority() == IMSG_PRI_HIGH);
 }
 
 //---------------------------------------------------------------------------//
@@ -655,7 +675,8 @@ BOOL TOEMessage::MarkAsRead()
 
 	folder->SetID(folderId_, pSF_);
 
-	return folder->MarkAsRead(props_->dwMessageId);
+	//return folder->MarkAsRead(props_->dwMessageId);
+	return folder->MarkAsRead(props_->GetID());
 }
 
 //---------------------------------------------------------------------------//
@@ -675,7 +696,8 @@ BOOL TOEMessage::MarkAsUnread()
 
 	folder->SetID(folderId_, pSF_);
 
-	return folder->MarkAsUnread(props_->dwMessageId);
+	//return folder->MarkAsUnread(props_->dwMessageId);
+	return folder->MarkAsUnread(props_->GetID());
 }
 
 //---------------------------------------------------------------------------//
@@ -694,7 +716,8 @@ BOOL TOEMessage::Delete(BOOL permanent)
 	OEAPIMessageStore* store = OEStoreManager::Get()->GetOEAPIStore();
 	if(store) {
 		HRESULT hr;
-		hr = store->DeleteMessage(folderId_, props_->dwMessageId, permanent);
+		//hr = store->DeleteMessage(folderId_, props_->dwMessageId, permanent);
+		hr = store->DeleteMessage(folderId_, props_->GetID(), permanent);
 		if(FAILED(hr)) {
 			debug_print(DEBUG_ERROR, _T("OEMessage::Delete: DeleteMessage failed %08x.\n"), hr);
 			return FALSE;
@@ -705,7 +728,8 @@ BOOL TOEMessage::Delete(BOOL permanent)
 	}
 
 	MESSAGEIDLIST msgIdList;
-	DWORD msgIds[] = {props_->dwMessageId};
+	//DWORD msgIds[] = {props_->dwMessageId};
+	DWORD msgIds[] = {props_->GetID()};
 
 	msgIdList.cbSize = sizeof(MESSAGEIDLIST);
 	msgIdList.cMsgs = 1;
@@ -713,7 +737,7 @@ BOOL TOEMessage::Delete(BOOL permanent)
 
 	// if permanent set the header so the hook of deleted folder deletes the mail too.
 	if(permanent) {
-		SetBodyPropByName(HandleToLong(HBODY_ROOT), DELETE_MSG_HEADER, "True");
+		SetBodyPropByName((LONG)HBODY_ROOT, DELETE_MSG_HEADER, "True");
 		Commit();
 	}
 
@@ -752,7 +776,7 @@ long TOEMessage::GetHTMLBody()
 		hBody = 0;
 	}
 
-	return HandleToLong(hBody);
+	return (LONG)hBody;
 }
 
 //---------------------------------------------------------------------------//
@@ -781,7 +805,7 @@ long TOEMessage::GetPlainBody()
 		hBody = 0;
 	}
 
-	return HandleToLong(hBody);
+	return (LONG)hBody;
 }
 
 //---------------------------------------------------------------------------//
@@ -792,7 +816,7 @@ long TOEMessage::GetBodyHandle(long prevBodyHandle, DWORD bodyLocation)
 	}
 
 	HBODY hBody;
-	HRESULT hr = pMimeMsg_->GetBody((BODYLOCATION) bodyLocation, (HBODY) LongToHandle(prevBodyHandle), &hBody);
+	HRESULT hr = pMimeMsg_->GetBody((BODYLOCATION) bodyLocation, (HBODY) prevBodyHandle, &hBody);
 	if(FAILED(hr)) {
 		return 0;
 	}
@@ -800,7 +824,7 @@ long TOEMessage::GetBodyHandle(long prevBodyHandle, DWORD bodyLocation)
 		hBody = 0;
 	}
 
-	return HandleToLong(hBody);
+	return (LONG)hBody;
 }
 
 //---------------------------------------------------------------------------//
@@ -814,14 +838,14 @@ long TOEMessage::InsertBody(long bodyHandle, DWORD bodyLoc)
 		return 0;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 
 	hr = pMimeMsg_->InsertBody((BODYLOCATION) bodyLoc, hBody, &newBody);
 	if(FAILED(hr)) {
 		newBody = 0;
 	}
 
-	return HandleToLong(newBody);
+	return (LONG)newBody;
 }
 
 //---------------------------------------------------------------------------//
@@ -834,7 +858,7 @@ BOOL TOEMessage::DeleteBody(long bodyHandle, DWORD flags)
 		return 0;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 
 	hr = pMimeMsg_->DeleteBody(hBody, flags);
 
@@ -851,7 +875,7 @@ BOOL TOEMessage::IsBodyContentType(long bodyHandle, const bstr_t &priContentType
 		return FALSE;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 
 	hr = pMimeMsg_->IsContentType(hBody, priContentType.s_str().c_str(), secContentType.s_str().c_str());
 	if(FAILED(hr)) {
@@ -877,11 +901,11 @@ bstr_t TOEMessage::GetBodyPrimaryContentType(long bodyHandle)
 
 	value = GetBodyProp(bodyHandle, PID_HDR_CNTTYPE, exist);
 	if(exist) {
-		aux = value.s_str();
-		pos = aux.find('/');
+		aux = value.t_str();
+		pos = aux.find(_T('/'));
 
 		if(pos != std::string::npos) {
-			std::string aux;
+			std::basic_string<TCHAR> aux;
 			aux.assign(value, 0, pos);
 			ret = aux;
 		}
@@ -931,7 +955,7 @@ bstr_t TOEMessage::GetBodyDisplayName(long bodyHandle)
 		return ret;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 
 	hr = pMimeMsg_->BindToObject(hBody,
 								IID_IMimeBody,
@@ -969,7 +993,7 @@ bstr_t TOEMessage::GetBodyText(long bodyHandle)
 		return ret;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 
 	hr = pMimeMsg_->BindToObject(hBody,
 								IID_IMimeBody,
@@ -1049,7 +1073,7 @@ BOOL TOEMessage::SetBodyText(long bodyHandle, const bstr_t &bodyText, const bstr
 	}
 
 	// Compute the new body length + the zero that terminates the string
-	ulLength = (ULONG)bodyText.length() + 1;
+	ulLength = (ULONG)bodyText.length(); // + 1;
 
 	// Write in the new body
 	hr = pStream->Write(bodyText.c_str(),
@@ -1087,13 +1111,13 @@ BOOL TOEMessage::SetBodySource(long bodyHandle, IStream *pStream, const bstr_t &
 		return FALSE;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 
 	HRESULT hr = pMimeMsg_->BindToObject(hBody,
 										IID_IMimeBody,
 										(LPVOID *)&pMimeBody);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEMessage::SetBodySource: BindToObject\n"));
+		debug_print(DEBUG_ERROR, _T("OEMessage::SetBodySource: BindToObject: %08x\n"), hr);
 		return FALSE;
 	}
 
@@ -1111,7 +1135,7 @@ BOOL TOEMessage::SetBodySource(long bodyHandle, IStream *pStream, const bstr_t &
 							IID_IStream,
 							pStream);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEMessage::SetBodySource: SetData\n"));
+		debug_print(DEBUG_ERROR, _T("OEMessage::SetBodySource: SetData %08x.\n"), hr);
 		pMimeBody->Release();
 		return FALSE;
 	}
@@ -1140,7 +1164,7 @@ BOOL TOEMessage::SaveBodyToFile(long bodyHandle, const bstr_t &path, BOOL useDef
 		return ret;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 	fullpath = path;
 
 	if(fullpath.empty()) {
@@ -1176,7 +1200,7 @@ BOOL TOEMessage::SaveBodyToFile(long bodyHandle, const bstr_t &path, BOOL useDef
 
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
-		debug_print(0, "OEMessage::SaveBodyToFile: Can't create file.\n");
+		debug_print(0, _T("OEMessage::SaveBodyToFile: Can't create file.\n"));
 		return ret;
 	}
 
@@ -1184,7 +1208,7 @@ BOOL TOEMessage::SaveBodyToFile(long bodyHandle, const bstr_t &path, BOOL useDef
 								IID_IMimeBody,
 								(LPVOID *)&pMimeBody);
 	if(FAILED(hr)) {
-		debug_print(DEBUG_ERROR, _T("OEMessage::SaveBodyToFile: BindToObject\n"));
+		debug_print(DEBUG_ERROR, _T("OEMessage::SaveBodyToFile: BindToObject.\n"));
 		pMimeBody->Release();
 		return ret;
 	}
@@ -1253,7 +1277,7 @@ BOOL TOEMessage::SetBodyFromFile(long bodyHandle, const bstr_t &filename, const 
 						STREAM_SEEK_SET,
 						NULL);
 
-	HANDLE hFile = CreateFile(filename.s_str().c_str(),
+	HANDLE hFile = CreateFile(filename.t_str().c_str(),
 		GENERIC_READ,
 		FILE_SHARE_READ,
 		NULL,
@@ -1263,7 +1287,7 @@ BOOL TOEMessage::SetBodyFromFile(long bodyHandle, const bstr_t &filename, const 
 
 	if(hFile == INVALID_HANDLE_VALUE)
 	{
-		debug_print(0, "TOEMessage::SetBodyFromFile: Can't read file.\n");
+		debug_print(0, _T("TOEMessage::SetBodyFromFile: Can't read file.\n"));
 		pStream->Release();
 		return ret;
 	}
@@ -1319,7 +1343,7 @@ BOOL TOEMessage::IsBodyAttachment(long bodyHandle)
 		return ret;
 	}
 
-	hr = pMimeMsg_->IsBodyType((HBODY) LongToHandle(bodyHandle), IBT_ATTACHMENT);
+	hr = pMimeMsg_->IsBodyType((HBODY) bodyHandle, IBT_ATTACHMENT);
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("OEMessage::IsBodyAttachment: IsBodyType\n"));
 	}
@@ -1352,7 +1376,7 @@ bstr_t TOEMessage::GetFirstBodyProp(long bodyHandle, long &propId)
 		pEnum_ = NULL;
 	}
 
-	hr = pMimeMsg_->BindToObject((HBODY) LongToHandle(bodyHandle), IID_IMimePropertySet,
+	hr = pMimeMsg_->BindToObject((HBODY) bodyHandle, IID_IMimePropertySet,
 								(LPVOID *) &pPropertySet);
 
 	if(FAILED(hr)) {
@@ -1423,14 +1447,14 @@ bstr_t TOEMessage::GetBodyProp(long bodyHandle, int propId, long &exist)
 		return ret;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
-	value.vt = VT_LPSTR;
+	hBody = (HBODY) bodyHandle;
+	value.vt = VT_LPWSTR;
 
 	hr = pMimeMsg_->GetBodyProp(hBody, PIDTOSTR(propId), 0, &value);
 	if(SUCCEEDED(hr)) {
 		if(hr != S_FALSE) {
 			exist = TRUE;
-			ret = value.pszVal;
+			ret = value.pwszVal; // .pszVal;
 			PropVariantClear(&value);
 		}
 	}
@@ -1450,24 +1474,27 @@ BOOL TOEMessage::SetBodyProp(long bodyHandle, int propId, const bstr_t &val)
 		return FALSE;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
-	value.vt = VT_LPSTR;
-	value.pszVal = (LPSTR) malloc(val.length()+1);
+	std::wstring v = val.w_str();
+	hBody = (HBODY) bodyHandle;
+	//value.vt = VT_LPSTR;
+	value.vt = VT_LPWSTR;
+	value.pwszVal = (LPWSTR)v.c_str();
+	//value.pszVal = (LPSTR) malloc(val.length()+1);
 
-	if(value.pszVal == NULL) {
-		debug_print(DEBUG_ERROR, _T("OEMessage::SetBodyProp: malloc.\n"));
-		return FALSE;
-	}
+	//if(value.pszVal == NULL) {
+	//	debug_print(DEBUG_ERROR, _T("OEMessage::SetBodyProp: malloc.\n"));
+	//	return FALSE;
+	//}
 
-#if _MSC_VER >= 1400
-	_tcscpy_s(value.pszVal, val.length()+1, val.s_str().c_str());
-#else
-	_tcscpy(value.pszVal, val.s_str().c_str());
-#endif
+//#if _MSC_VER >= 1400
+//	_tcscpy_s(value.pszVal, val.length()+1, val.s_str().c_str());
+//#else
+//	_tcscpy(value.pszVal, val.s_str().c_str());
+//#endif
 
 	hr = pMimeMsg_->SetBodyProp(hBody, PIDTOSTR(propId), NOFLAGS, &value);
 
-	free(value.pszVal);
+	//free(value.pszVal);
 
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("OEMessage::SetBodyProp: SetBodyProp.\n"));
@@ -1491,14 +1518,14 @@ bstr_t TOEMessage::GetBodyPropByName(long bodyHandle, const bstr_t &propName, lo
 		return ret;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
-	value.vt = VT_LPSTR;
+	hBody = (HBODY) bodyHandle;
+	value.vt = VT_LPWSTR;
 
 	hr = pMimeMsg_->GetBodyProp(hBody, propName.s_str().c_str(), 0, &value);
 	if(SUCCEEDED(hr)) {
 		if(hr != S_FALSE) {
 			exist = TRUE;
-			ret = value.pszVal;
+			ret = value.pwszVal;
 			PropVariantClear(&value);
 		}
 	}
@@ -1518,24 +1545,26 @@ BOOL TOEMessage::SetBodyPropByName(long bodyHandle, const bstr_t &propName, cons
 		return FALSE;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
-	value.vt = VT_LPSTR;
-	value.pszVal = (LPSTR) malloc(propText.length()+1);
+	std::wstring v = propText.w_str();
+	hBody = (HBODY) bodyHandle;
+	value.vt = VT_LPWSTR;  // LPSTR;
+	value.pwszVal = (LPWSTR)v.c_str();
+	// .pszVal = (LPSTR) malloc(propText.length()+1);
 
-	if(value.pszVal == NULL) {
-		debug_print(DEBUG_ERROR, _T("OEMessage::SetBodyPropByName: malloc\n."));
-		return FALSE;
-	}
+	//if(value.pszVal == NULL) {
+	//	debug_print(DEBUG_ERROR, _T("OEMessage::SetBodyPropByName: malloc\n."));
+	//	return FALSE;
+	//}
 
-#if _MSC_VER >= 1400
-	_tcscpy_s(value.pszVal, propText.length()+1, propText.s_str().c_str());
-#else
-	_tcscpy(value.pszVal, propText.s_str().c_str());
-#endif
+//#if _MSC_VER >= 1400
+//	_tcscpy_s(value.pszVal, propText.length()+1, propText.s_str().c_str());
+//#else
+//	_tcscpy(value.pszVal, propText.s_str().c_str());
+//#endif
 
 	hr = pMimeMsg_->SetBodyProp(hBody, propName.s_str().c_str(), NOFLAGS, &value);
 
-	free(value.pszVal);
+	//free(value.pszVal);
 
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("OEMessage::SetBodyPropByName: SetBodyProp.\n"));
@@ -1555,7 +1584,7 @@ BOOL TOEMessage::DeleteBodyProp(long bodyHandle, int propId)
 		return FALSE;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 	hr = pMimeMsg_->DeleteBodyProp(hBody, PIDTOSTR(propId));
 
 	return SUCCEEDED(hr);
@@ -1571,7 +1600,7 @@ BOOL TOEMessage::DeleteBodyPropByName(long bodyHandle, const bstr_t &propName)
 		return FALSE;
 	}
 
-	hBody = (HBODY) LongToHandle(bodyHandle);
+	hBody = (HBODY) bodyHandle;
 	hr = pMimeMsg_->DeleteBodyProp(hBody, propName.s_str().c_str());
 
 	return SUCCEEDED(hr);
@@ -1608,7 +1637,8 @@ TOEMessagePtr TOEMessage::Clone(DWORD folderId)
 	}
 
 	// This fail on WinMail when oestore is loaded in the same process as WinMail
-	hr = pSF_->OpenMessage(props_->dwMessageId, IID_IStream, (VOID **) &pStream);
+	//hr = pSF_->OpenMessage(props_->dwMessageId, IID_IStream, (VOID **) &pStream);
+	hr = pSF_->OpenMessage(props_->GetID(), IID_IStream, (VOID **) &pStream);
 	if(FAILED(hr)) {
 		if(pMimeMsg_ != NULL) {
 			hr = ::CreateStreamOnHGlobal(NULL, TRUE, &pStream);
@@ -1667,7 +1697,12 @@ TOEMessagePtr TOEMessage::Clone(DWORD folderId)
 	else {
 		msg->SetMimeMessage(pNewMimeMsg);
 		msg->SetFolderID(folderId);
-		msg->SetState(props_->dwState);
+		//msg->SetState(props_->dwState);
+		msg->SetState(props_->GetState());
+		WinMailAccountInfo accountInfo;
+		if(ReadAccountInfo(accountInfo)) {
+			msg->SetAccountInfo(accountInfo);
+		}
 
 		while(1) {
 			hr = pMimeMsg_->BindToObject(HBODY_ROOT, IID_IMimePropertySet,
@@ -1678,7 +1713,7 @@ TOEMessagePtr TOEMessage::Clone(DWORD folderId)
 				break;
 			}
 
-			value.vt = VT_LPSTR;
+			value.vt = VT_LPWSTR;
 
 			IMimeEnumProperties *pEnum;
 			ENUMPROPERTY eProp = {0};
@@ -1694,7 +1729,7 @@ TOEMessagePtr TOEMessage::Clone(DWORD folderId)
 			hr = pEnum->Next(1, &eProp, &cFetched);
 
 			while(SUCCEEDED(hr) && hr != S_FALSE) {
-				value.vt = VT_LPSTR;
+				value.vt = VT_LPWSTR;
 				hr = pPropertySet->GetProp(eProp.pszName, 0, &value);
 				hr = pNewMimeMsg->SetBodyProp(HBODY_ROOT, PIDTOSTR(eProp.dwPropId), NOFLAGS, &value);
 				hr = pAllocator_->FreeEnumPropertyArray(1, &eProp, FALSE);
@@ -1801,14 +1836,16 @@ BOOL TOEMessage::Commit()
 			pMimeMsg_ = NULL;
 
 			// Open it as an IMimeMessage interface
-			props_ = new MESSAGEPROPS;
-			props_->cbSize = sizeof(MESSAGEPROPS);
-
-			hr = pSF_->GetMessageProps(newId, 0, props_);
+			props_ = NktMessageProps::Create(pSF_);
+			hr = props_->GetMessageProps(newId, 0);
 			if(FAILED(hr)) {
-				if(props_) {
-					delete props_;
-					props_ = NULL;
+				debug_print(DEBUG_ERROR, _T("OEMessage::Commit: NktGetMessageProps failed.\n"));
+				delete props_;
+				props_ = NULL;
+			}
+			else {
+				if(IsWMail()) {
+					SaveAccountInfo(accountInfo_);
 				}
 			}
 		}
@@ -1838,7 +1875,7 @@ BOOL TOEMessage::FixMessageHeader()
 		return ret;
 	}
 
-	msgInfo.dwMessageId = props_->dwMessageId;
+	msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
 	hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
 	if(FAILED(hr)) {
 		debug_print(DEBUG_ERROR, _T("OEMessage::FixMessageHeader: FindRecord failed.\n"));
@@ -1862,7 +1899,7 @@ BOOL TOEMessage::FixMessageHeader()
 	hr = pStream->Stat(&stat, STATFLAG_NONAME);
 
 	//CHAR* buffer = NULL;
-	NktBuffer<CHAR> buffer;
+	NktDynamicArray<CHAR> buffer;
 	if(stat.cbSize.u.LowPart != 0) {
 		//buffer = new CHAR[stat.cbSize.u.LowPart];
 		buffer.alloc(stat.cbSize.u.LowPart);
@@ -1890,7 +1927,11 @@ BOOL TOEMessage::FixMessageHeader()
 		}
 
 		LPVOID oldStmOffsetTableBinary = msgInfo.StmOffsetTableBinary;
+#ifdef _WIN64
+		ULONGLONG oldStmOffsetTableSize = msgInfo.StmOffsetTableSize;
+#else
 		DWORD oldStmOffsetTableSize = msgInfo.StmOffsetTableSize;
+#endif
 
 		msgInfo.StmOffsetTableBinary = buffer;
 		msgInfo.StmOffsetTableSize = dwReaded;
@@ -2020,7 +2061,7 @@ long TOEMessage::GetFirstAttachment()
 
 	// keep only attachmens that have the property PID_PAR_FILENAME
 	for(i=0; i<attachCount_;) {
-		if(!IsBodyAttachment(HandleToLong(bodyAttachs_[i]))) {
+		if(!IsBodyAttachment((LONG)bodyAttachs_[i])) {
 			for(j=i+1; j<attachCount_; j++) {
 				bodyAttachs_[j-1] = bodyAttachs_[j];
 			}
@@ -2038,7 +2079,7 @@ long TOEMessage::GetFirstAttachment()
 
 	curAttach_ = 1;
 
-	return HandleToLong(bodyAttachs_[0]);
+	return (LONG)bodyAttachs_[0];
 }
 
 //---------------------------------------------------------------------------//
@@ -2050,7 +2091,7 @@ long TOEMessage::GetNextAttachment()
 		return 0;
 	}
 
-	return HandleToLong(bodyAttachs_[curAttach_++]);
+	return (LONG)bodyAttachs_[curAttach_++];
 }
 
 //---------------------------------------------------------------------------//
@@ -2077,7 +2118,7 @@ long TOEMessage::AttachFile(const bstr_t &filename)
 		newBody = 0;
 	}
 
-	return HandleToLong(newBody);
+	return (LONG)newBody;
 }
 
 //---------------------------------------------------------------------------//
@@ -2089,7 +2130,7 @@ BOOL TOEMessage::SaveAsFile(const bstr_t &filename)
 	BOOL ret = TRUE;
 
 	hFile = CreateFileW(filename.w_str().c_str(), GENERIC_WRITE, 0,
-						NULL, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+						NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
 	if(hFile == INVALID_HANDLE_VALUE) {
 		debug_print(DEBUG_ERROR, _T("TOEMessage::SaveAsFile: Error opening file.\n"));
 		return FALSE;
@@ -2112,6 +2153,176 @@ BOOL TOEMessage::SaveAsFile(const bstr_t &filename)
 	CloseHandle(hFile);
 
 	return ret;
+}
+
+//---------------------------------------------------------------------------//
+bool TOEMessage::ReadAccountInfo(WinMailAccountInfo& info)
+{
+	if(!IsWMail()) {
+		debug_print(DEBUG_INFO, _T("TOEMessage::ReadAccountInfo: WinMail required.\n"));
+		return false;
+	}
+
+	if(!msgFolder_) {
+		debug_print(DEBUG_INFO, _T("TOEMessage::ReadAccountInfo: Null msgFolder_.\n"));
+		return false;
+	}
+
+	HRESULT hr;
+	MESSAGEINFOWMAIL msgInfo = {0};
+	msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+	hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_INFO, _T("TOEMessage::ReadAccountInfo: FindRecord failed %08x.\n"), hr);
+		return FALSE;
+	}
+	//WinMailAccountInfo* info = new WinMailAccountInfo;
+	info._accountId = msgInfo.szAccountGUID;
+	info._accountName = msgInfo.wzAccountName;
+	info._displayFrom = msgInfo.wzDisplayFrom;
+	info._sender =  msgInfo.szSender;
+
+	hr = msgFolder_->FreeRecord(&msgInfo);
+
+	return true;
+}
+
+//---------------------------------------------------------------------------//
+bool TOEMessage::SaveAccountInfo(WinMailAccountInfo& info)
+{
+	//if(!IsWMail()) {
+	//	debug_print(DEBUG_INFO, _T("TOEMessage::SaveAccountInfo: WinMail required.\n"));
+	//	return false;
+	//}
+
+	if(!msgFolder_) {
+		debug_print(DEBUG_INFO, _T("TOEMessage::SaveAccountInfo: Null msgFolder_.\n"));
+		return false;
+	}
+
+	HRESULT hr;
+	MESSAGEINFOWMAIL msgInfo = {0};
+	msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+	hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_INFO, _T("TOEMessage::ReadAccountInfo: FindRecord failed %08x.\n"), hr);
+		return FALSE;
+	}
+	//WinMailAccountInfo* info = new WinMailAccountInfo;
+	LPCSTR accountId = msgInfo.szAccountGUID;
+	LPCWSTR accountName = msgInfo.wzAccountName;
+	LPCWSTR displayFrom = msgInfo.wzDisplayFrom;
+	LPCSTR sender = msgInfo.szSender;
+
+	msgInfo.szAccountGUID = info._accountId.c_str();
+	msgInfo.wzAccountName = info._accountName.c_str();
+	msgInfo.wzDisplayFrom = info._displayFrom.c_str();
+	msgInfo.szSender = info._sender.c_str();
+
+	msgFolder_->UpdateRecord(&msgInfo);
+
+	msgInfo.szAccountGUID = accountId;
+	msgInfo.wzAccountName = accountName;
+	msgInfo.wzDisplayFrom = displayFrom;
+	msgInfo.szSender = sender;
+
+	hr = msgFolder_->FreeRecord(&msgInfo);
+
+	return true;
+}
+
+//---------------------------------------------------------------------------//
+ULONGLONG TOEMessage::GetBodySize(long bodyHandle)
+{
+	com_ptr<IStream> pBodyStream = NULL;
+	com_ptr<IMimeBody> pMimeBody = NULL;
+	HBODY hBody;
+	HRESULT hr;
+
+	if(!OpenMessage()) {
+		return 0;
+	}
+
+	hBody = (HBODY) bodyHandle;
+	hr = pMimeMsg_->BindToObject(hBody,
+								IID_IMimeBody,
+								(LPVOID*)&pMimeBody);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("OEMessage::GetBodySize: BindToObject.\n"));
+		return 0;
+	}
+
+	hr = pMimeBody->GetData(IET_BINARY,
+							(IStream**)&pBodyStream);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("OEMessage::GetBodySize: GetData\n"));
+		//pMimeBody->Release();
+		return 0;
+	}
+
+	STATSTG st;
+	hr = pBodyStream->Stat(&st, STATFLAG_NONAME);
+	return st.cbSize.QuadPart;
+}
+
+//---------------------------------------------------------------------------//
+com_ptr<IUnknown> TOEMessage::GetBodyStream(long bodyHandle)
+{
+	com_ptr<IUnknown> ret;
+	com_ptr<IStream> pBodyStream = NULL;
+	com_ptr<IMimeBody> pMimeBody = NULL;
+	HBODY hBody;
+	HRESULT hr;
+
+	if(!OpenMessage()) {
+		return ret;
+	}
+
+	hBody = (HBODY) bodyHandle;
+	hr = pMimeMsg_->BindToObject(hBody,
+								IID_IMimeBody,
+								(LPVOID*)&pMimeBody);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("OEMessage::GetBodyStream: BindToObject.\n"));
+		return ret;
+	}
+
+	hr = pMimeBody->GetData(IET_BINARY,
+							(IStream**)&pBodyStream);
+	if(FAILED(hr)) {
+		debug_print(DEBUG_ERROR, _T("OEMessage::GetBodyStream: GetData\n"));
+		//pMimeBody->Release();
+		return ret;
+	}
+	ret = pBodyStream;
+	return ret;
+}
+
+//---------------------------------------------------------------------------//
+void TOEMessage::SetReadOnly(long readOnly)
+{
+	access_ = readOnly ? WINMAIL_ACCESS_RO : WINMAIL_ACCESS_RW;
+}
+
+//---------------------------------------------------------------------------//
+long TOEMessage::IsReadOnly()
+{
+	return access_ == WINMAIL_ACCESS_RO;
+}
+
+//---------------------------------------------------------------------------//
+DWORD TOEMessage::GetFlags()
+{
+	HRESULT hr;
+	DWORD dwFlag = 0;
+	if(!OpenMessage()) {
+		return 0;
+	}
+	hr = pMimeMsg_->GetFlags(&dwFlag);
+	if(FAILED(hr)) {
+		dwFlag = 0;
+	}
+	return dwFlag;
 }
 
 //---------------------------------------------------------------------------//

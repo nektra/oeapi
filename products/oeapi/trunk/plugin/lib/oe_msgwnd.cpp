@@ -1,8 +1,8 @@
-/* $Id: oe_msgwnd.cpp,v 1.22.4.7 2007/08/22 20:10:16 ibejarano Exp $
+/* $Id: oe_msgwnd.cpp,v 1.32 2009/01/27 19:29:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -43,7 +43,10 @@ UINT WM_OEAPI_DESTROY = ::RegisterWindowMessage( _T("OEAPI_WM_DESTROY") );
 
 #define TO_ADDRESS_CTRL 0x3e9
 #define CC_ADDRESS_CTRL 0x3eb
+#define BCC_ADDRESS_CTRL 0x402
 #define SUBJECT_CTRL 0x3ec
+
+#define WM_MSGWND_NOTIFICATION 39999
 
 //static INT msgList[1024];
 //static INT msgCount = 0;
@@ -58,8 +61,8 @@ UINT WM_OEAPI_DESTROY = ::RegisterWindowMessage( _T("OEAPI_WM_DESTROY") );
 //									 LPARAM lParam);
 // END DEBUG
 
-extern BOOL g_sendDlgSyncblocked;
-BOOL g_MessageSent = FALSE;
+//extern BOOL g_sendDlgSyncblocked;
+//BOOL g_MessageSent = FALSE;
 
 //---------------------------------------------------------------------------------//
 LRESULT CALLBACK MsgWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -110,7 +113,11 @@ LRESULT CALLBACK MsgWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_DESTROY:
 		{
 			//debug_print(DEBUG_TRACE, _T("MsgWndProc: Byebye.\n"));
-			g_MessageSent = false;
+			//g_MessageSent = FALSE;
+			if(msgWnd->GetMessageSent()) {
+				msgWnd->SetMessageSent(FALSE);
+				LockSendWindow(FALSE);
+			}
 
 			// Message windows is closing, check if we have to send wm_oeapi_destroy
 			if(GetProp(hWnd, _T("OEAPI_MsgWndDestroying")) != (HANDLE)TRUE)
@@ -168,10 +175,10 @@ LRESULT CALLBACK MsgWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			// be intercepted.
 			if(Plugin.msgWndSendButtonCb && lParam != -1) {
 				if(LOWORD(wParam) == OE_SEND_TOOLBAR_BTN) {
-					if(msgWnd->GetSendEvent()) {
+					if(msgWnd->GetPendingSendEvent()) {
 						return TRUE;
 					}
-					msgWnd->SetSendEvent(TRUE);
+					msgWnd->SetPendingSendEvent(TRUE);
 					// clear flag
 					msgWnd->SetSendCancelled(FALSE);
 
@@ -184,10 +191,10 @@ LRESULT CALLBACK MsgWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 				}
 				else if(LOWORD(wParam) == OE_SENDLATER_MENUITEM_BTN)
 				{
-					if(msgWnd->GetSendEvent()) {
+					if(msgWnd->GetPendingSendEvent()) {
 						return TRUE;
 					}
-					msgWnd->SetSendEvent(TRUE);
+					msgWnd->SetPendingSendEvent(TRUE);
 					// clear flag
 					msgWnd->SetSendCancelled(FALSE);
 
@@ -202,8 +209,10 @@ LRESULT CALLBACK MsgWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			else if(lParam == -1) {
 				//lParam == 0; 
 				if(LOWORD(wParam) == OE_SEND_TOOLBAR_BTN) {
-					g_sendDlgSyncblocked = TRUE;
-					g_MessageSent = TRUE;
+					//g_sendDlgSyncblocked = TRUE;
+					LockSendWindow(TRUE);
+					//g_MessageSent = TRUE;
+					msgWnd->SetMessageSent(TRUE);
 				}
 			}
 
@@ -272,14 +281,16 @@ LRESULT CALLBACK MsgWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 			return lResult;
 		}
 
-		// This notification is triggered by OE under different circunstances.
-		// We use that this is *NOT* triggered after a message was succesful sent.
-		case 39999:
+		// This notification is triggered by OE under different circumstances.
+		// We use that it is *NOT* triggered after a message was succesful sent.
+		case WM_MSGWND_NOTIFICATION:
 		{
-			if(g_MessageSent && g_sendDlgSyncblocked) {
+			if(msgWnd->GetMessageSent()) { // && IsSendWindowLocked()) {
 				// Sent was aborted
-				g_MessageSent = FALSE;
-				g_sendDlgSyncblocked = FALSE;
+				//g_MessageSent = FALSE;
+				msgWnd->SetMessageSent(FALSE);
+				//g_sendDlgSyncblocked = FALSE;
+				LockSendWindow(FALSE);
 			}
 		}
 	}
@@ -589,7 +600,8 @@ OEPluginMsgWnd::OEPluginMsgWnd(HWND hMsg)
 
 	emptyMsgWnd_ = FALSE;
 
-	sentEvent_ = FALSE;
+	pendingSentEvent_ = FALSE;
+	messageSent_ = FALSE;
 
 	wndStyle_ = MsgWndStyles::OE_MSG_INVALID;
 
@@ -703,6 +715,7 @@ HWND OEPluginMsgWnd::FindBodyCtrl()
 	}
 
 	HWND hRichEdit = FindWindowEx(mimeEditServer, NULL, _T("RichEdit20W"), NULL);
+	//HWND hRichEdit = ::GetDlgItem(mimeEditServer, 0);
 	if(hRichEdit == NULL) {
 		// Try WinMail control
 		hRichEdit = FindWindowEx(mimeEditServer, NULL, _T("RichEdit50W"), NULL);
@@ -884,6 +897,18 @@ BOOL OEPluginMsgWnd::SetCc(const bstr_t &address)
 }
 
 //---------------------------------------------------------------------------------//
+bstr_t OEPluginMsgWnd::GetBcc()
+{
+	return GetControlText(BCC_ADDRESS_CTRL);
+}
+
+//---------------------------------------------------------------------------------//
+BOOL OEPluginMsgWnd::SetBcc(const bstr_t &address)
+{
+	return SetControlText(BCC_ADDRESS_CTRL, address);
+}
+
+//---------------------------------------------------------------------------------//
 bstr_t OEPluginMsgWnd::GetSubject()
 {
 	return GetControlText(SUBJECT_CTRL);
@@ -1044,13 +1069,21 @@ DWORD CALLBACK OEPluginMsgWnd::ReadEditStreamCallback(DWORD_PTR dwCookie, LPBYTE
 	return 0;
 }
 
+struct RichEditWriteData
+{
+	LPBYTE data;
+	INT size;
+	INT written;
+};
+
 //---------------------------------------------------------------------------------//
 DWORD CALLBACK OEPluginMsgWnd::WriteEditStreamCallback(DWORD_PTR dwCookie, LPBYTE pbBuff, LONG cb, LONG *pcb)
 {
-	LPCSTR* pBody = (LPCSTR*)dwCookie;
-	memcpy_s(pbBuff, cb, *pBody, cb);
-	*pBody = *pBody + cb;
-	*pcb = cb;
+	RichEditWriteData* data = (RichEditWriteData*)dwCookie;
+	INT toWrite = min(cb, data->size - data->written);
+	memcpy_s(pbBuff, cb, data->data + data->written, toWrite);
+	data->written += toWrite;
+	*pcb = toWrite;
 	return 0;
 }
 
@@ -1104,12 +1137,15 @@ BOOL OEPluginMsgWnd::SetBodyGUIThread(LPCWSTR body, BOOL usePutInnerMethod)
 
 		EDITSTREAM editStream;
 
-		LPCSTR pBody = (LPCSTR)body;
-		editStream.dwCookie = (DWORD_PTR)&pBody;
+		RichEditWriteData data;
+		data.data = (LPBYTE)body;
+		data.written = 0;
+		data.size = sizeof(WCHAR)*wcslen(body);
+		editStream.dwCookie = (DWORD_PTR)&data;
 		editStream.dwError = 0;
 		editStream.pfnCallback = (EDITSTREAMCALLBACK)WriteEditStreamCallback;
 
-		::SendMessage(hRichEdit, EM_STREAMOUT, SF_UNICODE | SF_TEXT, (LPARAM)&editStream);
+		::SendMessage(hRichEdit, EM_STREAMIN, SF_UNICODE | SF_TEXT, (LPARAM)&editStream);
 
 		return TRUE;
 	}

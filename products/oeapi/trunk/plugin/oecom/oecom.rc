@@ -53,8 +53,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,2,1,0
- PRODUCTVERSION 3,2,1,0
+ FILEVERSION 3,2,3,0
+ PRODUCTVERSION 3,2,3,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -71,13 +71,13 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Nektra S.A."
             VALUE "FileDescription", "OEAPI oecom"
-            VALUE "FileVersion", "3, 2, 1, 0"
+            VALUE "FileVersion", "3, 2, 3, 0"
             VALUE "InternalName", "oecom"
-            VALUE "LegalCopyright", "Copyright © 2004-2007"
+            VALUE "LegalCopyright", "Copyright © 2004-2008"
             VALUE "OLESelfRegister", "Y"
             VALUE "OriginalFilename", "oecom.dll"
             VALUE "ProductName", "OEAPI"
-            VALUE "ProductVersion", "3, 2, 1, 0"
+            VALUE "ProductVersion", "3, 2, 3, 0"
         END
     END
     BLOCK "VarFileInfo"
@@ -92,15 +92,15 @@ END
 // Dialog
 //
 
-IDD_ABOUT DIALOGEX 0, 0, 148, 102
+IDD_ABOUT DIALOGEX 0, 0, 160, 102
 STYLE DS_SETFONT | DS_MODALFRAME | DS_FIXEDSYS | WS_POPUP | WS_VISIBLE | WS_CAPTION | WS_SYSMENU
 CAPTION "About OEAPI"
 FONT 8, "MS Shell Dlg", 400, 0, 0x0
 BEGIN
-    DEFPUSHBUTTON   "Ok",IDOK,56,77,50,14,WS_GROUP
-    LTEXT           "Nektra OEAPI Version 3.2.1",IDC_STATIC,38,7,87,20
-    ICON            IDI_OEAPI,IDC_STATIC,7,7,21,20
-    LTEXT           "oeapi-support@nektra.com",IDC_HYPERLINK2,52,58,88,9
+    DEFPUSHBUTTON   "Ok",IDOK,55,77,50,14,WS_GROUP
+    LTEXT           "Nektra OEAPI Version 3.2.3",IDC_STATIC,47,6,95,20
+    ICON            IDI_OEAPI,IDC_STATIC,16,6,20,20
+    LTEXT           "oeapi-support@nektra.com",IDC_HYPERLINK2,52,58,90,9
     LTEXT           "Buy OEAPI:",IDC_STATIC,7,38,41,9
     LTEXT           "Technical assistance:",IDC_STATIC,7,53,41,18
     LTEXT           "products@nektra.com",IDC_HYPERLINK,52,39,80,12
@@ -118,9 +118,9 @@ BEGIN
     IDD_ABOUT, DIALOG
     BEGIN
         LEFTMARGIN, 7
-        RIGHTMARGIN, 140
+        RIGHTMARGIN, 152
         VERTGUIDE, 52
-        TOPMARGIN, 7
+        TOPMARGIN, 6
         BOTTOMMARGIN, 95
         HORZGUIDE, 42
         HORZGUIDE, 62

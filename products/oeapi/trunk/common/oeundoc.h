@@ -1,8 +1,8 @@
-/* $Id: oeundoc.h,v 1.11.6.5 2007/08/08 22:39:31 ibejarano Exp $
+/* $Id: oeundoc.h,v 1.17 2008/09/07 16:55:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -133,8 +133,8 @@ typedef struct tagMESSAGEINFOWMAIL
 	LPSTR field_58;
 	DWORD field_5c;
 	LPSTR szAccount;
-	LPWSTR wzDisplayFrom;
-	LPSTR szSender;
+	LPCWSTR wzDisplayFrom;
+	LPCSTR szSender;
 	WORD wLanguage;
 	WORD wPriority;
 	DWORD cbMessage;
@@ -146,8 +146,8 @@ typedef struct tagMESSAGEINFOWMAIL
 	DWORD field_94;
 	DWORD field_98;
 	DWORD field_9c;
-	LPWSTR wzAccountName;
-	LPSTR szAccountGUID;
+	LPCWSTR wzAccountName;
+	LPCSTR szAccountGUID;
 	DWORD field_a8;
 	DWORD field_ac;
 	DWORD field_b0;
@@ -276,8 +276,8 @@ typedef struct tagMESSAGEINFOWMAIL
 	LPSTR field_58;
 	DWORD field_5c;
 	LPSTR szAccount;
-	LPWSTR wzDisplayFrom;
-	LPSTR szSender;
+	LPCWSTR wzDisplayFrom;
+	LPCSTR szSender;
 	WORD wLanguage;
 	WORD wPriority;
 	DWORD cbMessage;
@@ -289,8 +289,8 @@ typedef struct tagMESSAGEINFOWMAIL
 	ULONGLONG field_94;
 	ULONGLONG field_98;
 	ULONGLONG field_9c;
-	LPWSTR wzAccountName;
-	LPSTR szAccountGUID;
+	LPCWSTR wzAccountName;
+	LPCSTR szAccountGUID;
 	ULONGLONG field_a8;
 	ULONGLONG field_ac;
 	ULONGLONG field_b0;
@@ -501,7 +501,7 @@ typedef struct tagFOLDERINFOWMAIL
 	ULONGLONG field_9c;
 	ULONGLONG field_a0;
 } FOLDERINFOWMAIL, __RPC_FAR *LPFOLDERINFOWMAIL;
-#endif _WIN64
+#endif // _WIN64
 
 
 typedef struct tagADJUSTFLAGS
@@ -586,6 +586,40 @@ typedef enum tagSTOREOPERATIONTYPE
 	op_GetMinPollingInterval = 23
 
 } STOREOPERATIONTYPE, *LPSTOREOPERATIONTYPE;
+
+//---------------------------------------------------------------------
+typedef struct  tagFOLDERPROPS_OE64
+    {
+    DWORD cbSize;
+    ULONGLONG dwFolderId;
+    INT cSubFolders;
+    SPECIALFOLDER sfType;
+    DWORD cUnread;
+    DWORD cMessage;
+    CHAR szName[256];
+    }	FOLDERPROPS_OE64;
+typedef FOLDERPROPS_OE64* LPFOLDERPROPS_OE64;
+
+//---------------------------------------------------------------------
+typedef struct  tagMESSAGEPROPS_OE64
+    {
+    DWORD cbSize;
+    ULONGLONG dwReserved;
+    ULONGLONG dwMessageId;
+    DWORD dwLanguage;
+    DWORD dwState;
+    DWORD cbMessage;
+    IMSGPRIORITY priority;
+    FILETIME ftReceived;
+    FILETIME ftSent;
+    LPSTR pszSubject;
+    LPSTR pszDisplayTo;
+    LPSTR pszDisplayFrom;
+    LPSTR pszNormalSubject;
+    DWORD dwFlags;
+    IStream __RPC_FAR *pStmOffsetTable;
+    } MESSAGEPROPS_OE64;
+typedef MESSAGEPROPS_OE64* LPMESSAGEPROPS_OE64;
 
 //---------------------------------------------------------------------
 interface IStoreCallback : public IUnknown
@@ -778,16 +812,16 @@ interface IMessageStoreWMail : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE CreateServer(IImnAccount *,unsigned long,FOLDERID__ * *);
 	virtual HRESULT STDMETHODCALLTYPE CreateFolder(unsigned long,tagFOLDERINFOWMAIL *,IStoreCallback *);
 	virtual HRESULT STDMETHODCALLTYPE OpenSpecialFolder();
-	virtual HRESULT STDMETHODCALLTYPE OpenFolder(FOLDERID__ ,DWORD /*0*/, IMessageServer * /*NULL*/,ULONG/*0*/,IMessageFolder**);
+	virtual HRESULT STDMETHODCALLTYPE OpenFolder(ULONGLONG, IMessageServer * /*NULL*/,ULONG/*0*/,IMessageFolder**);
 	virtual HRESULT STDMETHODCALLTYPE MoveFolder();
 	virtual HRESULT STDMETHODCALLTYPE RenameFolder();
 	virtual HRESULT STDMETHODCALLTYPE DeleteFolder();
-	virtual HRESULT STDMETHODCALLTYPE GetFolderInfo(FOLDERID__, long /*0*/, tagFOLDERINFOWMAIL *);
+	virtual HRESULT STDMETHODCALLTYPE GetFolderInfo(ULONGLONG, tagFOLDERINFOWMAIL *);
 	virtual HRESULT STDMETHODCALLTYPE GetSpecialFolderInfo();
 	virtual HRESULT STDMETHODCALLTYPE SubscribeToFolder();
 	virtual HRESULT STDMETHODCALLTYPE sub_50F09E22();
 	virtual HRESULT STDMETHODCALLTYPE UpdateFolderCounts();
-	virtual HRESULT STDMETHODCALLTYPE EnumChildren(FOLDERID__ ,int /*0*/,int /*1*/, IEnumerateFolders **);
+	virtual HRESULT STDMETHODCALLTYPE EnumChildren(ULONGLONG,int /*1*/, IEnumerateFolders **);
 };
 
 //---------------------------------------------------------------------
@@ -929,8 +963,8 @@ interface IMessageFolderWMail : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE SetFolderId(FOLDERID__ * *);
 	virtual HRESULT STDMETHODCALLTYPE GetMessageFolderId(MESSAGEID__ *,FOLDERID__ * *);
 	virtual HRESULT STDMETHODCALLTYPE FContinueMessageLoop();
-	virtual HRESULT STDMETHODCALLTYPE OpenMessage(MESSAGEID__ , DWORD /*0*/, ULONG, IMimeMessage * *, IStoreCallback *);
-	virtual HRESULT STDMETHODCALLTYPE SaveMessage(MESSAGEID__ *, ULONG, ULONG, IStream *, IMimeMessage *, IStoreCallback *);
+	virtual HRESULT STDMETHODCALLTYPE OpenMessage(ULONGLONG, ULONG, IMimeMessage * *, IStoreCallback *);
+	virtual HRESULT STDMETHODCALLTYPE SaveMessage(ULONGLONG*, ULONG, ULONG, IStream *, IMimeMessage *, IStoreCallback *);
 	virtual HRESULT STDMETHODCALLTYPE StartTransaction();
 	virtual HRESULT STDMETHODCALLTYPE EndTransaction();
 	virtual HRESULT STDMETHODCALLTYPE SetMessageStream(MESSAGEID__ *,IStream *);
@@ -993,6 +1027,47 @@ interface IDatabase : public IUnknown
 	  virtual HRESULT STDMETHODCALLTYPE GetClientCount(ULONG *);
 	  virtual HRESULT STDMETHODCALLTYPE GetFile(ushort * *);
 	  virtual HRESULT STDMETHODCALLTYPE GetSize(ULONG *,ULONG *,ULONG *,ULONG *);
+};
+
+//---------------------------------------------------------------------
+interface IMessageTableWMail : public IUnknown
+{
+public:
+    virtual HRESULT STDMETHODCALLTYPE Initialize( void);
+    virtual HRESULT STDMETHODCALLTYPE StartFind( void);
+    virtual HRESULT STDMETHODCALLTYPE SetOwner( void);
+    virtual HRESULT STDMETHODCALLTYPE Close( void);
+    virtual HRESULT STDMETHODCALLTYPE Synchronize( void);
+    virtual HRESULT STDMETHODCALLTYPE GetCount( DWORD *__MIDL_0011);
+    virtual HRESULT STDMETHODCALLTYPE GetRow( void); 
+    virtual HRESULT STDMETHODCALLTYPE ReleaseRow( void);
+    virtual HRESULT STDMETHODCALLTYPE GetIndentLevel( void);
+    virtual HRESULT STDMETHODCALLTYPE Mark( void);
+    virtual HRESULT STDMETHODCALLTYPE GetSortInfo( void);
+    virtual HRESULT STDMETHODCALLTYPE OnSynchronizeComplete( void);
+    virtual HRESULT STDMETHODCALLTYPE SetSortInfo( DWORD *__MIDL_0012, DWORD __MIDL_0013);
+    virtual HRESULT STDMETHODCALLTYPE GetLanguage( void); 
+    virtual HRESULT STDMETHODCALLTYPE SetLanguage( void);
+    virtual HRESULT STDMETHODCALLTYPE GetNextRow( void); 
+    virtual HRESULT STDMETHODCALLTYPE GetRelativeRow( void);
+    virtual HRESULT STDMETHODCALLTYPE GetRowState( void); 
+    virtual HRESULT STDMETHODCALLTYPE GetSelectionState( void);
+    virtual HRESULT STDMETHODCALLTYPE Expand( void);
+    virtual HRESULT STDMETHODCALLTYPE Collapse( void);
+    virtual HRESULT STDMETHODCALLTYPE OpenMessage( void);
+    virtual HRESULT STDMETHODCALLTYPE GetRowMessageId( DWORD __MIDL_0014, ULONGLONG *__MIDL_0015);
+    virtual HRESULT STDMETHODCALLTYPE GetRowIndex( ULONGLONG __MIDL_0016, DWORD *__MIDL_0017); 
+    virtual HRESULT STDMETHODCALLTYPE DeleteRows( void); 
+    virtual HRESULT STDMETHODCALLTYPE CopyRows( void);
+    virtual HRESULT STDMETHODCALLTYPE RegisterNotify( HWND __MIDL_0018) = 0;   
+    virtual HRESULT STDMETHODCALLTYPE UnregisterNotify( DWORD dwReserved, HWND __MIDL_0019);
+    virtual HRESULT STDMETHODCALLTYPE FindNextRow( void); 
+    virtual HRESULT STDMETHODCALLTYPE GetRowFolderId( void);
+    virtual HRESULT STDMETHODCALLTYPE GetMessageIdList( void);
+    virtual HRESULT STDMETHODCALLTYPE ConnectionAddRef( void);
+    virtual HRESULT STDMETHODCALLTYPE ConnectionRelease( void);
+    virtual HRESULT STDMETHODCALLTYPE IsChild( void);
+    virtual HRESULT STDMETHODCALLTYPE GetAdBarUrl( void);
 };
 
 //---------------------------------------------------------------------
@@ -1150,16 +1225,16 @@ typedef struct NktIMessageStoreWMailVtbl
 	HRESULT (STDMETHODCALLTYPE *CreateServer)(IMessageStoreWMail * This, IImnAccount *,unsigned long,FOLDERID__ * *);
 	HRESULT (STDMETHODCALLTYPE *CreateFolder)(IMessageStoreWMail * This, unsigned long,tagFOLDERINFOWMAIL *,IStoreCallback *);
 	HRESULT (STDMETHODCALLTYPE *OpenSpecialFolder)(IMessageStoreWMail * This);
-	HRESULT (STDMETHODCALLTYPE *OpenFolder)(IMessageStoreWMail * This, FOLDERID__ ,DWORD /*0*/, IMessageServer * /*NULL*/,ULONG/*0*/,IMessageFolder**);
+	HRESULT (STDMETHODCALLTYPE *OpenFolder)(IMessageStoreWMail * This, ULONGLONG, IMessageServer * /*NULL*/,ULONG/*0*/,IMessageFolder**);
 	HRESULT (STDMETHODCALLTYPE *MoveFolder)(IMessageStoreWMail * This);
 	HRESULT (STDMETHODCALLTYPE *RenameFolder)(IMessageStoreWMail * This);
 	HRESULT (STDMETHODCALLTYPE *DeleteFolder)(IMessageStoreWMail * This);
-	HRESULT (STDMETHODCALLTYPE *GetFolderInfo)(IMessageStoreWMail * This, FOLDERID__, long /*0*/, tagFOLDERINFOWMAIL *);
+	HRESULT (STDMETHODCALLTYPE *GetFolderInfo)(IMessageStoreWMail * This, ULONGLONG, tagFOLDERINFOWMAIL *);
 	HRESULT (STDMETHODCALLTYPE *GetSpecialFolderInfo)(IMessageStoreWMail * This);
 	HRESULT (STDMETHODCALLTYPE *SubscribeToFolder)(IMessageStoreWMail * This);
 	HRESULT (STDMETHODCALLTYPE *sub_50F09E22)(IMessageStoreWMail * This);
 	HRESULT (STDMETHODCALLTYPE *UpdateFolderCounts)(IMessageStoreWMail * This);
-	HRESULT (STDMETHODCALLTYPE *EnumChildren)(IMessageStoreWMail * This, FOLDERID__ ,int /*0*/,int /*1*/, IEnumerateFolders **);
+	HRESULT (STDMETHODCALLTYPE *EnumChildren)(IMessageStoreWMail * This, ULONGLONG ,int /*1*/, IEnumerateFolders **);
 	END_INTERFACE
 } NktIMessageStoreWMailVtbl;
 

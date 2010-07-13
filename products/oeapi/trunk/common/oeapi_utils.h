@@ -1,8 +1,8 @@
-/* $Id: oeapi_utils.h,v 1.22.4.1 2007/07/31 21:30:40 ibejarano Exp $
+/* $Id: oeapi_utils.h,v 1.26 2008/09/07 16:55:58 ibejarano Exp $
  *
  * Author: Pablo Yabo (pablo.yabo@nektra.com)
  *
- * Copyright (c) 2004-2007 Nektra S.A., Buenos Aires, Argentina.
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
  * All rights reserved.
  *
  **/
@@ -20,8 +20,11 @@
 #include "nkt_utils.h"
 
 
+#define HENUMSTORE_INVALID ((HENUMSTORE)-1)
+
 #define DELETE_MSG_HEADER "X_OEAPI_DELETED"
 
+//---------------------------------------------------------------------------//
 
 /**
 Get the window that matches the search recursively
@@ -42,6 +45,8 @@ typedef struct AccountInfoWM__ {
 	CHAR sender[1024];
 } AccountInfoWM;
 
+/**
+*/
 BOOL GetDefaultAccountSettingsWM(AccountInfoWM* accountInfo);
 
 /**
@@ -70,6 +75,8 @@ buffer inside WinMail.exe
 Load a string from resources given its id
 */
 std::basic_string<TCHAR> GetResourceString(HINSTANCE hInstance, int stringId);
+
+//---------------------------------------------------------------------------//
 
 typedef NKTComPtr<IStoreFolder, &IID_IStoreFolder> IStoreFolderPtr;
 typedef NKTComPtr<IStoreNamespace, &IID_IStoreNamespace> IStoreNamespacePtr;
