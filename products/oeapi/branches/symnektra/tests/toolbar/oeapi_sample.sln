@@ -1,0 +1,34 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oeapi_sample", "oeapi_sample.vcproj", "{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oeapi_samplePS", "oeapi_samplePS.vcproj", "{C45950D7-B02B-438B-ABE3-FE1B9DF89904}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A} = {B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}.Debug|Win32.Build.0 = Debug|Win32
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}.Debug|x64.ActiveCfg = Debug|x64
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}.Debug|x64.Build.0 = Debug|x64
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}.Release|Win32.ActiveCfg = Release|Win32
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}.Release|Win32.Build.0 = Release|Win32
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}.Release|x64.ActiveCfg = Release|x64
+		{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}.Release|x64.Build.0 = Release|x64
+		{C45950D7-B02B-438B-ABE3-FE1B9DF89904}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C45950D7-B02B-438B-ABE3-FE1B9DF89904}.Debug|x64.ActiveCfg = Debug|x64
+		{C45950D7-B02B-438B-ABE3-FE1B9DF89904}.Release|Win32.ActiveCfg = Release|Win32
+		{C45950D7-B02B-438B-ABE3-FE1B9DF89904}.Release|x64.ActiveCfg = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

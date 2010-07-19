@@ -1,0 +1,1 @@
+This is a Visual Studio 2003 VB .NET solution.
