@@ -56,6 +56,7 @@
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../common; ../lib; ../../oeapiinitcom"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -70,7 +71,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
@@ -141,6 +141,7 @@
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../common; ../lib; ../../oeapiinitcom"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -231,7 +232,6 @@
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -247,7 +247,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="2"
@@ -324,7 +323,6 @@
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -411,6 +409,7 @@
 				AdditionalOptions="/Zm200 "
 				AdditionalIncludeDirectories="../../common; ../lib; ../../oeapiinitcom"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -425,7 +424,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
@@ -495,6 +493,7 @@
 				AdditionalOptions="/Zm200 "
 				AdditionalIncludeDirectories="../../common; ../lib; ../../oeapiinitcom"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -580,6 +579,7 @@
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../common; ../lib; ../../oeapiinitcom"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -594,7 +594,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
 				LinkLibraryDependencies="false"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
@@ -665,6 +664,7 @@
 				InlineFunctionExpansion="0"
 				AdditionalIncludeDirectories="../../common; ../lib; ../../oeapiinitcom"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -720,6 +720,10 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
+			<File
+				RelativePath=".\GetCoreinstance.cpp"
+				>
+			</File>
 			<File
 				RelativePath="main.cpp"
 				>
@@ -850,6 +854,10 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath=".\GetCoreInstance.h"
+				>
+			</File>
+			<File
 				RelativePath="main.h"
 				>
 			</File>
@@ -896,6 +904,14 @@
 			>
 			<File
 				RelativePath=".\res\oeapi.ico"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			>
+			<File
+				RelativePath=".\OEAPI.h"
 				>
 			</File>
 		</Filter>

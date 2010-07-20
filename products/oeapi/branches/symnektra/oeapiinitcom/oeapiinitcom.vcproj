@@ -67,12 +67,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
 				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -150,7 +148,6 @@
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -218,7 +215,6 @@
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="4"
 			/>
 			<Tool
@@ -233,14 +229,12 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
 				LinkLibraryDependencies="false"
 				LinkIncremental="2"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -307,7 +301,6 @@
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -328,7 +321,6 @@
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -403,12 +395,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
 				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -486,7 +476,6 @@
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -561,12 +550,10 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
 				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -644,7 +631,6 @@
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -678,6 +664,10 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
+			<File
+				RelativePath=".\GetInitInstance.cpp"
+				>
+			</File>
 			<File
 				RelativePath="..\common\oeapi_utils.cpp"
 				>
@@ -792,6 +782,10 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
+				RelativePath=".\GetInitInstance.h"
+				>
+			</File>
+			<File
 				RelativePath="..\common\oeapi_event.h"
 				>
 			</File>
@@ -812,6 +806,14 @@
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
+		</Filter>
+		<Filter
+			Name="Generated Files"
+			>
+			<File
+				RelativePath=".\OEAPIINITCOM.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

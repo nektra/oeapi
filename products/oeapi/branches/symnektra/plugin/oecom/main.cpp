@@ -4231,8 +4231,10 @@ DWORD _stdcall OEAPICOMServerProc(void *)
 /////////////////////////////////////////////////////////
 void _stdcall StartServer(HWND hwnd)
 {
-	if(hServer == NULL) {
-		if(!IsOE()) {
+	if(hServer == NULL)
+    {
+	    if(!IsOE())
+        {
 			return;
 		}
 
@@ -4243,7 +4245,8 @@ void _stdcall StartServer(HWND hwnd)
 		}
 #endif // EVALUATION_VERSION
 
-		if(hwnd) {
+		if(hwnd)
+        {
 			LoadPlugin(hwnd);
 
 #ifdef EVALUATION_VERSION
@@ -4262,26 +4265,33 @@ void _stdcall StartServer(HWND hwnd)
 
 			//LoadRegisteredPlugins();
 
-			if((hServer = CreateThread(0, 0, OEAPICOMServerProc, 0, 0, &serverID)) == NULL) {
+			if((hServer = CreateThread(0, 0, OEAPICOMServerProc, 0, 0, &serverID)) == NULL)
+            {
 				debug_print(DEBUG_ERROR, _T("COM Server: CreateThread failed.\n"));
 			}
 
 			// Force OEAPIManager object creation before continue
-			while(pThis == NULL) {
+			while(pThis == NULL)
+            {
 				MSG msg;
-				if(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE)) {
-					if(::GetMessage(&msg, 0, 0, 0)) {
-						if(msg.message != 0x0413) {
+				if(PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE))
+                {
+					if(::GetMessage(&msg, 0, 0, 0))
+                    {
+						if(msg.message != 0x0413)
+                        {
 							::DispatchMessage(&msg);
 						}
-						else {
+						else
+                        {
 							//debug_print(DEBUG_INFO, _T("COM Server: (2) msg 0x0413 skipped %08x %08x %08x.\n"), msg.hwnd, msg.wParam, msg.lParam);
 							::PostMessage(msg.hwnd, msg.message, msg.wParam, msg.lParam);
 						}
 					}
-					else {
-					break;
-				}
+					else
+                    {
+					    break;
+				    }
 				}
 
 				Sleep(10);
