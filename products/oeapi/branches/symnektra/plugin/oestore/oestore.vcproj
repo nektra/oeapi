@@ -889,11 +889,6 @@
 				RelativePath=".\OESTORE.h"
 				>
 			</File>
-			<File
-				RelativePath=".\OESTORE.htm"
-				DeploymentContent="true"
-				>
-			</File>
 		</Filter>
 	</Files>
 	<Globals>
