@@ -1,22 +1,26 @@
 #include "GetCoreInstance.h"
 #include <Windows.h>
 #include "oeapi.h"
+#include "oeapiobj.h"
 
 using namespace comet;
 using namespace OEAPI;
 
-HRESULT __stdcall GetCoreInstance(REFGUID objid, REFGUID key, void** ppObj)
+HRESULT __stdcall GetCoreInstance(REFGUID clsid, REFGUID key, void** ppObj)
 {
     if (ppObj == NULL) return E_POINTER;
 
-    if (objid == comtype<IOEAPIObj>::uuid())
+    if (clsid == uuidof<OEAPIObj>())
     {
-        *ppObj = new coclass_implementation<OEAPIObj>();
-        return S_OK;
+        TOEAPIObj* ret = new TOEAPIObj;
+        ret->AddRef();
+        *ppObj = ret;
+        return (ret == NULL) ? E_FAIL : S_OK;
     }
     else
     {
         return E_NOINTERFACE;
     }
+ 
     return E_FAIL;
 }

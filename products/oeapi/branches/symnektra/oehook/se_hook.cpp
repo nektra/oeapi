@@ -170,7 +170,7 @@ VOID VerifyEvent()
 
 	if(initEventHandle != NULL) {
 		if(WaitForSingleObject(initEventHandle, 0) == WAIT_OBJECT_0) {
-			if(W32Process.FindProcess("msimn") == 0 && W32Process.FindProcess("winmail") == 0) {
+			if(W32Process.FindProcess(_T("msimn")) == 0 && W32Process.FindProcess(_T("winmail")) == 0) {
 				debug_print(DEBUG_ERROR, _T("OEHOOK: Reseting event.\n"));
 				ResetEvent(initEventHandle);
 			}

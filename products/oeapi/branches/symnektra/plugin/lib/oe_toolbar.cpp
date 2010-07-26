@@ -2468,7 +2468,7 @@ VOID OEPluginToolbarBtn::SetTooltip(LPCTSTR tooltip)
 			ti.hwnd = toolbar_->GetHandle();
 			ti.uId = id_;
 #if _MSC_VER >= 1400
-			_tcsncpy_s(tooltip, sizeof(tooltip), tooltip_.c_str(), _TRUNCATE);
+			_tcsncpy_s(tooltip, sizeof(tooltip)/sizeof(tooltip[0]), tooltip_.c_str(), _TRUNCATE);
 #else
 			_tcsncpy(tooltip, tooltip_.c_str(), sizeof(tooltip)/sizeof(TCHAR)-1);
 #endif
@@ -2729,7 +2729,7 @@ VOID OEPluginToolbarBtn::Create(OEPluginToolbar *toolbar)
 				::SendMessage(hToolTip, TTM_GETTOOLINFO, 0, (LPARAM)&ti);
 
 #if _MSC_VER >= 1400
-				_tcscpy_s(tooltip, sizeof(tooltip), tooltip_.c_str());
+				_tcscpy_s(tooltip, sizeof(tooltip)/sizeof(tooltip[0]), tooltip_.c_str());
 #else
 				_tcsncpy(tooltip, tooltip_.c_str(), sizeof(tooltip)/sizeof(TCHAR)-1);
 #endif
@@ -2946,7 +2946,7 @@ VOID OEPluginToolbarBtn::UpdateButtonInfo(int props)
 	if(props & btn_name) {
 		TCHAR name[256];
 #if _MSC_VER >= 1400
-		_tcscpy_s(name, sizeof(name), name_.c_str());
+		_tcscpy_s(name, sizeof(name)/sizeof(name[0]), name_.c_str());
 #else
 		_tcsncpy(name, name_.c_str(), sizeof(name)/sizeof(TCHAR)-1);
 #endif
@@ -2987,7 +2987,7 @@ VOID OEPluginToolbarBtn::CreateInMenu(HMENU menu)
 		}
 		mInfo.fType = MFT_STRING;
 #if _MSC_VER >= 1400
-		_tcscpy_s(szText, sizeof(szText), name_.c_str());
+		_tcscpy_s(szText, sizeof(szText)/sizeof(szText[0]), name_.c_str());
 #else
 		_tcsncpy(szText, name_.c_str(), sizeof(szText)/sizeof(TCHAR)-1);
 #endif

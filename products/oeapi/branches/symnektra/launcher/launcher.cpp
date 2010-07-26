@@ -21,7 +21,8 @@ int APIENTRY WinMain(HINSTANCE hInstance,
 
 	MSG msg;
 
-    while (GetMessage(&msg, (HWND) NULL, 0, 0) > 0) {
+    while (GetMessage(&msg, (HWND) NULL, 0, 0) > 0)
+    {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }

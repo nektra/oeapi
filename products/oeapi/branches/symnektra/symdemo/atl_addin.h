@@ -14,7 +14,7 @@
 
 #include <string>
 
-#include "oeapi_sample.h"
+#include "symdemo_h.h"
 
 extern _ATL_FUNC_INFO NoParamInfo;
 extern _ATL_FUNC_INFO OneLongParamInfo;
@@ -81,17 +81,7 @@ END_COM_MAP()
 public:
 
 private:
-	CComPtr<IOEAPIInit> m_init;
-	CComPtr<IOEAPIObj> m_oeapi;
-	CComPtr<IOEFolder> m_inbox;
 
-	std::basic_string<TCHAR> m_identity;
-
-	TCHAR m_path[1024];
-
-	long m_toolbarId;
-	long m_showHelp;
-	long m_button;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(atl_addin), Catl_addin)

@@ -26,6 +26,7 @@
 
 #include <string>
 #include <list>
+#include <tchar.h>
 
 typedef HANDLE (WINAPI *PFN_CREATETHELP32SNPSHT)(DWORD,DWORD);
 typedef BOOL (WINAPI *PFN_PROCESS32FIRST)(HANDLE,PROCESSENTRY32*);
@@ -36,14 +37,12 @@ typedef BOOL (WINAPI *PFN_THREAD32NEXT)(HANDLE,LPTHREADENTRY32);
 class Win32Process
 {
 public:
-	bool IsWinNT();
-	std::string GetLastError();
+	std::basic_string<TCHAR> GetLastError();
 	bool EnumAllProcesses();
-	bool Init();
 	Win32Process();
 	virtual ~Win32Process();
 
-	int FindProcess(const std::string& ProcessName);
+	int FindProcess(const std::basic_string<TCHAR>& ProcessName);
 
 	/**
 	These functions work in 2K / XP / 9x
@@ -54,13 +53,11 @@ public:
 	void CloseThreadEnum();
 
 protected:
-	int FindProcess95(const std::string& ProcessName);
-	int FindProcessNT(const std::string& ProcessName);
 
 	DWORD GetThreadId();
 
-	char *ExtractProcessName(char *path, int size);
-	std::list<std::string> m_strArray;
+	LPTSTR ExtractProcessName(LPTSTR path, int size);
+	std::list<std::basic_string<TCHAR>> m_strArray;
 	bool m_bActive;
 	HMODULE m_hWin95Kernel;
 	PFN_PROCESS32NEXT m_p_fnProcess32Next;
@@ -68,8 +65,8 @@ protected:
 	PFN_THREAD32FIRST m_p_fnThread32First;
 	PFN_THREAD32NEXT m_p_fnThread32Next;
 	PFN_CREATETHELP32SNPSHT m_p_fnCreateToolhelp32Snapshot;
-	std::string m_strLastError;
-	bool m_bIsNt;
+	std::basic_string<TCHAR> m_strLastError;
+
 
 	DWORD m_enumProcId;
 	HANDLE m_hSnapshot;

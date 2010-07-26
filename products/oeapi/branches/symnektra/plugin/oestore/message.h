@@ -17,6 +17,8 @@
 
 #include "oeapi_props.h"
 
+#include "OESTORE.h"
+
 struct WinMailAccountInfo
 {
 	const WinMailAccountInfo& operator = (const WinMailAccountInfo& info)
@@ -45,10 +47,10 @@ class TOEMessage
 
 #else
 
-#define TOEMessagePtr com_ptr<IOEMessage>
-#define TOEMessage coclass_implementation<OEMessage>
+#define TOEMessagePtr comet::com_ptr<comet::OESTORE::IOEMessage>
+#define TOEMessage coclass_implementation<comet::OESTORE::OEMessage>
 
-template<> class TOEMessage : public coclass<OEMessage>
+template<> class TOEMessage : public comet::coclass<comet::OESTORE::OEMessage>
 
 #endif // STATIC_LIBRARY
 {
@@ -58,17 +60,17 @@ public:
 
 	static TCHAR *get_progid() { return _T("OESTORE.OEMessage"); }
 
-	bstr_t GetSubject();
-	bstr_t GetNormalSubject();
-	bstr_t GetDisplayTo();
-	bstr_t GetDisplayFrom();
+    comet::bstr_t GetSubject();
+	comet::bstr_t GetNormalSubject();
+	comet::bstr_t GetDisplayTo();
+	comet::bstr_t GetDisplayFrom();
 	DWORD GetState();
 	DWORD GetSourceLength();
 	DWORD GetHeaderLength();
 	DWORD GetBodyLength();
-	bstr_t GetHeader();
-	bstr_t GetAllBody() { return GetBody(INFINITE); }
-	bstr_t GetBody(DWORD maxBytesToRead);
+	comet::bstr_t GetHeader();
+	comet::bstr_t GetAllBody() { return GetBody(INFINITE); }
+	comet::bstr_t GetBody(DWORD maxBytesToRead);
 
 	/**
 	Useful only when a message is created using Clone.The stored messages cannot change
@@ -86,13 +88,13 @@ public:
 	Return the maxBytesToRead bytes of the message source.
 	source = header + body
 	*/
-	bstr_t GetAllSource();
+	comet::bstr_t GetAllSource();
 
 	/**
 	Return the maxBytesToRead bytes of the message source.
 	source = header + body
 	*/
-	bstr_t GetSource(DWORD maxBytesToRead);
+	comet::bstr_t GetSource(DWORD maxBytesToRead);
 
 
 	// Priority
@@ -119,26 +121,26 @@ public:
 
 	BOOL DeleteBody(long bodyHandle, DWORD flags);
 
-	BOOL IsBodyContentType(long bodyHandle, const bstr_t &priContentType, const bstr_t &secContentType);
+	BOOL IsBodyContentType(long bodyHandle, const comet::bstr_t &priContentType, const comet::bstr_t &secContentType);
 
-	bstr_t GetBodyPrimaryContentType(long bodyHandle);
-	bstr_t GetBodySecondaryContentType(long bodyHandle);
+	comet::bstr_t GetBodyPrimaryContentType(long bodyHandle);
+	comet::bstr_t GetBodySecondaryContentType(long bodyHandle);
 
-	bstr_t GetBodyDisplayName(long bodyHandle);
+	comet::bstr_t GetBodyDisplayName(long bodyHandle);
 
-	bstr_t GetBodyText(long bodyHandle);
+	comet::bstr_t GetBodyText(long bodyHandle);
 
-	BOOL SetBodyText(long bodyHandle, const bstr_t &bodyText, const bstr_t &priContentType, const bstr_t &secContentType);
+	BOOL SetBodyText(long bodyHandle, const comet::bstr_t &bodyText, const comet::bstr_t &priContentType, const comet::bstr_t &secContentType);
 
 	/**
 	Save the specified body in a file: if useDefaultName is TRUE, path variable specifies only a path and the filepart is taken from the OE_PID_PAR_FILENAME property. Return TRUE on success.
 	*/
-	BOOL SaveBodyToFile(long bodyHandle, const bstr_t &path, BOOL useDefaultName);
+	BOOL SaveBodyToFile(long bodyHandle, const comet::bstr_t &path, BOOL useDefaultName);
 
 	/**
 	Set the body content from the specified file. This function is useful if you want to add a attachment.
 	*/
-	BOOL SetBodyFromFile(long bodyHandle, const bstr_t &filename, const bstr_t &priContentType, const bstr_t &secContentType);
+	BOOL SetBodyFromFile(long bodyHandle, const comet::bstr_t &filename, const comet::bstr_t &priContentType, const comet::bstr_t &secContentType);
 
 	/**
 	Return TRUE if the specified body is a attachment.
@@ -148,12 +150,12 @@ public:
 	/**
 	Add a attachment to the message. Return the new body handle or 0 on error.
 	*/
-	long AttachFile(const bstr_t &filename);
+	long AttachFile(const comet::bstr_t &filename);
 
 	/**
 	Save message source to the specified filename.
 	*/
-	BOOL SaveAsFile(const bstr_t &filename);
+	BOOL SaveAsFile(const comet::bstr_t &filename);
 
 
 	// Header
@@ -161,34 +163,34 @@ public:
 	Get the text of the first property of the body. <br>
 	If the property does not exist propId is -1. Otherwise, contains property id.
 	*/
-	bstr_t GetFirstBodyProp(long bodyHandle, long &propId);
+	comet::bstr_t GetFirstBodyProp(long bodyHandle, long &propId);
 
 	/**
 	Get the text of the next property of the body. <br>
 	If the property does not exist propId is -1. Otherwise, contains property id.
 	*/
-	bstr_t GetNextBodyProp(long &propId);
+	comet::bstr_t GetNextBodyProp(long &propId);
 
 	/**
 	Get the text of the specified property. If the property does not exist exist is 0 (False).
 	*/
-	bstr_t GetBodyProp(long bodyHandle, int propId, long &exist);
+	comet::bstr_t GetBodyProp(long bodyHandle, int propId, long &exist);
 
 	/**
 	Set the text of the specified property. Return TRUE on success
 	*/
-	BOOL SetBodyProp(long bodyHandle, int propId, const bstr_t &value);
+	BOOL SetBodyProp(long bodyHandle, int propId, const comet::bstr_t &value);
 
 	/**
 	Get the text of a property specifying the property name. If the property does not exist exist is 0 (False).
 	*/
-	bstr_t GetBodyPropByName(long bodyHandle, const bstr_t &propName, long &exist);
+	comet::bstr_t GetBodyPropByName(long bodyHandle, const comet::bstr_t &propName, long &exist);
 
 	/**
 	Get the text of a property specifying the property name. Return TRUE on success.<br>
 	This function can be used to set a custom property.
 	*/
-	BOOL SetBodyPropByName(long bodyHandle, const bstr_t &propName, const bstr_t &propText);
+	BOOL SetBodyPropByName(long bodyHandle, const comet::bstr_t &propName, const comet::bstr_t &propText);
 
 	/**
 	Remove the specified property. Return TRUE on success
@@ -198,7 +200,7 @@ public:
 	/**
 	Remove a property specifying the name. Return TRUE on success
 	*/
-	BOOL DeleteBodyPropByName(long bodyHandle, const bstr_t &propName);
+	BOOL DeleteBodyPropByName(long bodyHandle, const comet::bstr_t &propName);
 
 	TOEMessagePtr Clone(DWORD folderId);
 
@@ -222,14 +224,14 @@ public:
 	Get the filename prop (equivalent to: GetBodyProp(bodyHandle, OE_PID_PAR_FILENAME, exist, filename).<br>
 	This prop is used as the filename of the attachment.
 	*/
-	bstr_t GetFilename(long bodyHandle);
+	comet::bstr_t GetFilename(long bodyHandle);
 
     /**
 	*/
     ULONGLONG GetBodySize(long par_bodyHandle);
     /**
 	*/
-    com_ptr<IUnknown> GetBodyStream(long par_bodyHandle);
+    comet::com_ptr<IUnknown> GetBodyStream(long par_bodyHandle);
 
     /**
 	*/
@@ -268,7 +270,7 @@ public:
 	void AddRef() { refCount_++; }
 	void Release() { if(--refCount_ == 0) delete this; }
 #else
-	static com_ptr<IOEMessage> newInstance();
+    static TOEMessagePtr newInstance();
 #endif // STATIC_LIBRARY
 
 	void SetAccountInfo(const WinMailAccountInfo& accountInfo) { accountInfo_ = accountInfo; }
@@ -278,7 +280,7 @@ protected:
 	BOOL OpenStoreMessage();
 	void CloseMessage();
 
-	BOOL SetBodySource(long bodyHandle, IStream *pStream, const bstr_t &priContentType, const bstr_t &secContentType, ENCODINGTYPE encType=IET_BINARY);
+	BOOL SetBodySource(long bodyHandle, IStream *pStream, const comet::bstr_t &priContentType, const comet::bstr_t &secContentType, ENCODINGTYPE encType=IET_BINARY);
 
 	BOOL FixMessageHeader();
 
@@ -299,7 +301,7 @@ private:
 	IMimeEnumProperties *pEnum_;
 
 	DWORD folderId_;
-	bstr_t header_;
+	comet::bstr_t header_;
 	int refCount_;
 
 	// used in GetFirstAttachment / GetNextAttachements functions

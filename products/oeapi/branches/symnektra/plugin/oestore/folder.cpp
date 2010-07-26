@@ -891,10 +891,9 @@ TOEFolder *TOEFolder::newInstance()
 	return new TOEFolder;
 }
 #else
-com_ptr<IOEFolder> TOEFolder::newInstance()
+TOEFolderPtr TOEFolder::newInstance()
 {
-	com_ptr<IOEFolder> ret(uuidof<OEFolder>());
-	return ret;
+	return TOEFolderPtr(new TOEFolder);
 }
 #endif // STATIC_LIBRARY
 
@@ -1400,10 +1399,9 @@ TOEFolderManager *TOEFolderManager::newInstance()
 	return new TOEFolderManager;
 }
 #else
-com_ptr<IOEFolderManager> TOEFolderManager::newInstance()
+TOEFolderManagerPtr TOEFolderManager::newInstance()
 {
-	com_ptr<IOEFolderManager> ret(uuidof<OEFolderManager>());
-	return ret;
+	return TOEFolderManagerPtr(new TOEFolderManager);
 }
 #endif // STATIC_LIBRARY
 

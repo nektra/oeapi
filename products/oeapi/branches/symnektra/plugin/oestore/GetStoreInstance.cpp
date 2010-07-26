@@ -1,22 +1,28 @@
+#include "std.h"
+
 #include "GetStoreInstance.h"
 #include <Windows.h>
 #include "OESTORE.h"
+#include "folder.h"
 
 using namespace comet;
 using namespace OESTORE;
 
-HRESULT __stdcall GetStoreInstance(REFGUID objid, REFGUID key, void** ppObj)
+HRESULT __stdcall GetStoreInstance(REFGUID clsid, REFGUID key, void** ppObj)
 {
     if (ppObj == NULL) return E_POINTER;
 
-    if (objid == comtype<IOEFolderManager>::uuid())
+    if (clsid == uuidof<OEFolderManager>())
     {
-        *ppObj = new coclass_implementation<OEFolderManager>();
-        return S_OK;
+        TOEFolderManager* ret = new TOEFolderManager;
+        ret->AddRef();
+        *ppObj = ret;
+        return (ret == NULL) ? E_FAIL : S_OK;
     }
     else
     {
         return E_NOINTERFACE;
     }
+
     return E_FAIL;
 }

@@ -24,9 +24,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -54,12 +54,11 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="../common"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;PRINT_ERRORS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -195,9 +194,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -224,6 +223,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../common"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;ENTERPRISE_VERSION;EVALUATION_VERSION;;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -348,9 +348,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -377,6 +377,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../common"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -501,9 +502,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -530,6 +531,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="../common"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

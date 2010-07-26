@@ -218,13 +218,14 @@ void TOEMenuItem::SetText(const bstr_t& text)
 #ifdef STATIC_LIBRARY
 TOEMenuItem *TOEMenuItem::newInstance()
 {
-	return new TOEMenuItem;
+	
+    return new TOEMenuItem;
 }
 #else
-com_ptr<IOEMenuItem> TOEMenuItem::newInstance()
+
+TOEMenuItemPtr TOEMenuItem::newInstance()
 {
-	com_ptr<IOEMenuItem> ret(uuidof<OEMenuItem>());
-	return ret;
+    return TOEMenuItemPtr(new TOEMenuItem);
 }
 #endif // STATIC_LIBRARY
 
@@ -342,10 +343,9 @@ TOEMenu *TOEMenu::newInstance()
 	return new TOEMenu;
 }
 #else
-com_ptr<IOEMenu> TOEMenu::newInstance()
+TOEMenuPtr TOEMenu::newInstance()
 {
-	com_ptr<IOEMenu> ret(uuidof<OEMenu>());
-	return ret;
+    return TOEMenuPtr(new TOEMenu);
 }
 #endif // STATIC_LIBRARY
 
@@ -761,10 +761,9 @@ TOEButton *TOEButton::newInstance()
 	return new TOEButton;
 }
 #else
-com_ptr<IOEButton> TOEButton::newInstance()
+TOEButtonPtr TOEButton::newInstance()
 {
-	com_ptr<IOEButton> ret(uuidof<OEButton>());
-	return ret;
+    return TOEButtonPtr(new TOEButton);
 }
 #endif // STATIC_LIBRARY
 
@@ -1186,10 +1185,9 @@ TOEToolbar *TOEToolbar::newInstance()
 	return new TOEToolbar;
 }
 #else
-com_ptr<IOEToolbar> TOEToolbar::newInstance()
+TOEToolbarPtr TOEToolbar::newInstance()
 {
-	com_ptr<IOEToolbar> ret(uuidof<OEToolbar>());
-	return ret;
+    return TOEToolbarPtr(new TOEToolbar);
 }
 #endif // STATIC_LIBRARY
 

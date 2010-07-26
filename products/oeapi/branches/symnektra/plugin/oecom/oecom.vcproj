@@ -71,7 +71,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
@@ -197,7 +196,7 @@
 			UseOfMFC="0"
 			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -227,12 +226,11 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="../../common; ../lib; ../../oeapiinitcom"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -247,7 +245,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(OutDir)"
@@ -380,7 +377,7 @@
 			UseOfMFC="0"
 			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -409,6 +406,7 @@
 				AdditionalOptions="/Zm200 "
 				AdditionalIncludeDirectories="../../common; ../lib; ../../oeapiinitcom"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
 				WarningLevel="3"
 			/>
 			<Tool
@@ -424,7 +422,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
@@ -594,7 +591,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"

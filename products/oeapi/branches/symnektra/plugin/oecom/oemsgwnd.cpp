@@ -410,10 +410,9 @@ TOEMsgWnd *TOEMsgWnd::newInstance()
 	return new TOEMsgWnd;
 }
 #else
-com_ptr<IOEMsgWnd> TOEMsgWnd::newInstance()
+TOEMsgWndPtr TOEMsgWnd::newInstance()
 {
-	com_ptr<IOEMsgWnd> ret(uuidof<OEMsgWnd>());
-	return ret;
+    return TOEMsgWndPtr(new TOEMsgWnd);
 }
 #endif // STATIC_LIBRARY
 

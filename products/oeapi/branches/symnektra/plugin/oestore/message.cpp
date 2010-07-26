@@ -2332,10 +2332,9 @@ TOEMessage *TOEMessage::newInstance()
 	return new TOEMessage;
 }
 #else
-com_ptr<IOEMessage> TOEMessage::newInstance()
+TOEMessagePtr TOEMessage::newInstance()
 {
-	com_ptr<IOEMessage> ret(uuidof<OEMessage>());
-	return ret;
+	return TOEMessagePtr(new TOEMessage);
 }
 #endif // STATIC_LIBRARY
 

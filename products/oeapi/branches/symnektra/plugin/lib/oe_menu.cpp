@@ -438,7 +438,7 @@ BOOL OEPluginMenuItemListMgr::InsertItem(OEPluginMenuItem* item, HMENU hMenu)
 	if(!item->GetName().empty()) 
 	{
 #if _MSC_VER >= 1400
-		_tcscpy_s(szMenu, sizeof(szMenu), item->GetName().c_str());
+		_tcscpy_s(szMenu, sizeof(szMenu)/sizeof(szMenu[0]), item->GetName().c_str());
 #else
 		_tcsncpy(szMenu, item->GetName().c_str(), sizeof(szMenu)/sizeof(TCHAR)-1);
 #endif

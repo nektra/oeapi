@@ -2,9 +2,9 @@
 
 #include <Windows.h>
 
-void SNGetInit(void** obj);
+HRESULT SNGetInit(void** obj);
+HRESULT SNGetInitState(void** obj);
 
-void SNGetApiCore(void** obj);
+HRESULT SNGetApiCore(void** obj);
 
-void SNGetFolderManager(void** obj);
-
+HRESULT SNGetFolderManager(void** obj);

@@ -181,7 +181,7 @@
 			UseOfMFC="0"
 			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -210,12 +210,11 @@
 				Optimization="0"
 				AdditionalIncludeDirectories="..\common"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -354,7 +353,7 @@
 			UseOfMFC="0"
 			UseOfATL="1"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -382,6 +381,8 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="..\common"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -669,11 +670,19 @@
 				>
 			</File>
 			<File
+				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NktMutex.cpp"
+				>
+			</File>
+			<File
 				RelativePath="..\common\oeapi_utils.cpp"
 				>
 			</File>
 			<File
-				RelativePath="oeapiinitcom.cpp"
+				RelativePath=".\OeApiInit.cpp"
 				>
 			</File>
 			<File
@@ -769,6 +778,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OeApiInitState.cpp"
+				>
+			</File>
+			<File
 				RelativePath="oeidentity.cpp"
 				>
 			</File>
@@ -786,7 +799,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\globals.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NktMutex.h"
+				>
+			</File>
+			<File
 				RelativePath="..\common\oeapi_event.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OeApiInit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OeApiInitState.h"
 				>
 			</File>
 			<File

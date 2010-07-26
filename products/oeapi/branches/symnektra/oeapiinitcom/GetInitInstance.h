@@ -2,4 +2,4 @@
 
 #include <Windows.h>
 
-extern "C" HRESULT __stdcall GetInitInstance(REFGUID objid, REFGUID key, void** ppObj);
+extern "C" HRESULT __stdcall GetInitInstance(REFGUID clsid, REFGUID key, void** ppObj);
