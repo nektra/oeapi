@@ -35,7 +35,6 @@
 #define _ATL_ALL_WARNINGS
 
 
-#include "resource.h"
 #include <atlbase.h>
 #include <atlcom.h>
 
