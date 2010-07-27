@@ -9,7 +9,7 @@
 
 #pragma once
 
-#include "auto_ptr.h"
+#include <auto_ptr.h>
 
 #include <list>
 #include <comet/bstr.h>

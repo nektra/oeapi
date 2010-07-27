@@ -3920,14 +3920,14 @@ void LoadPluginFromString(LPCTSTR valueData)
 
 	// Get CLSID for our server...
 	CLSID clsid;
-	WCHAR pzValue[1024];
+	TCHAR pzValue[1024];
 	HRESULT hr;
 
 	// Convert down to ANSI
 #ifndef UNICODE
 	MultiByteToWideChar(CP_ACP, 0, valueData, -1, pzValue, sizeof(pzValue)/sizeof(WCHAR)-1);
 #else
-	wcscpy(pzValue, valueData);
+	_tcscpy_s(pzValue,sizeof(pzValue)/sizeof(pzValue[0]),valueData);
 #endif
 
 	hr = CLSIDFromProgID(pzValue, &clsid);

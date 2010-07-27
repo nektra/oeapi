@@ -7,9 +7,7 @@
  *
  **/
 
-#ifndef _SE_DEBUG_H_
-#define _SE_DEBUG_H_
-
+#pragma once
 
 #define DEBUG_ERROR 0
 #define DEBUG_WARNING 1
@@ -27,4 +25,3 @@ inline void nkt_debug_print_dummy(int, LPCTSTR, ...) {}
 //#define dbgprint(a)
 #endif 
 
-#endif /* _SE_DEBUG_H_ */

@@ -1,29 +1,33 @@
 Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "launcher", "launcher\launcher.vcproj", "{2D700C88-0FF8-4320-88E5-6CEAF134F53A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF} = {A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oeapiinitcom", "oeapiinitcom\oeapiinitcom.vcproj", "{505DB289-BC5B-486C-9727-7BFC8E99D22D}"
 	ProjectSection(ProjectDependencies) = postProject
-		{2D700C88-0FF8-4320-88E5-6CEAF134F53A} = {2D700C88-0FF8-4320-88E5-6CEAF134F53A}
+		{A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF} = {A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oeapiplugin", "plugin\lib\oeapiplugin.vcproj", "{00907C49-617B-4736-85EC-B12D4A7AD74E}"
-	ProjectSection(ProjectDependencies) = postProject
-		{505DB289-BC5B-486C-9727-7BFC8E99D22D} = {505DB289-BC5B-486C-9727-7BFC8E99D22D}
-	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oecom", "plugin\oecom\oecom.vcproj", "{A1B84277-EF63-4F93-95B8-AD1C86233C30}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF} = {A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF}
 		{00907C49-617B-4736-85EC-B12D4A7AD74E} = {00907C49-617B-4736-85EC-B12D4A7AD74E}
 		{505DB289-BC5B-486C-9727-7BFC8E99D22D} = {505DB289-BC5B-486C-9727-7BFC8E99D22D}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oehook", "oehook\oehook.vcproj", "{215D83C7-E3A8-4A85-9DCE-B86EDAF3B91A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF} = {A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF}
+	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "oestore", "plugin\oestore\oestore.vcproj", "{FB58BEFD-334F-4571-A8CE-6DF93F1E3A6C}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF} = {A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF}
 		{A1B84277-EF63-4F93-95B8-AD1C86233C30} = {A1B84277-EF63-4F93-95B8-AD1C86233C30}
-		{215D83C7-E3A8-4A85-9DCE-B86EDAF3B91A} = {215D83C7-E3A8-4A85-9DCE-B86EDAF3B91A}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libsymnektra", "libsymnektra\libsymnektra.vcproj", "{43F2E58F-0F3A-4708-92BE-5F45619FF120}"

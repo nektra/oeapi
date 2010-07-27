@@ -10,32 +10,35 @@
 #include <windows.h>
 #include <tchar.h>
 
-#include <se_debug.h>
+#include "se_debug.h"
 
 #include <stdio.h>
-//#include <sstream>
+#include <sstream>
 
 int nkt_debug_level = 5;
 
 //---------------------------------------------------------------------------//
 void nkt_debug_print(int level, LPCTSTR format, ...)
 {
-	if(nkt_debug_level >= level)
-	{
-		va_list ap;
-		TCHAR buffer[2048];
-		va_start(ap, format);
+    if(nkt_debug_level >= level)
+    {
+        va_list ap;
+        TCHAR buffer[2048];
+        va_start(ap, format);
 #if _MSC_VER >= 1400
-		_vsntprintf_s(buffer, sizeof(buffer), _TRUNCATE, format, ap);
+        _vstprintf_s(buffer, _TRUNCATE, format, ap);
 #else
-		_vsntprintf(buffer, sizeof(buffer)/sizeof(buffer[0]), format, ap);
+        _vstprintf(buffer, format, ap);
 #endif
-		va_end(ap);
+        va_end(ap);
+        std::basic_stringstream<TCHAR> str;
 #ifdef OEAPI_DEBUG_PREFIX
-		OutputDebugString(OEAPI_DEBUG_PREFIX);
+        str << _T(OEAPI_DEBUG_PREFIX ## "th: ") << ::GetCurrentThreadId() << _T(" :") << buffer;
+#else
+        str << _T("th: ") << ::GetCurrentThreadId() << _T(" :") << buffer;
 #endif
 
-		OutputDebugString(buffer);
-	}
+        OutputDebugString(str.str().c_str());
+    }
 }
 

@@ -12,7 +12,7 @@
 //#define OEAPI_USE_CUSTOM_MESSAGE_LOOP
 //#define OEAPI_DATABASECHANGE_USE_EVENT
 
-#include "oeapi_config.h"
+#include <oeapi_config.h>
 #include "oeapi.h"
 
 //using namespace comet;

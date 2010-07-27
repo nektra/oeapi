@@ -451,32 +451,6 @@ BOOL IsVistaIE()
 	return _Initialized == 2;
 }
 
-int nkt_debug_level = 5;
-
-//---------------------------------------------------------------------------//
-void nkt_debug_print(int level, LPCTSTR format, ...)
-{
-	if(nkt_debug_level >= level)
-	{
-		va_list ap;
-		TCHAR buffer[2048];
-		va_start(ap, format);
-#if _MSC_VER >= 1400
-		_vstprintf_s(buffer, _TRUNCATE, format, ap);
-#else
-		_vstprintf(buffer, format, ap);
-#endif
-		va_end(ap);
-		std::basic_stringstream<TCHAR> str;
-#ifdef OEAPI_DEBUG_PREFIX
-		str << _T(OEAPI_DEBUG_PREFIX ## "th: ") << ::GetCurrentThreadId() << _T(" :") << buffer;
-#else
-		str << _T("th: ") << ::GetCurrentThreadId() << _T(" :") << buffer;
-#endif
-
-		OutputDebugString(str.str().c_str());
-	}
-}
 
 //---------------------------------------------------------------------------//
 std::basic_string<TCHAR> GetResourceString(HINSTANCE hInstance, int stringId)
