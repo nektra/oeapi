@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="libsymnektra"
-	ProjectGUID="{43F2E58F-0F3A-4708-92BE-5F45619FF120}"
-	RootNamespace="libsymnektra"
+	Name="oeapicommon"
+	ProjectGUID="{A13A2B35-0D31-40BD-BAF9-5AD3FBFDFDDF}"
+	RootNamespace="oeapicommon"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -41,13 +41,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../oeapiinitcom;../plugin/oestore;../plugin/oecom"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
+				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
-				RuntimeLibrary="1"
+				RuntimeLibrary="3"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
-				DebugInformationFormat="3"
+				DebugInformationFormat="4"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -104,9 +104,8 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="../oeapiinitcom;../plugin/oestore;../plugin/oecom"
 				PreprocessorDefinitions="WIN32;NDEBUG;_LIB"
-				RuntimeLibrary="0"
+				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
 				WarningLevel="3"
@@ -150,7 +149,31 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\libsymnektra.cpp"
+				RelativePath=".\nkt_lock.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\nkt_utils.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\NktMutex.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\oeapi_utils.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\se_debug.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Win32Process.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\winmail_utils.cpp"
 				>
 			</File>
 		</Filter>
@@ -160,9 +183,51 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\libsymnektra.h"
+				RelativePath=".\auto_ptr.h"
 				>
 			</File>
+			<File
+				RelativePath=".\nkt_hook.h"
+				>
+			</File>
+			<File
+				RelativePath=".\nkt_lock.h"
+				>
+			</File>
+			<File
+				RelativePath=".\nkt_registry.h"
+				>
+			</File>
+			<File
+				RelativePath=".\nkt_utils.h"
+				>
+			</File>
+			<File
+				RelativePath=".\NktMutex.h"
+				>
+			</File>
+			<File
+				RelativePath=".\oeapi_utils.h"
+				>
+			</File>
+			<File
+				RelativePath=".\se_debug.h"
+				>
+			</File>
+			<File
+				RelativePath=".\Win32Process.h"
+				>
+			</File>
+			<File
+				RelativePath=".\winmail_utils.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="Resource Files"
+			Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav"
+			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
+			>
 		</Filter>
 	</Files>
 	<Globals>
