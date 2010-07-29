@@ -4,7 +4,7 @@
 #include "OeApiInitState.h"
 #include "OeApiInit.h"
 #include "oeidentity.h"
-
+#include <NktApiKey.h>
 
 using namespace comet;
 using namespace OEAPIINITCOM;
@@ -12,6 +12,8 @@ using namespace OEAPIINITCOM;
 HRESULT __stdcall GetInitInstance(REFGUID clsid, REFGUID key, void** ppObj)
 {
     if (ppObj == NULL) return E_POINTER;
+
+    if (GetApiKey(clsid) != key) return E_NOINTERFACE;
 
     if (clsid == uuidof<OEAPIInit>())
     {

@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include "oeapi.h"
 #include "oeapiobj.h"
+#include <NktApiKey.h>
 
 using namespace comet;
 using namespace OEAPI;
@@ -9,6 +10,8 @@ using namespace OEAPI;
 HRESULT __stdcall GetCoreInstance(REFGUID clsid, REFGUID key, void** ppObj)
 {
     if (ppObj == NULL) return E_POINTER;
+
+    if (GetApiKey(clsid) != key) return E_NOINTERFACE;
 
     if (clsid == uuidof<OEAPIObj>())
     {

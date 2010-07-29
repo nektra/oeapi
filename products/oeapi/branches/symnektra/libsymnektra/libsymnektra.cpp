@@ -2,22 +2,19 @@
 
 #include <OESTORE.h>
 #include <OEAPIINITCOM.h>
-#include <oeapi.h>
+#include <OEAPI.h>
 
 #include <GetStoreInstance.h>
 #include <GetInitInstance.h>
 #include <GetCoreInstance.h>
 
-#include <tchar.h>
+#include <NktApiKey.h>
 
 using namespace comet;
 using namespace OEAPIINITCOM;
 using namespace OESTORE;
+using namespace OEAPI;
 
-GUID GetApiKey(REFGUID clsid)
-{
-    return clsid;
-}
 
 HRESULT SNGetInit(void** obj)
 {
@@ -36,11 +33,11 @@ HRESULT SNGetIdentity(void** obj)
 
 HRESULT SNGetApiCore(void** obj)
 {
-    return GetCoreInstance(uuidof<OEAPIInit>(),GetApiKey(uuidof<OEAPIInit>()),obj);
+    return GetCoreInstance(uuidof<OEAPIObj>(),GetApiKey(uuidof<OEAPIObj>()),obj);
 }
 
 HRESULT SNGetFolderManager(void** obj)
 {
-    return GetStoreInstance(comtype<IOEFolderManager>::uuid(),comtype<IOEFolderManager>::uuid(),obj);
+    return GetStoreInstance(uuidof<OEFolderManager>(),uuidof<OEFolderManager>(),obj);
 }
 

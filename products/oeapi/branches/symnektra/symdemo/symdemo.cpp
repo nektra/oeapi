@@ -93,7 +93,7 @@ HRESULT CSymDemo::InitializePlugin()
 
     // create oeapi init notification object
     
-    hr = SNGetInitState((void**)&m_init);
+    hr = SNGetInit((void**)&m_init);
     
     if(SUCCEEDED(hr))
     {

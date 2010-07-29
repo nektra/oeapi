@@ -41,7 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../oeapiinitcom;../plugin/oestore;../plugin/oecom"
+				AdditionalIncludeDirectories="../oeapiinitcom;../plugin/oestore;../plugin/oecom;&quot;$(SolutionDir)oeapicommon&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_LIB"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"

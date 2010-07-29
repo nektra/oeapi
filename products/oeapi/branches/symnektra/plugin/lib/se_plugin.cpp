@@ -22,7 +22,7 @@
 #include "oe_msgwnd.h"
 #include "oe_menu.h"
 
-#include "..\oehook\se_hook.h"
+//#include "..\oehook\se_hook.h"
 
 #ifdef EVALUATION_VERSION
 #include "eval_utils.h"
