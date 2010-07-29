@@ -27,11 +27,18 @@ class CSymDemo :
             SINK_ENTRY_INFO(1, __uuidof(OEAPIINITCOM::IOEInitEvents), 0x0001, OnInitOEAPI, &NoParamInfo)
             SINK_ENTRY_INFO(1, __uuidof(OEAPIINITCOM::IOEInitEvents), 0x0002, OnShutdownOEAPI, &NoParamInfo)
             SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), 0x0001, OnToolbarButtonClicked, &TwoLongParamInfo)
-            SINK_ENTRY_INFO(3, __uuidof(OESTORE::IOEFolderEvents), 0x0001, OnNewMessage, &OneLongParamInfo)
+            SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), 0x0006, OnMessageDownloadStarted, &NoParamInfo)
+            SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), 0x0007, OnMessageDownloadFinished, &NoParamInfo)
+            SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), 0x0008, OnNewMessageInOutbox, &OneLongParamInfo)
+            SINK_ENTRY_INFO(3, __uuidof(OESTORE::IOEFolderEvents), 0x0001, OnNewMessage, &OneLongParamInfo)            
         END_SINK_MAP()
-
+        
         STDMETHOD(OnInitOEAPI)();
         STDMETHOD(OnShutdownOEAPI)();
+        STDMETHOD(OnMessageDownloadStarted)();
+        STDMETHOD(OnMessageDownloadFinished)();
+        STDMETHOD(OnNewMessageInOutbox)(long msgId);
+
         STDMETHOD(OnToolbarButtonClicked)(long toolbarId, long buttonId);
         STDMETHOD(OnNewMessage)(long msgId);
 
@@ -41,13 +48,15 @@ class CSymDemo :
         CComPtr<IOEAPIInit> m_init;
         CComPtr<IOEAPIObj> m_oeapi;
         CComPtr<IOEFolder> m_inbox;
+	    CComPtr<IOEFolderManager> m_foldermanager;
 
         std::basic_string<TCHAR> m_identity;
 
-        TCHAR m_path[1024];
+        TCHAR m_path[MAX_PATH];
 
         long m_toolbarId;
-        long m_showHelp;
+        long m_msgwndtoolbarId;
+        long m_SendButton;
         long m_button;
 
 };
@@ -127,9 +136,9 @@ STDMETHODIMP CSymDemo::OnInitOEAPI()
 
 		// images path
 		std::basic_string<TCHAR> normal = m_path;
-		normal += _T("\\..\\images\\img_normal.bmp");
+		normal += _T("\\images\\img_normal.bmp");
 		std::basic_string<TCHAR> over = m_path;
-		over += _T("\\..\\images\\img_mouseover.bmp");
+		over += _T("\\images\\img_mouseover.bmp");
 
 		// create a toolbar
 		CComPtr<IOEToolbar> toolbar;
@@ -141,15 +150,15 @@ STDMETHODIMP CSymDemo::OnInitOEAPI()
 
 			// create a botton
 			CComPtr<IOEButton> button;
-			button = toolbar->CreateButton(_T("OEAPI Help"), _T(""), _T(""));
-			if(button != NULL)
-				m_showHelp = button->GetID();
+			button = toolbar->CreateButton(_T("Send Message"), _T(""), _T(""));
+			if(button != NULL) m_SendButton = button->GetID();
 
 			button = toolbar->CreateButton(_T("Button"), _T(""), _T(""));
 			m_button = button->GetID();
 			button->CreateSubButton(_T("Subbutton1"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton2"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton3"), normal.c_str(), over.c_str());
+            button->SetPopupStyle(FALSE);
 
 			button = toolbar->CreateButton(_T("Popup Button"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton1"), normal.c_str(), over.c_str());
@@ -157,13 +166,26 @@ STDMETHODIMP CSymDemo::OnInitOEAPI()
 			button->CreateSubButton(_T("Subbutton3"), normal.c_str(), over.c_str());
 			button->SetPopupStyle(TRUE);
 		}
+
+        toolbar = m_oeapi->CreateToolbarInMsgWnd(OE_ALL_MSG_WND);
+        if(toolbar != NULL)
+        {
+            toolbar->SetLargeButtons(FALSE);
+            m_msgwndtoolbarId = toolbar->GetID();
+
+            // create a botton
+            CComPtr<IOEButton> button;
+            button = toolbar->CreateButton(_T("Message window button"), _T(""), _T(""));
+
+
+        }
 	}
 
 	//
-	CComPtr<IOEFolderManager> fm;
-	if(SUCCEEDED(SNGetFolderManager((void**)&fm)))
+
+	if(SUCCEEDED(SNGetFolderManager((void**)&m_foldermanager)))
 	{
-		m_inbox = fm->GetInboxFolder();
+		m_inbox = m_foldermanager->GetInboxFolder();
 		if(m_inbox != NULL)
 		{
 			// start listening folder events for Inbox
@@ -198,12 +220,50 @@ STDMETHODIMP CSymDemo::OnShutdownOEAPI()
 	return S_OK;
 }
 
+STDMETHODIMP CSymDemo::OnMessageDownloadStarted()
+{
+    MessageBox(0,L"OnMessageDownloadStarted",L"",0);
+    return S_OK;
+}
+
+STDMETHODIMP CSymDemo::OnMessageDownloadFinished()
+{
+    MessageBox(0,L"OnMessageDownloadFinished",L"",0);
+    return S_OK;
+}
+
+STDMETHODIMP CSymDemo::OnNewMessageInOutbox(long msgId)
+{
+    IOEFolderPtr outbox = m_foldermanager->GetOutboxFolder();
+    IOEMessagePtr msg = outbox->OEGetMessage(msgId);
+    _bstr_t s = msg->GetDisplayTo();
+    s = L"OnNewMessageInOutbox: To: " + s;
+    MessageBox(0,s,L"",0);
+    return S_OK;   
+}
+
 //------------------------------------------------------------------//
 STDMETHODIMP CSymDemo::OnToolbarButtonClicked(long toolbarId, long buttonId)
 {
-	if(m_toolbarId == toolbarId && buttonId == m_showHelp)
+	if(m_toolbarId == toolbarId && buttonId == m_SendButton)
 	{
-	
+	    long msgid = m_oeapi->GetCurrentMessageID();
+        long folderid = m_oeapi->GetSelectedFolderID();
+        m_oeapi->OESendMessage(folderid,msgid);*/
+        
+        /*IOEFolderPtr folder = m_foldermanager->GetFolder(folderid);
+        IOEMessagePtr msg = folder->OEGetMessage(msgid);
+
+        long bodyHandle = msg->GetBodyHandle(0, OE_IBL_ROOT);
+        _bstr_t bstrContent = msg->GetBodyText(bodyHandle); // here
+        if(bstrContent.length() != 0) // here
+        {
+            MessageBox(0,L"not null",L"",0);
+        }
+        else
+        {
+            MessageBox(0,L"null",L"",0);
+        }*/
 	}
 	return S_OK;
 }
