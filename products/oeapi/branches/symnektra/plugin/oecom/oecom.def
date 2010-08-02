@@ -5,4 +5,4 @@ LIBRARY      "oecom.dll"
 EXPORTS
 	StartServer         PRIVATE
 	ExitServer          PRIVATE
-	GetCoreInstance	
+	GetCoreInstance		@1

@@ -17,8 +17,8 @@ VIProductVersion "${PRODUCT_VERSION}.0"
 
 ; MUI Settings
 !define MUI_ABORTWARNING
-!define MUI_ICON "..\icon\oeapi.ico"
-!define MUI_UNICON "..\icon\oeapi.ico"
+!define MUI_ICON "oeapi.ico"
+!define MUI_UNICON "oeapi.ico"
 
 !define MUI_COMPONENTSPAGE_SMALLDESC ;No value
 

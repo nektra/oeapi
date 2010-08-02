@@ -130,7 +130,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;;&quot;$(SolutionDir)plugin\oecom&quot;;&quot;$(SolutionDir)plugin\oestore&quot;"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)libsymnektra&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;;&quot;$(SolutionDir)plugin\oecom&quot;;&quot;$(SolutionDir)plugin\oestore&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL"
 				RuntimeLibrary="0"
 				WarningLevel="3"

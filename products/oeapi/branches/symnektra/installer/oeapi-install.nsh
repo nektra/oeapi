@@ -97,68 +97,76 @@ done:
 FunctionEnd
 
 
-Section "Nektra OEAPI" Binaries
+Section "SymNektra OEAPI" Binaries
   SectionIn 1 RO
   ;; SetAutoClose false
   ;; SetAutoClose true
   SetOverwrite on
   SetOutPath "$INSTDIR\Bin"
-  File "..\Release\Launcher.exe"
-  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\${PRODUCT_BINARIES_DIR}\oecom.dll" "$INSTDIR\Bin\oecom.dll" "$INSTDIR"
-  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\${PRODUCT_BINARIES_DIR}\oeapiinitcom.dll" "$INSTDIR\Bin\oeapiinitcom.dll" "$INSTDIR"
-  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\${PRODUCT_BINARIES_DIR}\oestore.dll" "$INSTDIR\Bin\oestore.dll" "$INSTDIR"
-  !insertmacro InstallLib DLL NOTSHARED REBOOT_NOTPROTECTED "..\${PRODUCT_BINARIES_DIR}\oehook.dll"  "$INSTDIR\Bin\oehook.dll" "$INSTDIR"
-
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "Nektra OEAPI" "$INSTDIR\Bin\Launcher.exe"
+  File "..\${PRODUCT_BINARIES_DIR}\Launcher.exe"
+  File "..\${PRODUCT_BINARIES_DIR}\oecom.dll"
+  File "..\${PRODUCT_BINARIES_DIR}\oeapiinitcom.dll" 
+  File "..\${PRODUCT_BINARIES_DIR}\oestore.dll"
+  File "..\${PRODUCT_BINARIES_DIR}\oehook.dll"
+  
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "SymNektra OEAPI" "$INSTDIR\Bin\Launcher.exe"
 SectionEnd
 
 
 Section "Documentation" Documentation
-  !include "oeapi-doc.nsh"
+  SetOutPath "$INSTDIR\Doc"
+  File "..\doc\Install.rtf"
+  File "..\doc\OEAPI Dependencies.rtf"
+  File "..\doc\oeapi-help.chm"
+  File "..\doc\Readme.rtf"
 
+  File "..\doc\compiling-oeapi.txt"
+
+;  SetOutPath "$INSTDIR\Doc\Html"
+;  File "..\doc\html\*.html"
+;  File "..\doc\html\*.css"
+;  File "..\doc\html\*.png"
+;  File "..\doc\html\*.gif"
+  
+  
   SetShellVarContext all
   CreateDirectory "$SMPROGRAMS\Nektra\OEAPI"
   CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\OEAPI Help.lnk" "$INSTDIR\Doc\oeapi-help.chm"
-  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\OEAPI Help (HTML).lnk" "$INSTDIR\Doc\Html\index.html"
-!ifdef PRODUCT_INCLUDE_SOURCES
+  ;CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\OEAPI Help (HTML).lnk" "$INSTDIR\Doc\Html\index.html"
   CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\Compiling OEAPI.lnk" "$INSTDIR\Doc\compiling-oeapi.txt"
-!endif
-SectionEnd
-
-
-
-Section "Sample Projects" Samples
-  !include "oeapi-demos.nsh"
-  !include "oeapi-shortcuts.nsh"
   
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DemosPath" "${OEAPI_DEMO_DIR}"
+  CreateDirectory "$SMPROGRAMS\Nektra\OEAPI"
+  WriteIniStr "$SMPROGRAMS\Nektra\OEAPI\Desktop.ini" ".ShellClassInfo" "IconFile" "$INSTDIR\Bin\Launcher.exe"
+  WriteIniStr "$SMPROGRAMS\Nektra\OEAPI\Desktop.ini" ".ShellClassInfo" "IconIndex" "0"
+  WriteIniStr "$SMPROGRAMS\Nektra\OEAPI\Desktop.ini" ".ShellClassInfo" "ConfirmFileOp" "0"
+  FlushIni "$SMPROGRAMS\Nektra\OEAPI\Desktop.ini"
+  
+    ; Set the new folder as a system folder
+  SetFileAttributes "$SMPROGRAMS\Nektra\OEAPI" SYSTEM
+  ; Set file attributes to system and hidden
+  SetFileAttributes "$SMPROGRAMS\Nektra\OEAPI\Desktop.ini" HIDDEN|SYSTEM
+
+
 SectionEnd
 
-
-!ifdef PRODUCT_INCLUDE_SOURCES
 Section "Source Code" Source
-  !include "oeapi-source.nsh"
+  ;!include "oeapi-source.nsh"
   CreateDirectory "$SMPROGRAMS\Nektra\OEAPI\Source Code"
   CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\Source Code\oeapi.sln.lnk" "$INSTDIR\Source\oeapi.sln"
 SectionEnd
-!endif
 
 
-LangString DESC_Binaries ${LANG_ENGLISH} "Nektra OEAPI COM objects."
-LangString DESC_Documentation ${LANG_ENGLISH} "Documentation in CHM and HTML formats."
-LangString DESC_Samples ${LANG_ENGLISH} "Sample projects in VB, C#, C++ and Delphi."
-!ifdef PRODUCT_INCLUDE_SOURCES
+
+LangString DESC_Binaries ${LANG_ENGLISH} "Nektra OEAPI objects."
+LangString DESC_Documentation ${LANG_ENGLISH} "Documentation in CHM format."
 LangString DESC_Source ${LANG_ENGLISH} "Nektra OEAPI Source Code."
-!endif
+
 
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${Binaries} $(DESC_Binaries)
   !insertmacro MUI_DESCRIPTION_TEXT ${Documentation} $(DESC_Documentation)
-  !insertmacro MUI_DESCRIPTION_TEXT ${Samples} $(DESC_Samples)
-!ifdef PRODUCT_INCLUDE_SOURCES
   !insertmacro MUI_DESCRIPTION_TEXT ${Source} $(DESC_Source)
-!endif
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
 

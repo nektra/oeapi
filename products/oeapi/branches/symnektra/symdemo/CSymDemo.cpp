@@ -11,7 +11,6 @@ using namespace std;
 
 CSymDemo::~CSymDemo()
 {
-    OutputDebugString(_T("Catl_addin::FinalRelease\n"));
     // _OEAPIInitEvents::DispEventUnadvise((IUnknown*)m_init);
     m_init = NULL;
 }
@@ -19,7 +18,6 @@ CSymDemo::~CSymDemo()
 //------------------------------------------------------------------//
 HRESULT CSymDemo::InitializePlugin()
 {
-    OutputDebugString(_T("Catl_addin::FinalConstruct\n"));
     HRESULT hr;
 
     m_identity = _T("");
@@ -182,9 +180,9 @@ STDMETHODIMP CSymDemo::OnToolbarButtonClicked(long toolbarId, long buttonId)
         {
             long msgid = m_oeapi->GetCurrentMessageID();
             long folderid = m_oeapi->GetSelectedFolderID();
-            m_oeapi->OESendMessage(folderid,msgid);
+            //m_oeapi->OESendMessage(folderid,msgid);
             
-           /* IOEFolderPtr folder = m_foldermanager->GetFolder(folderid);
+            IOEFolderPtr folder = m_foldermanager->GetFolder(folderid);
             IOEMessagePtr msg = folder->OEGetMessage(msgid);
 
             long bodyHandle = msg->GetPlainBody();
@@ -196,7 +194,7 @@ STDMETHODIMP CSymDemo::OnToolbarButtonClicked(long toolbarId, long buttonId)
             else
             {
                 MessageBox(0,L"null",L"",0);
-            }*/
+            }
         } 
         else if (buttonId == m_ShowFoldersButton)
         {
