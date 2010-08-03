@@ -61,12 +61,11 @@
   File "..\oeapiinitcom\std.h"
 
   SetOutPath "$INSTDIR\Source\oehook"
-  File "..\oehook\oehook.vcproj"
   File "..\oehook\oehook.rc"
+  File "..\oehook\oehook.vcproj"
   File "..\oehook\resource.h"
   File "..\oehook\se_hook.cpp"
-  File "..\oehook\se_hook.h"
-
+  
   SetOutPath "$INSTDIR\Source\plugin\lib"
   File "..\plugin\lib\oeapi.cpp"
   File "..\plugin\lib\oeapi.h"

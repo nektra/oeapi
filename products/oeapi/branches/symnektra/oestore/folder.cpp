@@ -13,7 +13,7 @@
 #include "manager.h"
 #include "oestore.h"
 
-#include "../lib/oeapi.h"
+#include "../plugin/oeapi.h"
 
 #include "oeapi_utils.h"
 

@@ -54,7 +54,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200 "
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;../lib;../../oeapiinitcom"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				WarningLevel="3"
 			/>
@@ -139,7 +139,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200 "
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;../lib;../../oeapiinitcom"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				WarningLevel="3"
 			/>
@@ -224,7 +224,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200 "
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;../lib;../../oeapiinitcom"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -314,7 +314,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200 "
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;../lib;../../oeapiinitcom"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -404,7 +404,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200 "
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;../lib;../../oeapiinitcom"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				RuntimeLibrary="0"
 				WarningLevel="3"
@@ -489,7 +489,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200 "
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;../lib;../../oeapiinitcom"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				WarningLevel="3"
 			/>
@@ -574,7 +574,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200 "
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;../lib;../../oeapiinitcom"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				WarningLevel="3"
 			/>
@@ -659,7 +659,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalOptions="/Zm200 "
 				InlineFunctionExpansion="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;../lib;../../oeapiinitcom"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				WarningLevel="3"
 			/>

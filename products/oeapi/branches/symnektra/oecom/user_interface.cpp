@@ -8,14 +8,14 @@
  **/
 
 #include "std.h"
-#include "oe_toolbar.h"
-#include "oe_msgwnd.h"
-#include "oe_menu.h"
+#include <oe_toolbar.h>
+#include <oe_msgwnd.h>
+#include <oe_menu.h>
 
 #include "user_interface.h"
 #include "main.h"
 
-#include "../lib/oeapi.h"
+#include "../plugin/oeapi.h"
 
 #include "se_debug.h"
 

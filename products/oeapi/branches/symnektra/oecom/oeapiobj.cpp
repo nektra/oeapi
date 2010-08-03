@@ -16,7 +16,7 @@
 #include "se_debug.h"
 
 // there is a auto-generated oeapi.h in this project, so we must specify the path
-#include "../lib/oeapi.h"
+#include "../plugin/oeapi.h"
 
 #ifdef EVALUATION_VERSION
 #include "eval_utils.h"

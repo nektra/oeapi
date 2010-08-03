@@ -13,7 +13,7 @@
 #include "folder.h"
 
 #include "oeapi_utils.h"
-#include "../lib/oeapi.h"
+#include "../plugin/oeapi.h"
 
 #include "se_debug.h"
 
