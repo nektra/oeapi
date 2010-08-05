@@ -24,9 +24,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -52,15 +52,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../common"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\oeapicommon&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;PRINT_ERRORS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -68,19 +66,15 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -138,14 +132,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="../common"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\oeapicommon&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;PRINT_ERRORS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -161,7 +154,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
 				SubSystem="2"
@@ -197,9 +189,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -224,8 +216,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../common"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\oeapicommon&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;ENTERPRISE_VERSION;EVALUATION_VERSION;;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -233,17 +227,13 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -300,8 +290,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../common"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\oeapicommon&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;ENTERPRISE_VERSION;EVALUATION_VERSION;;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -316,7 +307,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -350,9 +340,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -377,8 +367,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../common"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\oeapicommon&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -386,17 +378,13 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -453,8 +441,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../common"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\oeapicommon&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -469,7 +458,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -503,9 +491,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -530,8 +518,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../common"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\oeapicommon&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -539,17 +529,13 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -606,8 +592,9 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="../common"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\oeapicommon&quot;"
 				PreprocessorDefinitions="NDEBUG;WIN32;_WINDOWS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -622,7 +609,6 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -662,32 +648,15 @@
 				RelativePath="launcher.cpp"
 				>
 			</File>
-			<File
-				RelativePath="launcher.rc"
-				>
-			</File>
-			<File
-				RelativePath="..\common\oeapi_utils.cpp"
-				>
-			</File>
-			<File
-				RelativePath="StdAfx.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
-			Name="Header Files"
-			Filter="h;hpp;hxx;hm;inl"
-			>
-			<File
-				RelativePath="StdAfx.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Resource Files"
 			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
 			>
+			<File
+				RelativePath="launcher.rc"
+				>
+			</File>
 			<File
 				RelativePath="oeapi.ico"
 				>

@@ -1,0 +1,27 @@
+/* $Id: se_debug.h,v 1.10 2008/09/07 16:55:58 ibejarano Exp $
+ *
+ * Author: Pablo Yabo (pablo.yabo@nektra.com)
+ *
+ * Copyright (c) 2004-2008 Nektra S.A., Buenos Aires, Argentina.
+ * All rights reserved.
+ *
+ **/
+
+#pragma once
+
+#define DEBUG_ERROR 0
+#define DEBUG_WARNING 1
+#define DEBUG_INFO 2
+#define DEBUG_TRACE 4
+
+void nkt_debug_print(int level, LPCTSTR format, ...);
+inline void nkt_debug_print_dummy(int, LPCTSTR, ...) {}
+
+#ifdef PRINT_ERRORS
+#define debug_print nkt_debug_print
+//#define dbgprint(a) nkt_debug_print(DEBUG_ERROR, a)
+#else
+#define debug_print nkt_debug_print_dummy
+//#define dbgprint(a)
+#endif 
+

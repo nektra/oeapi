@@ -24,9 +24,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -52,7 +52,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\common"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 			/>
 			<Tool
@@ -67,12 +67,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
-				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -104,8 +101,9 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -131,7 +129,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\common"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 			/>
 			<Tool
@@ -146,11 +144,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -182,9 +178,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -211,15 +207,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\common"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
-				DebugInformationFormat="4"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -233,14 +227,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
-				LinkLibraryDependencies="false"
 				LinkIncremental="2"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -272,8 +263,9 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -300,14 +292,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\common"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
 				BrowseInformation="1"
 				WarningLevel="3"
-				Detect64BitPortabilityProblems="true"
 				DebugInformationFormat="3"
 			/>
 			<Tool
@@ -322,13 +313,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				LinkIncremental="2"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -360,9 +349,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -388,8 +377,10 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\common"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -403,12 +394,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
-				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -440,8 +428,9 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -467,7 +456,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\common"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 			/>
 			<Tool
@@ -482,11 +471,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -518,9 +505,9 @@
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -546,7 +533,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\common"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 			/>
 			<Tool
@@ -561,12 +548,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				RegisterOutput="true"
-				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -598,8 +582,9 @@
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
 			UseOfMFC="0"
-			UseOfATL="1"
+			UseOfATL="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -625,7 +610,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="..\common"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 			/>
 			<Tool
@@ -640,11 +625,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				LinkLibraryDependencies="false"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -679,11 +662,15 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="..\common\oeapi_utils.cpp"
+				RelativePath=".\GetInitInstance.cpp"
 				>
 			</File>
 			<File
-				RelativePath="oeapiinitcom.cpp"
+				RelativePath=".\main.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\OeApiInit.cpp"
 				>
 			</File>
 			<File
@@ -779,6 +766,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\OeApiInitState.cpp"
+				>
+			</File>
+			<File
 				RelativePath="oeidentity.cpp"
 				>
 			</File>
@@ -792,7 +783,19 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath="..\common\oeapi_event.h"
+				RelativePath=".\GetInitInstance.h"
+				>
+			</File>
+			<File
+				RelativePath=".\globals.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OeApiInit.h"
+				>
+			</File>
+			<File
+				RelativePath=".\OeApiInitState.h"
 				>
 			</File>
 			<File
@@ -809,9 +812,12 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			Name="Generated Files"
 			>
+			<File
+				RelativePath=".\OEAPIINITCOM.h"
+				>
+			</File>
 		</Filter>
 	</Files>
 	<Globals>

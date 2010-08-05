@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="oehook"
-	ProjectGUID="{215D83C7-E3A8-4A85-9DCE-B86EDAF3B91A}"
-	RootNamespace="oehook"
+	Name="oestore"
+	ProjectGUID="{FB58BEFD-334F-4571-A8CE-6DF93F1E3A6C}"
+	RootNamespace="oestore"
 	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
@@ -18,319 +18,6 @@
 	<ToolFiles>
 	</ToolFiles>
 	<Configurations>
-		<Configuration
-			Name="Release|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			UseOfATL="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Release/oehook.tlb"
-				HeaderFileName=""
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				RuntimeLibrary="0"
-				WarningLevel="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="11274"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib shlwapi.lib"
-				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Release|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			UseOfATL="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName=".\Release/oehook.tlb"
-				HeaderFileName=""
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				RuntimeLibrary="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="11274"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib shlwapi.lib"
-				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Standard|Win32"
-			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
-			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			UseOfATL="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="1"
-				TypeLibraryName=".\Standard/oehook.tlb"
-				HeaderFileName=""
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				RuntimeLibrary="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="11274"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib shlwapi.lib"
-				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="1"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			Name="Standard|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			ConfigurationType="2"
-			UseOfMFC="0"
-			UseOfATL="0"
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="1"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				MkTypLibCompatible="true"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName=".\Standard/oehook.tlb"
-				HeaderFileName=""
-			/>
-			<Tool
-				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				RuntimeLibrary="0"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-				Culture="11274"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib shlwapi.lib"
-				SubSystem="2"
-				RandomizedBaseAddress="1"
-				DataExecutionPrevention="0"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
@@ -346,6 +33,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -359,13 +47,13 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Debug/oehook.tlb"
+				TypeLibraryName=".\Debug/oestore.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="1"
@@ -379,15 +67,16 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="11274"
+				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib shlwapi.lib"
+				AdditionalDependencies="psapi.lib"
 				LinkIncremental="2"
+				ModuleDefinitionFile="./oestore.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -414,6 +103,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -431,6 +121,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -444,13 +135,13 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/oehook.tlb"
+				TypeLibraryName=".\Debug/oestore.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -465,15 +156,16 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="_DEBUG"
-				Culture="11274"
+				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib shlwapi.lib"
+				AdditionalDependencies="comctl32.lib"
 				LinkIncremental="2"
+				ModuleDefinitionFile="./oestore.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -500,10 +192,11 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
-			Name="Evaluation|Win32"
+			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
 			ConfigurationType="2"
@@ -517,6 +210,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -530,14 +224,15 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="1"
-				TypeLibraryName=".\Evaluation/oehook.tlb"
+				TypeLibraryName=".\Release/oestore.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				RuntimeLibrary="0"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -545,14 +240,15 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="11274"
+				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib shlwapi.lib"
+				AdditionalDependencies="psapi.lib"
+				ModuleDefinitionFile="./oestore.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -578,10 +274,11 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
-			Name="Evaluation|x64"
+			Name="Release|x64"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			ConfigurationType="2"
@@ -595,6 +292,7 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -608,14 +306,14 @@
 				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="3"
-				TypeLibraryName=".\Evaluation/oehook.tlb"
+				TypeLibraryName=".\Release/oestore.tlb"
 				HeaderFileName=""
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				RuntimeLibrary="0"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -623,14 +321,14 @@
 			<Tool
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
-				Culture="11274"
+				Culture="0"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="psapi.lib shlwapi.lib"
+				ModuleDefinitionFile="./oestore.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -656,6 +354,329 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Standard|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Standard/oestore.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="0"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="psapi.lib"
+				ModuleDefinitionFile="./oestore.def"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Standard|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="3"
+				TypeLibraryName=".\Standard/oestore.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="0"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="./oestore.def"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Evaluation|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Evaluation/oestore.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="0"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="psapi.lib"
+				ModuleDefinitionFile="./oestore.def"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Evaluation|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="3"
+				TypeLibraryName=".\Evaluation/oestore.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;_USRDLL;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="0"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				ModuleDefinitionFile="./oestore.def"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -667,80 +688,132 @@
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
 			<File
-				RelativePath="se_hook.cpp"
+				RelativePath="folder.cpp"
 				>
-				<FileConfiguration
-					Name="Release|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Release|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Standard|Win32"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Standard|x64"
-					>
-					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						BrowseInformation="1"
-					/>
-				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\GetStoreInstance.cpp"
+				>
+			</File>
+			<File
+				RelativePath="gui_def.cpp"
+				>
+			</File>
+			<File
+				RelativePath="manager.cpp"
+				>
+			</File>
+			<File
+				RelativePath="message.cpp"
+				>
+			</File>
+			<File
+				RelativePath="..\oecom\messagestore.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\oeapi_props.cpp"
+				>
+			</File>
+			<File
+				RelativePath="oestore.cpp"
+				>
+			</File>
+			<File
+				RelativePath="oestore.def"
+				>
+			</File>
+			<File
+				RelativePath="oestore.idl"
+				>
 				<FileConfiguration
 					Name="Debug|Win32"
 					>
 					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						BasicRuntimeChecks="3"
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oestore.h;oestore.tlb"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Debug|x64"
 					>
 					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						BasicRuntimeChecks="3"
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oestore.h;oestore.tlb"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oestore.h;oestore.tlb"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Release|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oestore.h;oestore.tlb"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Standard|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oestore.h;oestore.tlb"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Standard|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oestore.h;oestore.tlb"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Evaluation|Win32"
 					>
 					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						BrowseInformation="1"
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oestore.h;oestore.tlb"
 					/>
 				</FileConfiguration>
 				<FileConfiguration
 					Name="Evaluation|x64"
 					>
 					<Tool
-						Name="VCCLCompilerTool"
-						AdditionalIncludeDirectories=""
-						BrowseInformation="1"
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oestore.h;oestore.tlb"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="oestore.rc"
+				>
+			</File>
+			<File
+				RelativePath="std.cpp"
+				>
 			</File>
 		</Filter>
 		<Filter
@@ -748,16 +821,43 @@
 			Filter="h;hpp;hxx;hm;inl"
 			>
 			<File
-				RelativePath=".\resource.h"
+				RelativePath="folder.h"
+				>
+			</File>
+			<File
+				RelativePath=".\GetStoreInstance.h"
+				>
+			</File>
+			<File
+				RelativePath="manager.h"
+				>
+			</File>
+			<File
+				RelativePath="message.h"
+				>
+			</File>
+			<File
+				RelativePath="..\oecom\messagestore.h"
+				>
+			</File>
+			<File
+				RelativePath=".\oeapi_props.h"
+				>
+			</File>
+			<File
+				RelativePath="resource.h"
+				>
+			</File>
+			<File
+				RelativePath="std.h"
 				>
 			</File>
 		</Filter>
 		<Filter
-			Name="Resource Files"
-			Filter="ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"
+			Name="Generated Files"
 			>
 			<File
-				RelativePath=".\oehook.rc"
+				RelativePath=".\OESTORE.h"
 				>
 			</File>
 		</Filter>

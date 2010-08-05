@@ -1,0 +1,8 @@
+; oecom.def : Declares the module parameters.
+
+LIBRARY      "oecom.dll"
+
+EXPORTS
+	StartServer         PRIVATE
+	ExitServer          PRIVATE
+	GetCoreInstance		@1

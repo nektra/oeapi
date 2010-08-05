@@ -1,13 +1,17 @@
+#pragma once
+
+#include "OEAPIINITCOM.h"
 
 using namespace comet;
 using namespace OEAPIINITCOM;
 
+#define TOeIdentity coclass_implementation<OEIdentity>
 
-template<> class coclass_implementation<OEIdentity> : public coclass<OEIdentity>
+template<> class TOeIdentity : public coclass<OEIdentity>
 {
 public:
-	coclass_implementation<OEIdentity>() {}
-	~coclass_implementation<OEIdentity>() {}
+	TOeIdentity() {}
+	~TOeIdentity() {}
 
 	static TCHAR *get_progid() { return _T("OEAPIINITCOM.OEIdentity"); }
 

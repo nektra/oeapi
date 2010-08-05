@@ -9,11 +9,13 @@
 
 #include "std.h"
 
+#include "oeidentity.h"
+
 #include "se_debug.h"
 #include "nkt_registry.h"
 
 
-bstr_t coclass_implementation<OEIdentity>::GetCurrentIdentity()
+bstr_t TOeIdentity::GetCurrentIdentity()
 {
 	NktRegistry reg;
 	TCHAR buf[512];

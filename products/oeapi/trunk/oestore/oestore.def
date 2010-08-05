@@ -1,0 +1,6 @@
+; oestore.def : Declares the module parameters.
+
+LIBRARY      "oestore.dll"
+
+EXPORTS
+	GetStoreInstance @1
