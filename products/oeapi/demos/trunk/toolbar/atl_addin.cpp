@@ -127,10 +127,10 @@ STDMETHODIMP Catl_addin::OnInitOEAPI()
 	}
 
 	//
-	CComPtr<IOEFolderManager> fm;
-	if(SUCCEEDED(fm.CoCreateInstance(CLSID_OEFolderManager)))
+
+	if(SUCCEEDED(m_foldermanager.CoCreateInstance(CLSID_OEFolderManager)))
 	{
-		m_inbox = fm->GetInboxFolder();
+		m_inbox = m_foldermanager->GetInboxFolder();
 		if(m_inbox != NULL)
 		{
 			// start listening folder events for Inbox
@@ -166,14 +166,75 @@ STDMETHODIMP Catl_addin::OnShutdownOEAPI()
 }
 
 //------------------------------------------------------------------//
+
+
+
+long FindTextBody(IOEMessagePtr msg, long hBody)
+{
+    if (!msg->IsBodyAttachment(hBody) && 
+        msg->IsBodyContentType(hBody,L"text","plain"))
+    {
+        return hBody;
+    }
+
+    long ret = NULL;
+    
+    _bstr_t bContentType = msg->GetBodyPrimaryContentType(hBody);
+
+    if (bContentType == _bstr_t("multipart"))
+    {
+        long hChild = msg->GetBodyHandle(hBody,OE_IBL_FIRST);
+        while (hChild!=NULL && ret == NULL)
+        {
+            ret = FindTextBody(msg, hChild);
+            hChild = msg->GetBodyHandle(hChild,OE_IBL_NEXT);
+        }
+    }
+    return ret;
+}
+
+
 STDMETHODIMP Catl_addin::OnToolbarButtonClicked(long toolbarId, long buttonId)
 {
 	if(m_toolbarId == toolbarId && buttonId == m_showHelp)
 	{
-		std::basic_string<TCHAR> helpFile = m_path;
+		/*std::basic_string<TCHAR> helpFile = m_path;
 		helpFile += _T("\\..\\..\\..\\doc\\OEAPI-Help.chm");
 
-		::HtmlHelp(NULL, helpFile.c_str(), HH_DISPLAY_TOC, NULL);
+		::HtmlHelp(NULL, helpFile.c_str(), HH_DISPLAY_TOC, NULL);*/
+
+
+        long msgid = m_oeapi->GetCurrentMessageID();
+        long folderid = m_oeapi->GetSelectedFolderID();
+        //m_oeapi->OESendMessage(folderid,msgid);
+
+        IOEFolderPtr folder = m_foldermanager->GetFolder(folderid);
+        IOEMessagePtr msg = folder->OEGetMessage(msgid);
+
+   
+        long contentHandle = FindTextBody(msg, msg->GetBodyHandle(NULL,OE_IBL_ROOT));
+        _bstr_t bstrTemp = msg->GetBodyText(contentHandle);
+        
+        if (bstrTemp.GetBSTR() != NULL)
+        {
+          
+            /*wstring sBody = (wchar_t *)bstrTemp;
+            sBody = TrimString(sBody);
+
+            if(sBody.length() > 0)
+            {
+                item.bContent = true;
+            }
+            else
+            {
+                item.bContent = false;
+            }*/
+        }
+        else
+        {
+            //item.bContent = false;
+        }
+
 	}
 	return S_OK;
 }

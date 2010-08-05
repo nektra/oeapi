@@ -40,16 +40,16 @@
 #include <atlcom.h>
 
 // to handle OnInit & OnShutdown
-#import "..\..\bin\oeapiinitcom.dll" named_guids
+#import <oeapiinitcom.tlb> named_guids
 using namespace OEAPIINITCOM;
 
 // to handle objects from oecom
-#import "..\..\bin\oecom.dll" named_guids, \
+#import <oecom.tlb> named_guids, \
 	rename("SendMessage", "OESendMessage")
 using namespace OEAPI;
 
 // to handle objects from oestore
-#import "..\..\bin\oestore.dll" named_guids \
+#import <oestore.tlb> named_guids \
 	rename("GetMessage", "OEGetMessage")
 using namespace OESTORE;
 

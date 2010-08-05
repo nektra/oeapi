@@ -84,6 +84,7 @@ private:
 	CComPtr<IOEAPIInit> m_init;
 	CComPtr<IOEAPIObj> m_oeapi;
 	CComPtr<IOEFolder> m_inbox;
+	CComPtr<IOEFolderManager> m_foldermanager;
 
 	std::basic_string<TCHAR> m_identity;
 
