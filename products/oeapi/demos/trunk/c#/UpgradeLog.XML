@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><?xml-stylesheet type='text/xsl' href='_UpgradeReport_Files/UpgradeReport.xslt'?><UpgradeLog>
+<Properties><Property Name="Solution" Value="demo">
+</Property><Property Name="Solution File" Value="C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\demo.sln">
+</Property><Property Name="Date" Value="Wednesday, May 05, 2010">
+</Property><Property Name="Time" Value="15:45 PM">
+</Property></Properties><Event ErrorLevel="0" Project="" Source="demo.sln" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\demo.sln">
+</Event><Event ErrorLevel="0" Project="demo" Source="demo.csproj" Description="Project file successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\demo.csproj">
+</Event><Event ErrorLevel="0" Project="demo" Source="AssemblyInfo.cs" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\AssemblyInfo.cs">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmCreateMsg.cs" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmCreateMsg.cs">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmEditProperty.cs" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmEditProperty.cs">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmFolders.cs" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmFolders.cs">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmInput.cs" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmInput.cs">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmMain.cs" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmMain.cs">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmMessageAttachments.cs" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmMessageAttachments.cs">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmMsgBodies.cs" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmMsgBodies.cs">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmCreateMsg.resx" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmCreateMsg.resx">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmEditProperty.resx" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmEditProperty.resx">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmFolders.resx" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmFolders.resx">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmInput.resx" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmInput.resx">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmMain.resx" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmMain.resx">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmMessageAttachments.resx" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmMessageAttachments.resx">
+</Event><Event ErrorLevel="0" Project="demo" Source="FrmMsgBodies.resx" Description="File successfully backed up as C:\Documents and Settings\Andres\Desktop\oeapi\products\oeapi\demo\c#\Backup\FrmMsgBodies.resx">
+</Event><Event ErrorLevel="0" Project="demo" Source="demo.csproj" Description="Project converted successfully">
+</Event><Event ErrorLevel="3" Project="demo" Source="demo.csproj" Description="Converted">
+</Event><Event ErrorLevel="0" Project="" Source="demo.sln" Description="Solution converted successfully">
+</Event><Event ErrorLevel="3" Project="" Source="demo.sln" Description="Converted">
+</Event><Event ErrorLevel="0" Project="demo" Source="demo.csproj" Description="Scan complete: Upgrade not required for project files.">
+</Event></UpgradeLog>
