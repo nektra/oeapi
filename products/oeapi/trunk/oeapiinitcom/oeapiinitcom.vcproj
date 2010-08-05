@@ -67,6 +67,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -144,6 +145,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -227,6 +229,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				LinkIncremental="2"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				GenerateDebugInformation="true"
@@ -313,6 +316,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				LinkIncremental="2"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				GenerateDebugInformation="true"
@@ -394,6 +398,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -471,6 +476,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -548,6 +554,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -625,6 +632,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -661,10 +669,6 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
-			<File
-				RelativePath=".\GetInitInstance.cpp"
-				>
-			</File>
 			<File
 				RelativePath=".\main.cpp"
 				>
@@ -782,10 +786,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
-			<File
-				RelativePath=".\GetInitInstance.h"
-				>
-			</File>
 			<File
 				RelativePath=".\globals.h"
 				>

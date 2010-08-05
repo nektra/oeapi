@@ -71,6 +71,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
@@ -156,6 +157,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
@@ -245,6 +247,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(OutDir)"
@@ -336,6 +339,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="$(OutDir)"
@@ -422,6 +426,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
@@ -506,6 +511,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
@@ -591,6 +597,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
@@ -676,6 +683,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
@@ -716,10 +724,6 @@
 			Name="Source Files"
 			Filter="cpp;c;cxx;rc;def;r;odl;idl;hpj;bat"
 			>
-			<File
-				RelativePath=".\GetCoreinstance.cpp"
-				>
-			</File>
 			<File
 				RelativePath="main.cpp"
 				>
@@ -845,10 +849,6 @@
 			Name="Header Files"
 			Filter="h;hpp;hxx;hm;inl"
 			>
-			<File
-				RelativePath=".\GetCoreInstance.h"
-				>
-			</File>
 			<File
 				RelativePath="main.h"
 				>

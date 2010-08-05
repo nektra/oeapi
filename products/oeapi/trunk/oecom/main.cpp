@@ -29,8 +29,6 @@
 #include "OEAPIINITCOM.h"
 #include "nkt_registry.h"
 
-#include <GetInitInstance.h>
-
 #ifndef STATIC_LIBRARY
 
 #include <comet/comet.h>
@@ -811,8 +809,7 @@ void OEAPIManager::CreateOEAPIInitObject()
 {
 	if(g_OEAPIInitState.is_null())
     {
-        //g_OEAPIInitState = OEAPIINITCOM::OEAPIInitState::create();
-        GetInitInstance(uuidof<OEAPIINITCOM::OEAPIInitState>(),uuidof<OEAPIINITCOM::OEAPIInitState>(),(void**)&g_OEAPIInitState);
+        g_OEAPIInitState = OEAPIINITCOM::OEAPIInitState::create();
 		if(g_OEAPIInitState.is_null()) {
 			debug_print(DEBUG_ERROR, _T("OEAPIManager::CreateOEAPIInitObject: Error CoCreateInstance.\n"));
 		}
@@ -4146,9 +4143,8 @@ DWORD _stdcall OEAPICOMServerProc(void *)
 	if(CoInitialize(0) == S_OK) {
 		// Needs to be called AFTER CoInitialize
 		
-        //LoadRegisteredPlugins();
-        LoadPluginFromString(_T("symdemo.dll"));
-
+        LoadRegisteredPlugins();
+        
 		oeapi_exe_server server(hInstOecom);
 //		exe_server<type_library> server(hInstOecom);
 
@@ -4270,11 +4266,7 @@ void _stdcall StartServer(HWND hwnd)
 			// if I create this object here I prevent the unload because this module should
 			// be the owner of the library.
 			
-            OEAPIINITCOM::IOEAPIInitState *pInitstate = NULL;
-            GetInitInstance(uuidof<OEAPIINITCOM::OEAPIInitState>(),uuidof<OEAPIINITCOM::OEAPIInitState>(),(void**)&pInitstate);
-            g_OEAPIInitState = pInitstate;
-
-            //g_OEAPIInitState = OEAPIINITCOM::OEAPIInitState::create();
+            g_OEAPIInitState = OEAPIINITCOM::OEAPIInitState::create();
 
 			//LoadRegisteredPlugins();
 

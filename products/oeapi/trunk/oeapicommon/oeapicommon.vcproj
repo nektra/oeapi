@@ -177,10 +177,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\NktApiKey.h"
-				>
-			</File>
-			<File
 				RelativePath=".\NktMutex.cpp"
 				>
 			</File>

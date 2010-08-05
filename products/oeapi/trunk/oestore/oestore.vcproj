@@ -74,6 +74,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="psapi.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="./oestore.def"
@@ -163,6 +164,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="comctl32.lib"
 				LinkIncremental="2"
 				ModuleDefinitionFile="./oestore.def"
@@ -247,6 +249,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="psapi.lib"
 				ModuleDefinitionFile="./oestore.def"
 				SubSystem="2"
@@ -328,6 +331,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oestore.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -408,6 +412,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="psapi.lib"
 				ModuleDefinitionFile="./oestore.def"
 				SubSystem="2"
@@ -489,6 +494,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oestore.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -569,6 +575,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				AdditionalDependencies="psapi.lib"
 				ModuleDefinitionFile="./oestore.def"
 				SubSystem="2"
@@ -650,6 +657,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				RegisterOutput="true"
 				ModuleDefinitionFile="./oestore.def"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
@@ -689,10 +697,6 @@
 			>
 			<File
 				RelativePath="folder.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\GetStoreInstance.cpp"
 				>
 			</File>
 			<File
@@ -822,10 +826,6 @@
 			>
 			<File
 				RelativePath="folder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\GetStoreInstance.h"
 				>
 			</File>
 			<File

@@ -1,6 +1,9 @@
 ; oeapiinitcom.def : Declares the module parameters.
 
-LIBRARY      "oeapiinitcom.dll"
+LIBRARY      "oeapiinitcom.DLL"
 
 EXPORTS
-	GetInitInstance @1
+	DllCanUnloadNow     PRIVATE
+	DllGetClassObject   PRIVATE
+	DllRegisterServer   PRIVATE
+	DllUnregisterServer	PRIVATE
