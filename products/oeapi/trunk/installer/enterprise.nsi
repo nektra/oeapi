@@ -15,6 +15,7 @@
 LangString DESC_Binaries ${LANG_ENGLISH} "Nektra OEAPI COM objects."
 LangString DESC_Documentation ${LANG_ENGLISH} "Documentation in CHM and HTML formats."
 LangString DESC_Samples ${LANG_ENGLISH} "Sample projects in VB, C#, C++ and Delphi."
+
 !ifdef PRODUCT_INCLUDE_SOURCES
 LangString DESC_Source ${LANG_ENGLISH} "Nektra OEAPI Source Code."
 !endif
@@ -35,6 +36,8 @@ Section -Post
   Exec "$INSTDIR\Bin\Launcher.exe"
 
   WriteUninstaller "$INSTDIR\uninst.exe"
+  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\Uninstall.lnk" "$INSTDIR\uninst.exe"
+	
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "UninstallString" "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayVersion" "${PRODUCT_VERSION}"

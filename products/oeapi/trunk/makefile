@@ -15,6 +15,7 @@ installer-all: installer-standard installer-evaluation installer-enterprise inst
 
 build-common:
 	devenv oeapi.sln /Build "$(BUILDTYPE)|Win32"
+	devenv demo/demos.sln /Build "Release|Win32"
 
 build-debug:
 	set BUILDTYPE=Debug
