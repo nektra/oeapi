@@ -2,8 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9.00"
-	Name="demo"
+	Name="atldemo"
 	ProjectGUID="{B5DA6843-EEAB-48D0-8DA8-2C52CCE8D78A}"
+	RootNamespace="atldemo"
 	Keyword="AtlProj"
 	TargetFrameworkVersion="131072"
 	>

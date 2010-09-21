@@ -25,7 +25,7 @@ HKCR
 		}
 	}
 }
-HKCU
+HKLM
 {
 	Software
 	{
