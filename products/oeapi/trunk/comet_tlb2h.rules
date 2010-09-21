@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<VisualStudioToolFile
+	Name="Comet tlb2h"
+	Version="8.00"
+	>
+	<Rules>
+		<CustomBuildRule
+			Name="tlb2h"
+			DisplayName="Comet tlb2h"
+			CommandLine="tlb2h [outputhtml] -r  [RenameNamespace] [inputs]"
+			Outputs="[RenameNamespace].h"
+			FileExtensions="*.tlb"
+			ExecutionDescription="Comet tlb2h"
+			>
+			<Properties>
+				<EnumProperty
+					Name="outputhtml"
+					DisplayName="Ouput html"
+					Category="Output"
+					Description="Ouput/suppress html (default output)"
+					>
+					<Values>
+						<EnumValue
+							Value="0"
+							Switch="-h+"
+							DisplayName="Output"
+						/>
+						<EnumValue
+							Value="1"
+							Switch="-h-"
+							DisplayName="Supress"
+						/>
+					</Values>
+				</EnumProperty>
+				<StringProperty
+					Name="RenameNamespace"
+					DisplayName="Rename library namespace"
+					Category="Output"
+					Description="Rename library namespace"
+					Switch="[value]"
+					DefaultValue="$(InputName)"
+				/>
+			</Properties>
+		</CustomBuildRule>
+	</Rules>
+</VisualStudioToolFile>

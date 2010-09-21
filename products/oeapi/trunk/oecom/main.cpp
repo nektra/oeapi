@@ -1372,7 +1372,8 @@ void OEAPIManager::SetSelectedMessages(int count, int *msgIndexs, int focusIndex
 	int i;
 
 	newSel.alloc(count);
-	for(i=0; i<count; i++) {
+	for(i=0; i<count; i++)
+    {
 		DWORD msgId;
 		msgId = msgList_->GetMessageId(msgIndexs[i]);
 		if(msgId == -1) {
