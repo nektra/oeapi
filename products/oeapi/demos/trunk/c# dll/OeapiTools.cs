@@ -10,7 +10,7 @@ using System;
 using System.Drawing;
 using stdole;
 
-namespace Plugin
+namespace OeapiPlugin
 {
 	public class OeapiTools : System.Windows.Forms.AxHost
 	{

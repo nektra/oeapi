@@ -21,7 +21,7 @@ using OEAPI;
 using OEAPIINITCOM;
 using OESTORE;
 
-namespace Plugin
+namespace OeapiPlugin
 {
 	/// <summary>
 	/// Summary description for Class1.
@@ -34,29 +34,22 @@ namespace Plugin
 		public static void RegisterFunction(Type t)
 		{
 			// Attempt to open the key
-			RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Nektra\\OEAPI\\Plugins", true);
+			RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Nektra\\OEAPI\\Plugins", true);
 			// If the return value is null, the key doesn't exist
 			if ( key == null ) 
 			{
 				// The key doesn't exist; create it / open it
-				key = Registry.CurrentUser.CreateSubKey( "Software\\Nektra\\OEAPI\\Plugins");
+				key = Registry.LocalMachine.CreateSubKey( "Software\\Nektra\\OEAPI\\Plugins");
 			}
-			key.SetValue ("Plugin", (string)"Plugin.Main");
+            key.SetValue("OeapiPlugin", (string)"OeapiPlugin.Main");
 		}
 		   
 		[ComUnregisterFunctionAttribute]
 		public static void UnregisterFunction(Type t)
 		{
 			// Attempt to open the key
-			RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Nektra\\OEAPI\\Plugins");
-//			try
-//			{
-				key.DeleteValue("Plugin"); //if 'true' is added as a second parameter, eventual exceptions will be thrown
-//			}
-//			catch (Exception ex)
-//			{
-//				MessageBox.Show (ex.ToString(), "Exception");
-//			}
+            RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Nektra\\OEAPI\\Plugins", RegistryKeyPermissionCheck.ReadWriteSubTree);
+            key.DeleteValue("OeapiPlugin",false); //if 'true' is added as a second parameter, eventual exceptions will be thrown
 		}
 
 		private OEAPIInit oeInit;
