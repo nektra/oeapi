@@ -6,14 +6,14 @@
 
 Section "Sample Projects" Samples
     
-  SetShellVarContext all
-  CreateDirectory "$SMPROGRAMS\Nektra\OEAPI"
-  ; Set the new folder as a system folder
-  SetFileAttributes "$SMPROGRAMS\Nektra\OEAPI" SYSTEM
- 
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DemosPath" "${OEAPI_DEMO_DIR}"
-  
-  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\Demos Folder.lnk" "${OEAPI_DEMO_DIR}\"
+	SetShellVarContext all
+	CreateDirectory "$SMPROGRAMS\Nektra\OEAPI"
+	; Set the new folder as a system folder
+	SetFileAttributes "$SMPROGRAMS\Nektra\OEAPI" SYSTEM
+
+	WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DemosPath" "${OEAPI_DEMO_DIR}"
+
+	CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\Demos Folder.lnk" "${OEAPI_DEMO_DIR}\"
     
 ; C# DLL demo
 	SetOutPath "${OEAPI_DEMO_DIR}\C# DLL"
@@ -26,6 +26,9 @@ Section "Sample Projects" Samples
 	File "..\demo\c# dll\Plugin.csproj"
 
 	File "..\demo\c# dll\Release\OeapiPlugin.dll" 
+	File "..\demo\c# dll\Release\Interop.OEAPI.dll" 
+	File "..\demo\c# dll\Release\Interop.OEAPIINITCOM.dll" 
+	File "..\demo\c# dll\Release\Interop.OESTORE.dll" 	
 	
 	; get directory of .NET framework installation
 	Push "v2.0"
@@ -33,7 +36,7 @@ Section "Sample Projects" Samples
 	Pop $R0 ; .net framework v2.0 installation directory
 	StrCmpS "" $R0 err_dot_net_not_found
 
-	ExecWait '"$R0\RegAsm.exe" OeapiPlugin.dll'
+	ExecWait '"$R0\RegAsm.exe" /codebase OeapiPlugin.dll'
  
 err_dot_net_not_found:
 
@@ -43,30 +46,36 @@ err_dot_net_not_found:
   CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\C# DLL Demo\Plugin.csproj.lnk" "${OEAPI_DEMO_DIR}\C# DLL\Plugin.csproj"  
   
 ; C# EXE demo
-  SetOutPath "${OEAPI_DEMO_DIR}\C# EXE"
-  File "..\demo\c#\oeapi.ico"
-  File "..\demo\c#\AssemblyInfo.cs"
-  File "..\demo\c#\csdemo.csproj"
-  File "..\demo\c#\FrmCreateMsg.cs"
-  File "..\demo\c#\FrmCreateMsg.resx"
-  File "..\demo\c#\FrmEditProperty.cs"
-  File "..\demo\c#\FrmEditProperty.resx"
-  File "..\demo\c#\FrmFolders.cs"
-  File "..\demo\c#\FrmFolders.resx"
-  File "..\demo\c#\FrmInput.cs"
-  File "..\demo\c#\FrmInput.resx"
-  File "..\demo\c#\FrmMain.cs"
-  File "..\demo\c#\FrmMain.resx"
-  File "..\demo\c#\FrmMessageAttachments.cs"
-  File "..\demo\c#\FrmMessageAttachments.resx"
-  File "..\demo\c#\FrmMsgBodies.cs"
-  File "..\demo\c#\FrmMsgBodies.resx"
-  File "..\demo\c#\Release\csharpdemo.exe"
-  
-  SetOutPath "${OEAPI_DEMO_DIR}\C# EXE"
-  CreateDirectory "$SMPROGRAMS\Nektra\OEAPI\C# EXE Demo"
-  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\C# EXE Demo\demo.exe.lnk" "${OEAPI_DEMO_DIR}\C# EXE\csharpdemo.exe"  
-  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\C# EXE Demo\csdemo.csproj.lnk" "${OEAPI_DEMO_DIR}\C# EXE\csdemo.csproj"    
+	SetOutPath "${OEAPI_DEMO_DIR}\C# EXE"
+	File "..\demo\c#\oeapi.ico"
+	File "..\demo\c#\AssemblyInfo.cs"
+	File "..\demo\c#\csdemo.csproj"
+	File "..\demo\c#\FrmCreateMsg.cs"
+	File "..\demo\c#\FrmCreateMsg.resx"
+	File "..\demo\c#\FrmEditProperty.cs"
+	File "..\demo\c#\FrmEditProperty.resx"
+	File "..\demo\c#\FrmFolders.cs"
+	File "..\demo\c#\FrmFolders.resx"
+	File "..\demo\c#\FrmInput.cs"
+	File "..\demo\c#\FrmInput.resx"
+	File "..\demo\c#\FrmMain.cs"
+	File "..\demo\c#\FrmMain.resx"
+	File "..\demo\c#\FrmMessageAttachments.cs"
+	File "..\demo\c#\FrmMessageAttachments.resx"
+	File "..\demo\c#\FrmMsgBodies.cs"
+	File "..\demo\c#\FrmMsgBodies.resx"
+
+	File "..\demo\c#\Release\csharpdemo.exe"
+	File "..\demo\c#\Release\Interop.OEAPI.dll" 
+	File "..\demo\c#\Release\Interop.OEAPIINITCOM.dll" 
+	File "..\demo\c#\Release\Interop.OESTORE.dll" 
+	File "..\demo\c#\Release\AxInterop.SHDocVw.dll" 
+	File "..\demo\c#\Release\Interop.SHDocVw.dll" 	
+
+	SetOutPath "${OEAPI_DEMO_DIR}\C# EXE"
+	CreateDirectory "$SMPROGRAMS\Nektra\OEAPI\C# EXE Demo"
+	CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\C# EXE Demo\demo.exe.lnk" "${OEAPI_DEMO_DIR}\C# EXE\csharpdemo.exe"  
+	CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\C# EXE Demo\csdemo.csproj.lnk" "${OEAPI_DEMO_DIR}\C# EXE\csdemo.csproj"    
 
 ; C++ Atl demo
   SetOutPath "${OEAPI_DEMO_DIR}\C++ ATL DLL"

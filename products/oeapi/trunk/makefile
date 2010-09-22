@@ -34,7 +34,8 @@ build-standard:
 	$(MAKE) build-common
 
 clean-common:
-	devenv WLMailApi.sln /Clean "$(BUILDTYPE)|Win32"
+	devenv oeapi.sln /Clean "$(BUILDTYPE)|Win32"
+	devenv demo/demos.sln /Clean "Release|Win32"	
 
 clean-debug:
 	set BUILDTYPE=Debug
