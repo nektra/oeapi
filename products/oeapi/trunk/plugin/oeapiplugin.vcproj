@@ -49,6 +49,7 @@
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_LIB;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				RuntimeLibrary="0"
 				WarningLevel="3"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -170,6 +171,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_LIB;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -291,6 +293,7 @@
 				Name="VCCLCompilerTool"
 				AdditionalIncludeDirectories="$(SolutionDir)oeapicommon"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_LIB;ENTERPRISE_VERSION;EVALUATION_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"

@@ -57,6 +57,7 @@
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				WarningLevel="3"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -76,6 +77,7 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
 				ModuleDefinitionFile="./oecom.def"
+				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -412,6 +414,7 @@
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				RuntimeLibrary="0"
 				WarningLevel="3"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -431,6 +434,7 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
 				ModuleDefinitionFile="./oecom.def"
+				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
@@ -583,6 +587,7 @@
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;EVALUATION_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				WarningLevel="3"
+				DebugInformationFormat="3"
 			/>
 			<Tool
 				Name="VCManagedResourceCompilerTool"
@@ -602,6 +607,7 @@
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="$(OutDir)\"
 				ModuleDefinitionFile="./oecom.def"
+				GenerateDebugInformation="true"
 				SubSystem="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
