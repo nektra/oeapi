@@ -38,7 +38,7 @@ void GetLibraryPath(const LPTSTR fileName, LPTSTR out_buffer, size_t bufferSize)
 
     _tcscat_s(out_buffer,bufferSize,_T("\\"));
     _tcscat_s(out_buffer,bufferSize,fileName);
-		}
+}
 
 bool LoadOeComModule(HWND hwnd)
 {
@@ -51,19 +51,19 @@ bool LoadOeComModule(HWND hwnd)
         if(pStartServer == NULL)
         {
             debug_print(DEBUG_ERROR, _T("CBTProc: Error GetProcAddress\n"));
-	}
+		}
         else
-{
+		{
             pStartServer(hwnd);
             return TRUE;
 		}
 	}
     else
-{
+	{
         debug_print(DEBUG_ERROR, _T("CBTProc: Error LoadLibrary %d\n"), GetLastError());
-		}
-    return FALSE;
 	}
+    return FALSE;
+}
 
 
 extern "C" __declspec(dllexport) 
@@ -81,16 +81,17 @@ LRESULT CALLBACK CBTHookProc(int nCode, WPARAM wParam, LPARAM lParam)
 
 
         GetClassName(hCreatedWindow, wndClassName, sizeof(wndClassName)/sizeof(wndClassName[0]));
-        if(_tcscmp(wndClassName, OutlookExpressClassName) == 0 ||
+        
+		if(_tcscmp(wndClassName, OutlookExpressClassName) == 0 ||
            _tcscmp(wndClassName, ATLSysListView32ClassName) == 0 ||
            _tcscmp(wndClassName, ATHNOTEClassName) == 0 )
-{
+		{
             g_hooked = LoadOeComModule(hCreatedWindow);
-			}
 		}
+	}
 
     return CallNextHookEx(NULL, nCode, wParam, lParam);
-	}
+}
 
 BOOL CheckProcessName(HANDLE hProcess)
 {
@@ -108,8 +109,8 @@ BOOL CheckProcessName(HANDLE hProcess)
     else
     {
         return FALSE;
-		}
 	}
+}
 
 BOOL InstallCBTHook(DWORD dwThreadId)
 {
@@ -120,7 +121,7 @@ BOOL InstallCBTHook(DWORD dwThreadId)
         if (hCBTHook!=NULL)
         {
             return TRUE;
-	}
+		}
     }
 
     return FALSE;
@@ -129,13 +130,13 @@ BOOL InstallCBTHook(DWORD dwThreadId)
 BOOL RemoveCBTHook()
 {
     if (hCBTHook!=NULL)
-		{
+	{
         UnhookWindowsHookEx(hCBTHook);
         debug_print(DEBUG_TRACE,_T("CBT Hook Removed\n"));
         hCBTHook=NULL;
-		}
-    return TRUE;
 	}
+    return TRUE;
+}
 
 
 BOOL RemoveWinEventHook()
@@ -150,14 +151,14 @@ BOOL RemoveWinEventHook()
 }
 
 BOOL RemoveWinEventHookAndWait(HANDLE hProcess)
-        {
+{
     if (RemoveWinEventHook())
-			{
+	{
         PostMessage(hWnd,WM_REMOVEHOOK,(WPARAM) hProcess,0);
         return TRUE;
-					}
+	}
     return FALSE;
-};
+}
 
 void CALLBACK WinEventProc(HWINEVENTHOOK hWinEventHook,
                            DWORD event,
@@ -188,15 +189,14 @@ void CALLBACK WinEventProc(HWINEVENTHOOK hWinEventHook,
                 if (!RemoveWinEventHookAndWait(hProcess))
                 {
                     CloseHandle(hProcess);
-								}
-								}
+				}
+			}
             else
             {
                 CloseHandle(hProcess);
-							}
-							}
-					}
-    return;
+			}
+		}
+	}
 }
 
 
@@ -204,7 +204,7 @@ void InstallWinEventHook()
 {
     hWinEventHook = SetWinEventHook(EVENT_OBJECT_CREATE,EVENT_OBJECT_CREATE,NULL,WinEventProc,0,0,WINEVENT_OUTOFCONTEXT|WINEVENT_SKIPOWNPROCESS);
     debug_print(DEBUG_TRACE,_T("WinEventHook 0x%x\n"),hWinEventHook);
-					}
+}
 
 BOOL WaitProcess(HANDLE hProcess)
 {
@@ -212,13 +212,13 @@ BOOL WaitProcess(HANDLE hProcess)
     WaitForSingleObject(hProcess,INFINITE);
     CloseHandle(hProcess);
     return TRUE;
-			}
+}
 
 LRESULT CALLBACK LoaderWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
     switch (message)
 	{
-    case WM_DESTROY:
+	case WM_DESTROY:
         PostQuitMessage(0);
         break;
     case WM_REMOVEHOOK:
@@ -228,9 +228,9 @@ LRESULT CALLBACK LoaderWndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lP
         break;
     default:
         return DefWindowProc(hWnd, message, wParam, lParam);
-				}
+	}
     return 0;
-				}
+}
 
 BOOL DllMain_ProcessAttach(HMODULE hModule, DWORD reason, LPVOID lpReserved)
 {
@@ -255,14 +255,14 @@ BOOL DllMain_ProcessAttach(HMODULE hModule, DWORD reason, LPVOID lpReserved)
         g_hCurrentModule = hModule;
 
         InstallWinEventHook();
-			}
+	}
 
 
     return TRUE;
-						}
+}
 
 BOOL DllMain_ProcessDetach(HMODULE hModule, DWORD reason, LPVOID lpReserved)
-		{
+{
     UNREFERENCED_PARAMETER(hModule);
     UNREFERENCED_PARAMETER(reason);
     UNREFERENCED_PARAMETER(lpReserved);
@@ -271,11 +271,11 @@ BOOL DllMain_ProcessDetach(HMODULE hModule, DWORD reason, LPVOID lpReserved)
     {
         RemoveCBTHook();
         RemoveWinEventHook();
-			}
+	}
 
 
     return TRUE;
-		}
+}
 
 
 BOOL APIENTRY DllMain(HMODULE hModule, DWORD reason, LPVOID lpReserved)
