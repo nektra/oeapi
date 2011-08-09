@@ -1,3 +1,6 @@
+!include LogicLib.nsh
+!include "include\ProcFunc.nsh"
+
 !insertmacro GetParent
 !insertmacro DirState
 
@@ -21,7 +24,7 @@ Function .onInit
 remove_nsis:
   ;ReadRegStr $R1 "${PRODUCT_UNINST_ROOT_KEY}" "${PRODUCT_UNINST_KEY}" "ProductPath"
   ${GetParent} "$R0" $R1
-  ReadRegStr $R2 "${PRODUCT_UNINST_ROOT_KEY}" "${PRODUCT_UNINST_KEY}" "DemoPath"
+  ReadRegStr $R2 "${PRODUCT_UNINST_ROOT_KEY}" "${PRODUCT_UNINST_KEY}" "Path"
 
   WriteRegStr "${PRODUCT_UNINST_ROOT_KEY}" "${PRODUCT_UNINST_KEY}" "OeapiUpgrade" "True"
 
@@ -38,12 +41,12 @@ remove_nsis:
   goto remove_error
 
 check_folders:
-; Check if the ProgramFiles\OEAPI is empty
+; Check if the ProgramFiles\Nektra\WLMailApi is empty
   ${DirState} "$R1" $R3
-  IntCmp $R3 -1 check_demo_path
+  IntCmp $R3 -1 check_path
 
-; Check if demo folder is empty
-check_demo_path:
+; Check if folder is empty
+check_path:
   StrCmp $R2 "" continue_upgrade
   ${DirState} "$R2" $R3
   IntCmp $R3 -1 continue_upgrade
@@ -58,7 +61,7 @@ query_reboot:
   
 reboot_before:
   ;MessageBox MB_OK "<$CMDLINE>"
-  WriteRegStr "HKLM" "Software\Microsoft\Windows\CurrentVersion\RunOnce" "Nektra OEAPI Install" "$CMDLINE"
+  WriteRegStr "HKLM" "Software\Microsoft\Windows\CurrentVersion\RunOnce" "Nektra WLMailApi Install" "$CMDLINE"
   
   Reboot
   goto done
@@ -97,74 +100,76 @@ done:
 FunctionEnd
 
 
-Section "Nektra OEAPI" Binaries
+Section "Nektra OEAPi" Binaries
+
+;; begin LiveMail installation check
+;;  ReadRegStr $R0 HKLM "Software\Microsoft\Windows Live Mail" "InstallRoot"
+;;  StrCmp $R0 "" wlmail_not_installed wlmail_installed
+
+;;wlmail_not_installed:
+;;  MessageBox MB_ICONEXCLAMATION \
+;;   "Windows Live Mail is not installed, please install it first."
+;;  Abort
+
+wlmail_installed:
+;;; end LiveMail installation check
+
+;;; begin Microsoft .Net Framework 2.0 installation check
+  ;;; http://support.microsoft.com/kb/315291
+  ReadRegStr $R0 HKLM "Software\Microsoft\.NETFramework\policy\v2.0" "50727"
+  StrCmp $R0 "" dotnet_framework_not_installed dotnet_framework_installed
+
+dotnet_framework_not_installed:
+  MessageBox MB_ICONEXCLAMATION \
+    "Microsoft .Net Framework 2.0 is not installed, please install it first."
+  Abort
+
+dotnet_framework_installed:
+;;; end Microsoft .Net Framework 2.0 installation check
+
+;------------------------------------
+test_wlmail_instance:
+  
+  ${If} ${ProcessExists} msimn.exe
+      MessageBox MB_OKCANCEL|MB_ICONEXCLAMATION \
+             "Please close any running instance of Outlook Express." \
+             IDOK test_wlmail_instance
+      Abort  
+  ${EndIf}
+
+;------------------------------------
+
   SectionIn 1 RO
   ;; SetAutoClose false
   ;; SetAutoClose true
   SetOverwrite on
   SetOutPath "$INSTDIR\Bin"
-  File "..\Release\Launcher.exe"
-  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\${PRODUCT_BINARIES_DIR}\oecom.dll" "$INSTDIR\Bin\oecom.dll" "$INSTDIR"
-  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\${PRODUCT_BINARIES_DIR}\oeapiinitcom.dll" "$INSTDIR\Bin\oeapiinitcom.dll" "$INSTDIR"
-  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\${PRODUCT_BINARIES_DIR}\oestore.dll" "$INSTDIR\Bin\oestore.dll" "$INSTDIR"
-  !insertmacro InstallLib DLL NOTSHARED REBOOT_NOTPROTECTED "..\${PRODUCT_BINARIES_DIR}\oehook.dll"  "$INSTDIR\Bin\oehook.dll" "$INSTDIR"
+  File "..\Release\launcher.exe"
+  !insertmacro InstallLib DLL NOTSHARED REBOOT_NOTPROTECTED "..\Release\oehook.dll" "$INSTDIR\Bin\WLMailApiCore.dll" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\Standard\oecom.dll" "$INSTDIR\Bin\oecom.dll" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\Standard\oeapiinitcom.dll" "$INSTDIR\Bin\oeapiinitcom.dll" "$INSTDIR"
+  !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\Standard\oestore.dll" "$INSTDIR\Bin\oestore.dll" "$INSTDIR"
 
-  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "Nektra OEAPI" "$INSTDIR\Bin\Launcher.exe"
-SectionEnd
-
-
-Section "Documentation" Documentation
-  !include "oeapi-doc.nsh"
-
-  SetShellVarContext all
-  CreateDirectory "$SMPROGRAMS\Nektra\OEAPI"
-  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\OEAPI Help.lnk" "$INSTDIR\Doc\oeapi-help.chm"
-  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\OEAPI Help (HTML).lnk" "$INSTDIR\Doc\Html\index.html"
-!ifdef PRODUCT_INCLUDE_SOURCES
-  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\Compiling OEAPI.lnk" "$INSTDIR\Doc\compiling-oeapi.txt"
-!endif
-SectionEnd
+  !include shortcuts.nsh
+;;  !include demos.nsh
 
 
-
-Section "Sample Projects" Samples
-  !include "oeapi-demos.nsh"
-  !include "oeapi-shortcuts.nsh"
+  WriteRegStr HKLM "SOFTWARE\Microsoft\Windows\CurrentVersion\Run" "Nektra OEApi" "$INSTDIR\Bin\launcher.exe"
   
-  WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DemosPath" "${OEAPI_DEMO_DIR}"
+   ;Load WLMailApiAgent if not loaded
+  Exec "$INSTDIR\Bin\launcher.exe"
 SectionEnd
 
 
-!ifdef PRODUCT_INCLUDE_SOURCES
-Section "Source Code" Source
-  !include "oeapi-source.nsh"
-  CreateDirectory "$SMPROGRAMS\Nektra\OEAPI\Source Code"
-  CreateShortCut "$SMPROGRAMS\Nektra\OEAPI\Source Code\oeapi.sln.lnk" "$INSTDIR\Source\oeapi.sln"
-SectionEnd
-!endif
 
 
-LangString DESC_Binaries ${LANG_ENGLISH} "Nektra OEAPI COM objects."
-LangString DESC_Documentation ${LANG_ENGLISH} "Documentation in CHM and HTML formats."
-LangString DESC_Samples ${LANG_ENGLISH} "Sample projects in VB, C#, C++ and Delphi."
-!ifdef PRODUCT_INCLUDE_SOURCES
-LangString DESC_Source ${LANG_ENGLISH} "Nektra OEAPI Source Code."
-!endif
-
+LangString DESC_Binaries ${LANG_ENGLISH} "Nektra OEApi"
 
 !insertmacro MUI_FUNCTION_DESCRIPTION_BEGIN
   !insertmacro MUI_DESCRIPTION_TEXT ${Binaries} $(DESC_Binaries)
-  !insertmacro MUI_DESCRIPTION_TEXT ${Documentation} $(DESC_Documentation)
-  !insertmacro MUI_DESCRIPTION_TEXT ${Samples} $(DESC_Samples)
-!ifdef PRODUCT_INCLUDE_SOURCES
-  !insertmacro MUI_DESCRIPTION_TEXT ${Source} $(DESC_Source)
-!endif
 !insertmacro MUI_FUNCTION_DESCRIPTION_END
 
-
-Section -Post
-  ; Load Launcher if not loaded
-  Exec "$INSTDIR\Bin\Launcher.exe"
+Section "Nektra OEAPi" Uninstaller
 
   WriteUninstaller "$INSTDIR\uninst.exe"
   WriteRegStr ${PRODUCT_UNINST_ROOT_KEY} "${PRODUCT_UNINST_KEY}" "DisplayName" "$(^Name)"

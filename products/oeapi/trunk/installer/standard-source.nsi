@@ -12,8 +12,9 @@
 !define PRODUCT_UNINST_KEY_MSI "Software\Microsoft\Windows\CurrentVersion\Uninstall\${PRODUCT_CODE}"
 !define PRODUCT_UNINST_ROOT_KEY "HKLM"
 !define PRODUCT_LICENSE "unlimited-license.txt"
-!define PRODUCT_OUTPUT_FILE "oeapi_v${WLMAILAPI_VERSION_STR}.exe"
+!define PRODUCT_OUTPUT_FILE "oeapi_v${WLMAILAPI_VERSION_STR}_src.exe"
 !define PRODUCT_BINARIES_DIR ${WLMAILAPI_BUILDTYPE_STR}
+!define PRODUCT_SOURCE TRUE
 !define DEMO_BINARIES_DIR "Release"
 
 !include "prelude.nsh"
@@ -22,3 +23,4 @@
 
 !include "uninstall.nsh"
 
+!include "source.nsh"

@@ -49,9 +49,6 @@ VIProductVersion "${PRODUCT_VERSION}.0"
 
 Name "${PRODUCT_NAME} ${PRODUCT_VERSION}"
 OutFile "${PRODUCT_OUTPUT_FILE}"
-InstallDir "$PROGRAMFILES\OEAPI"
+InstallDir "$PROGRAMFILES\Nektra\${PRODUCT_NAME}"
 ShowInstDetails hide ;;  show
 ShowUnInstDetails hide ;; show
-
-;!define OEAPI_DEMO_DIR "$DOCUMENTS\Nektra OEAPI Samples"
-!define OEAPI_DEMO_DIR "$INSTDIR\Demos"
