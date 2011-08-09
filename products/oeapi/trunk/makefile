@@ -8,14 +8,14 @@ all: clean-all build-all installer-all
 
 clean-all: clean-debug clean-evaluation clean-standard clean-doc clean-installer
 
-build-all: build-debug build-evaluation build-standard build-enterprise
+build-all: build-debug build-evaluation build-standard
 
-installer-all: installer-standard installer-evaluation installer-enterprise installer-enterprise-source
+installer-all: installer-evaluation installer-standard  installer-standard-source
 
 
 build-common:
 	devenv oeapi.sln /Build "$(BUILDTYPE)|Win32"
-	devenv demo/demos.sln /Build "Release|Win32"
+	devenv demo\demos.sln /Build "Release|Win32"
 
 build-debug:
 	set BUILDTYPE=Debug
@@ -25,18 +25,13 @@ build-evaluation:
 	set BUILDTYPE=Evaluation
 	$(MAKE) build-common
 
-build-enterprise:
-	set BUILDTYPE=Enterprise
-	$(MAKE) build-common
-
 build-standard:
 	set BUILDTYPE=Standard
 	$(MAKE) build-common
 
 clean-common:
 	devenv oeapi.sln /Clean "$(BUILDTYPE)|Win32"
-	devenv demo/demos.sln /Clean "Release|Win32"	
-
+	devenv demo\demos.sln /Clean "$(BUILDTYPE)|Win32"
 clean-debug:
 	set BUILDTYPE=Debug
 	$(MAKE) clean-common 
@@ -49,10 +44,6 @@ clean-standard:
 	set BUILDTYPE=Standard
 	$(MAKE) clean-common
 
-clean-enterprise:
-	set BUILDTYPE=Enterprise
-	$(MAKE) clean-common
-
 installer-common: doc 
 	echo !define WLMAILAPI_BUILDTYPE_STR "$(BUILDTYPE)" > installer\buildtype.nsh 
 
@@ -63,40 +54,33 @@ installer-common: doc
 
 	subwcrev . installer\version.nsh.in installer\version.nsh
 	subwcrev . tools\buildversion.py.in tools\buildversion.py
-	
-
 
 installer-evaluation: build-evaluation installer-common
 	$(MAKENSIS) installer\evaluation.nsi	
-	tools\symbolzip.py .\Evaluation .\installer oeapi evaluation
+	tools\symbolzip.py .\Bin .\installer oeapi evaluation
 
 installer-standard: build-standard installer-common
 	$(MAKENSIS) installer\standard.nsi
-	tools\symbolzip.py .\Standard .\installer oeapi standard
+	tools\symbolzip.py .\Bin .\installer oeapi standard
 
-installer-enterprise: build-enterprise installer-common
-	$(MAKENSIS) installer\enterprise.nsi
-	tools\symbolzip.py .\Enterprise .\installer oeapi enterprise
-
-installer-enterprise-source: build-enterprise installer-common
-	$(MAKENSIS) installer\enterprise-source.nsi
-	tools\symbolzip.py .\Enterprise .\installer oeapi enterprise-src
+installer-standard-source: build-standard installer-common
+	$(MAKENSIS) installer\standard-source.nsi
+	tools\symbolzip.py .\Bin .\installer oeapi src
 
 clean-installer:
 	del installer\buildtype.nsh
 	del installer\version.nsh
 
-	del oeapiinitcom\oeapiinitcom-distro.vcproj
-	del oestore\oestore-distro.vcproj
-	del oecom\oecom-distro.vcproj
-	del plugin\oeapiplugin-distro.vcproj
+	del source\WLMailApiInit\WLMailApiInit-distro.vcproj
+	del source\WLMailStore\WLMailStore-distro.vcproj
+	del source\WLMailCom\oecom-distro.vcproj
+	del source\lib\oeapiplugin-distro.vcproj
 
 doc:
-	cd Documentation
+	cd doc
 	$(DOXYGEN)
 	cd ..
 
 clean-doc:
-	del Documentation\OEAPI-Help.chm
-	del Documentation\html /S /Q
-
+	del doc\WLMailApiHelp.chm 
+	del doc\html /S /Q

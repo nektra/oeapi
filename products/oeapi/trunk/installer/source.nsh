@@ -5,7 +5,7 @@ Section CopySource
 	
 	SetOutPath "$INSTDIR\Source"
 
-	File /oname=oeapi.sln "${INPATH_PRODUCT_SRCDIR}\oeapi-distro.sln"
+	File "${INPATH_PRODUCT_SRCDIR}\oeapi.sln"
 	File "${INPATH_PRODUCT_SRCDIR}\comet_tlb2h.rules"
 
 	SetOutPath "$INSTDIR\Source\launcher"

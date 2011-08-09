@@ -145,7 +145,7 @@ test_wlmail_instance:
   SetOverwrite on
   SetOutPath "$INSTDIR\Bin"
   File "..\Release\launcher.exe"
-  !insertmacro InstallLib DLL NOTSHARED REBOOT_NOTPROTECTED "..\Release\oehook.dll" "$INSTDIR\Bin\WLMailApiCore.dll" "$INSTDIR"
+  !insertmacro InstallLib DLL NOTSHARED REBOOT_NOTPROTECTED "..\Release\oehook.dll" "$INSTDIR\Bin\oehook.dll" "$INSTDIR"
   !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\Standard\oecom.dll" "$INSTDIR\Bin\oecom.dll" "$INSTDIR"
   !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\Standard\oeapiinitcom.dll" "$INSTDIR\Bin\oeapiinitcom.dll" "$INSTDIR"
   !insertmacro InstallLib REGDLL NOTSHARED REBOOT_NOTPROTECTED "..\Standard\oestore.dll" "$INSTDIR\Bin\oestore.dll" "$INSTDIR"

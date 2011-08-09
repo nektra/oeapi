@@ -19,6 +19,8 @@
 
 !include "prelude.nsh"
 
+!include "demos.nsh"
+
 !include "install.nsh"
 
 !include "uninstall.nsh"
