@@ -64,6 +64,11 @@ public:
 	comet::bstr_t GetNormalSubject();
 	comet::bstr_t GetDisplayTo();
 	comet::bstr_t GetDisplayFrom();
+	void SetSubject(const bstr_t&);
+	void SetDisplayTo(const bstr_t&);
+	void SetNormalSubject(const bstr_t&);
+	void SetDisplayFrom(const bstr_t&);
+
 	DWORD GetState();
 	DWORD GetSourceLength();
 	DWORD GetHeaderLength();
