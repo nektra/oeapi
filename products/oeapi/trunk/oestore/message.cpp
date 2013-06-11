@@ -410,46 +410,105 @@ bstr_t TOEMessage::GetDisplayFrom()
 
 void TOEMessage::SetSubject(const bstr_t& s)
 {
-	MESSAGEINFO msgInfo = {0};
-	msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
-	HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
+	if (IsWMail())
+	{
+		MESSAGEINFOWMAIL msgInfo = {0};
+		msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+		HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
 
-	if (hr == 0xC0320 /* db found*/ )
-	{ 
-		// Convert subject to ANSI
+		if (hr == 0xC0320 /* db found*/ )
+		{ 		
+			HANDLE lock;
+			msgFolder_->Lock((struct HLOCK__**) &lock);
+			msgInfo.wzSubject = (LPWSTR) s.c_str();
 
-		const size_t cch = s.length() + 1;
+			hr = msgFolder_->UpdateRecord(&msgInfo);
 
-		char* szSubject = new char[cch];
-		memset(szSubject, 0, cch);
+			if (FAILED(hr))
+			{
+				debug_print(DEBUG_INFO, _T("TOEMessage::SetSubject: UpdateRecord failed 0x%08x.\n"), hr);
+			}
 
-		WideCharToMultiByte(CP_ACP, NULL, s.c_str(), cch-1,	szSubject, cch, NULL, NULL);
-		
-		msgInfo.pszSubject = szSubject;
-
-		HANDLE lock;
-		msgFolder_->Lock((struct HLOCK__**) &lock);
-
-		hr = msgFolder_->UpdateRecord(&msgInfo);
-
-		if (FAILED(hr))
-		{
-			debug_print(DEBUG_INFO, _T("TOEMessage::SetSubject: UpdateRecord failed 0x%08x.\n"), hr);
+			msgFolder_->Unlock((struct HLOCK__**) &lock);
+			msgFolder_->FreeRecord(&msgInfo);		
 		}
-
-		msgFolder_->Unlock((struct HLOCK__**) &lock);
-		msgFolder_->FreeRecord(&msgInfo);
-
-		delete[] szSubject;
+		else
+		{	
+			debug_print(DEBUG_INFO, _T("TOEMessage::SetSubject: FindRecord returned 0x%08x.\n"), hr);
+		}		
 	}
 	else
-	{	
-		debug_print(DEBUG_INFO, _T("TOEMessage::SetSubject: FindRecord returned 0x%08x.\n"), hr);
-	}	
+	{
+		MESSAGEINFO msgInfo = {0};
+		msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+		HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
+
+		if (hr == 0xC0320 /* db found*/ )
+		{ 
+			// Convert subject to ANSI
+
+			const size_t cch = s.length() + 1;
+
+			char* szSubject = new char[cch];
+			memset(szSubject, 0, cch);
+
+			WideCharToMultiByte(CP_ACP, NULL, s.c_str(), cch-1,	szSubject, cch, NULL, NULL);
+
+			msgInfo.pszSubject = szSubject;
+
+			HANDLE lock;
+			msgFolder_->Lock((struct HLOCK__**) &lock);
+
+			hr = msgFolder_->UpdateRecord(&msgInfo);
+
+			if (FAILED(hr))
+			{
+				debug_print(DEBUG_INFO, _T("TOEMessage::SetSubject: UpdateRecord failed 0x%08x.\n"), hr);
+			}
+
+			msgFolder_->Unlock((struct HLOCK__**) &lock);
+			msgFolder_->FreeRecord(&msgInfo);
+
+			delete[] szSubject;
+		}
+		else
+		{	
+			debug_print(DEBUG_INFO, _T("TOEMessage::SetSubject: FindRecord returned 0x%08x.\n"), hr);
+		}
+	}
 }
 
 void TOEMessage::SetDisplayTo(const bstr_t& s)
 {
+	if (IsWMail())
+	{
+		MESSAGEINFOWMAIL msgInfo = {0};
+		msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+		HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
+
+		if (hr == 0xC0320 /* db found*/ )
+		{ 		
+			HANDLE lock;
+			msgFolder_->Lock((struct HLOCK__**) &lock);
+			msgInfo.wzDisplayTo = (LPWSTR) s.c_str();
+
+			hr = msgFolder_->UpdateRecord(&msgInfo);
+
+			if (FAILED(hr))
+			{
+				debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayTo: UpdateRecord failed 0x%08x.\n"), hr);
+			}
+
+			msgFolder_->Unlock((struct HLOCK__**) &lock);
+			msgFolder_->FreeRecord(&msgInfo);		
+		}
+		else
+		{	
+			debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayTo: FindRecord returned 0x%08x.\n"), hr);
+		}		
+	}
+	else
+	{
 	MESSAGEINFO msgInfo = {0};
 	msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
 	HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
@@ -486,87 +545,148 @@ void TOEMessage::SetDisplayTo(const bstr_t& s)
 	{	
 		debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayTo: FindRecord returned 0x%08x.\n"), hr);
 	}	
+	}
 }
 
 void TOEMessage::SetNormalSubject(const bstr_t& s)
 {
-	MESSAGEINFO msgInfo = {0};
-	msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
-	HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
+	if (IsWMail())
+	{
+		MESSAGEINFOWMAIL msgInfo = {0};
+		msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+		HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
 
-	if (hr == 0xC0320 /* db found*/ )
-	{ 
-		// Convert NormalSubject to ANSI
+		if (hr == 0xC0320 /* db found*/ )
+		{ 		
+			HANDLE lock;
+			msgFolder_->Lock((struct HLOCK__**) &lock);
+			msgInfo.wzNormalSubject = (LPWSTR) s.c_str();
 
-		const size_t cch = s.length() + 1;
+			hr = msgFolder_->UpdateRecord(&msgInfo);
 
-		char* szNormalSubject = new char[cch];
-		memset(szNormalSubject, 0, cch);
+			if (FAILED(hr))
+			{
+				debug_print(DEBUG_INFO, _T("TOEMessage::SetNormalSubject: UpdateRecord failed 0x%08x.\n"), hr);
+			}
 
-		WideCharToMultiByte(CP_ACP, NULL, s.c_str(), cch-1,	szNormalSubject, cch, NULL, NULL);
-		
-		msgInfo.pszNormalSubject = szNormalSubject;
-		
-		HANDLE lock;
-		msgFolder_->Lock((struct HLOCK__**) &lock);
-
-		hr = msgFolder_->UpdateRecord(&msgInfo);
-
-		if (FAILED(hr))
-		{
-			debug_print(DEBUG_INFO, _T("TOEMessage::SetNormalSubject: UpdateRecord failed 0x%08x.\n"), hr);
+			msgFolder_->Unlock((struct HLOCK__**) &lock);
+			msgFolder_->FreeRecord(&msgInfo);		
 		}
-
-		msgFolder_->Unlock((struct HLOCK__**) &lock);
-		msgFolder_->FreeRecord(&msgInfo);
-
-		delete[] szNormalSubject;
+		else
+		{	
+			debug_print(DEBUG_INFO, _T("TOEMessage::SetNormalSubject: FindRecord returned 0x%08x.\n"), hr);
+		}		
 	}
 	else
-	{	
-		debug_print(DEBUG_INFO, _T("TOEMessage::SetNormalSubject: FindRecord returned 0x%08x.\n"), hr);
-	}
+	{
+		MESSAGEINFO msgInfo = {0};
+		msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+		HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
 
+		if (hr == 0xC0320 /* db found*/ )
+		{ 
+			// Convert NormalSubject to ANSI
+
+			const size_t cch = s.length() + 1;
+
+			char* szNormalSubject = new char[cch];
+			memset(szNormalSubject, 0, cch);
+
+			WideCharToMultiByte(CP_ACP, NULL, s.c_str(), cch-1,	szNormalSubject, cch, NULL, NULL);
+
+			msgInfo.pszNormalSubject = szNormalSubject;
+
+			HANDLE lock;
+			msgFolder_->Lock((struct HLOCK__**) &lock);
+
+			hr = msgFolder_->UpdateRecord(&msgInfo);
+
+			if (FAILED(hr))
+			{
+				debug_print(DEBUG_INFO, _T("TOEMessage::SetNormalSubject: UpdateRecord failed 0x%08x.\n"), hr);
+			}
+
+			msgFolder_->Unlock((struct HLOCK__**) &lock);
+			msgFolder_->FreeRecord(&msgInfo);
+
+			delete[] szNormalSubject;
+		}
+		else
+		{	
+			debug_print(DEBUG_INFO, _T("TOEMessage::SetNormalSubject: FindRecord returned 0x%08x.\n"), hr);
+		}
+	}
 }
 
 void TOEMessage::SetDisplayFrom(const bstr_t& s)
 {
-	MESSAGEINFO msgInfo = {0};
-	msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
-	HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
 
-	if (hr == 0xC0320 /* db found*/ )
-	{ 
-		// Convert DisplayFrom to ANSI
+	if (IsWMail())
+	{
+		MESSAGEINFOWMAIL msgInfo = {0};
+		msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+		HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
 
-		const size_t cch = s.length() + 1;
+		if (hr == 0xC0320 /* db found*/ )
+		{ 		
+			HANDLE lock;
+			msgFolder_->Lock((struct HLOCK__**) &lock);
+			msgInfo.wzDisplayFrom = (LPWSTR) s.c_str();
 
-		char* szDisplayFrom = new char[cch];
-		memset(szDisplayFrom, 0, cch);
+			hr = msgFolder_->UpdateRecord(&msgInfo);
 
-		WideCharToMultiByte(CP_ACP, NULL, s.c_str(), cch-1,	szDisplayFrom, cch, NULL, NULL);
-		
-		msgInfo.pszDisplayFrom = szDisplayFrom;
-		
-		HANDLE lock;
-		msgFolder_->Lock((struct HLOCK__**) &lock);
+			if (FAILED(hr))
+			{
+				debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayfrom: UpdateRecord failed 0x%08x.\n"), hr);
+			}
 
-		hr = msgFolder_->UpdateRecord(&msgInfo);
-
-		if (FAILED(hr))
-		{
-			debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayFrom: UpdateRecord failed 0x%08x.\n"), hr);
+			msgFolder_->Unlock((struct HLOCK__**) &lock);
+			msgFolder_->FreeRecord(&msgInfo);		
 		}
-
-		msgFolder_->Unlock((struct HLOCK__**) &lock);
-		msgFolder_->FreeRecord(&msgInfo);
-
-		delete[] szDisplayFrom;
+		else
+		{	
+			debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayfrom: FindRecord returned 0x%08x.\n"), hr);
+		}		
 	}
 	else
-	{	
-		debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayFrom: FindRecord returned 0x%08x.\n"), hr);
-	}	
+	{
+		MESSAGEINFO msgInfo = {0};
+		msgInfo.dwMessageId = props_->GetID(); // props_->dwMessageId;
+		HRESULT hr = msgFolder_->FindRecord(0, -1, &msgInfo, 0);
+
+		if (hr == 0xC0320 /* db found*/ )
+		{ 
+			// Convert DisplayFrom to ANSI
+
+			const size_t cch = s.length() + 1;
+
+			char* szDisplayFrom = new char[cch];
+			memset(szDisplayFrom, 0, cch);
+
+			WideCharToMultiByte(CP_ACP, NULL, s.c_str(), cch-1,	szDisplayFrom, cch, NULL, NULL);
+
+			msgInfo.pszDisplayFrom = szDisplayFrom;
+
+			HANDLE lock;
+			msgFolder_->Lock((struct HLOCK__**) &lock);
+
+			hr = msgFolder_->UpdateRecord(&msgInfo);
+
+			if (FAILED(hr))
+			{
+				debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayFrom: UpdateRecord failed 0x%08x.\n"), hr);
+			}
+
+			msgFolder_->Unlock((struct HLOCK__**) &lock);
+			msgFolder_->FreeRecord(&msgInfo);
+
+			delete[] szDisplayFrom;
+		}
+		else
+		{	
+			debug_print(DEBUG_INFO, _T("TOEMessage::SetDisplayFrom: FindRecord returned 0x%08x.\n"), hr);
+		}	
+	}
 }
 
 //---------------------------------------------------------------------------//
