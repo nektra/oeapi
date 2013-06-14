@@ -1,5 +1,4 @@
 KNOWN ISSUES:
-- if the subject is changed in the message list view it doesn't change.
 - if all the attachments are removed the attachment sign in the message list view's not removed.
 - Doesn't work with limited account priviledges.
 - Multi buttons doesn't work in OE toolbar.
