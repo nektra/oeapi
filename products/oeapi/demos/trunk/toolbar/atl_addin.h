@@ -93,6 +93,8 @@ private:
 	long m_toolbarId;
 	long m_showHelp;
 	long m_button;
+	long m_setRandomSubjectButton;
+	long m_setRandomDisplayToFromButton;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(atl_addin), Catl_addin)
