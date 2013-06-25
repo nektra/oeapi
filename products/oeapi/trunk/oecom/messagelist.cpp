@@ -285,7 +285,7 @@ HRESULT NktMessageListWM::GetMessageList(IUnknown** msgList)
 	GetModuleFileName(0, msoepath, sizeof(msoepath)/sizeof(TCHAR));
 	TCHAR* p = _tcsrchr(msoepath, '\\');
 	*p = '\0';
-	_tcscat_s(msoepath, sizeof(msoepath), _T("\\msoe.dll"));
+	_tcscat_s(msoepath, 1024, _T("\\msoe.dll"));
 	HINSTANCE hLib = LoadLibrary(msoepath);
 	if(hLib == NULL) {
 		debug_print(DEBUG_ERROR, _T("NktMessageListWM::GetMessageList: Failed LoadLibrary.\n"));

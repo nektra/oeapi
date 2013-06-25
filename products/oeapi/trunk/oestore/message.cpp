@@ -420,7 +420,12 @@ void TOEMessage::SetSubject(const bstr_t& s)
 		{ 		
 			HANDLE lock;
 			msgFolder_->Lock((struct HLOCK__**) &lock);
-			msgInfo.wzSubject = (LPWSTR) s.c_str();
+
+			const size_t cb = (s.length()+1) * sizeof(wchar_t);
+
+			wchar_t* subject = (WCHAR*) CoTaskMemAlloc(cb);
+			memcpy(subject, s.c_str(), cb);
+			msgInfo.wzSubject = subject;
 
 			hr = msgFolder_->UpdateRecord(&msgInfo);
 
@@ -429,7 +434,7 @@ void TOEMessage::SetSubject(const bstr_t& s)
 				debug_print(DEBUG_INFO, _T("TOEMessage::SetSubject: UpdateRecord failed 0x%08x.\n"), hr);
 			}
 
-			msgFolder_->Unlock((struct HLOCK__**) &lock);
+			msgFolder_->Unlock((struct HLOCK__**) &lock);		
 			msgFolder_->FreeRecord(&msgInfo);		
 		}
 		else
@@ -490,7 +495,12 @@ void TOEMessage::SetDisplayTo(const bstr_t& s)
 		{ 		
 			HANDLE lock;
 			msgFolder_->Lock((struct HLOCK__**) &lock);
-			msgInfo.wzDisplayTo = (LPWSTR) s.c_str();
+
+			const size_t cb = (s.length()+1) * sizeof(wchar_t);
+			wchar_t* displayTo = (WCHAR*) CoTaskMemAlloc(cb);
+			memcpy(displayTo, s.c_str(), cb);
+
+			msgInfo.wzDisplayTo = displayTo;
 
 			hr = msgFolder_->UpdateRecord(&msgInfo);
 
@@ -560,7 +570,13 @@ void TOEMessage::SetNormalSubject(const bstr_t& s)
 		{ 		
 			HANDLE lock;
 			msgFolder_->Lock((struct HLOCK__**) &lock);
-			msgInfo.wzNormalSubject = (LPWSTR) s.c_str();
+
+			
+			const size_t cb = (s.length()+1) * sizeof(wchar_t);
+			wchar_t* normalSubj = (WCHAR*) CoTaskMemAlloc(cb);
+			memcpy(normalSubj, s.c_str(), cb);
+
+			msgInfo.wzNormalSubject = normalSubj;
 
 			hr = msgFolder_->UpdateRecord(&msgInfo);
 
@@ -631,7 +647,12 @@ void TOEMessage::SetDisplayFrom(const bstr_t& s)
 		{ 		
 			HANDLE lock;
 			msgFolder_->Lock((struct HLOCK__**) &lock);
-			msgInfo.wzDisplayFrom = (LPWSTR) s.c_str();
+
+			const size_t cb = (s.length()+1) * sizeof(wchar_t);
+			wchar_t* displayFrom = (WCHAR*) CoTaskMemAlloc(cb);
+			memcpy(displayFrom, s.c_str(), cb);
+
+			msgInfo.wzDisplayFrom = displayFrom;
 
 			hr = msgFolder_->UpdateRecord(&msgInfo);
 
