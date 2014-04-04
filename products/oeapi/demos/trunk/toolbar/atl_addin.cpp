@@ -20,6 +20,7 @@
 _ATL_FUNC_INFO NoParamInfo = { CC_STDCALL, VT_EMPTY, 0 };
 _ATL_FUNC_INFO OneLongParamInfo = { CC_STDCALL, VT_EMPTY, 1, { VT_INT } };
 _ATL_FUNC_INFO TwoLongParamInfo = { CC_STDCALL, VT_EMPTY, 2, { VT_INT, VT_INT } };
+_ATL_FUNC_INFO ThreeLongParamInfo={ CC_STDCALL, VT_EMPTY, 3, { VT_INT, VT_INT, VT_INT } }; 
 
 // Catl_addin
 
@@ -123,6 +124,20 @@ STDMETHODIMP Catl_addin::OnInitOEAPI()
 			button->CreateSubButton(_T("Subbutton2"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton3"), normal.c_str(), over.c_str());
 			button->SetPopupStyle(TRUE);
+
+			button = toolbar->CreateButton(_T("Test Button"), normal.c_str(), over.c_str());
+			m_setRandomProps = button->CreateSubButton(_T("Set Random To/From/Subject Properties"), normal.c_str(), over.c_str())->GetID();
+			button->SetPopupStyle(TRUE);
+		}
+
+		CComPtr<IOEToolbar> mwintbar;
+		mwintbar = m_oeapi->CreateToolbarInMsgWnd(OE_ALL_MSG_WND);
+
+		if (mwintbar)
+		{
+			IOEButtonPtr btn = mwintbar->CreateButton(_T("Save To Drafts"), normal.c_str(), over.c_str());
+			m_saveToDraftsButton = btn->GetID();
+			m_msgtoolbarId = mwintbar->GetID();
 		}
 	}
 
@@ -196,46 +211,53 @@ long FindTextBody(IOEMessagePtr msg, long hBody)
 
 STDMETHODIMP Catl_addin::OnToolbarButtonClicked(long toolbarId, long buttonId)
 {
+	if (m_toolbarId == toolbarId && buttonId == m_setRandomProps)
+	{
+		long msgid = m_oeapi->GetCurrentMessageID();
+
+		if (msgid != -1)
+		{
+			wchar_t szGuid[60];
+			GUID guid;
+
+			CoCreateGuid(&guid);
+			StringFromGUID2(guid, szGuid, 60);
+
+			IOEFolderPtr folder;
+			IOEMessagePtr msg;
+
+			long folderid = m_oeapi->GetSelectedFolderID();        			
+			folder = m_foldermanager->GetFolder(folderid);
+			msg = folder->OEGetMessage(msgid);
+			folder = NULL;
+							
+			msg->SetSubject(szGuid);
+			msg->SetNormalSubject(szGuid);
+			msg->SetDisplayFrom(szGuid);
+			msg->SetDisplayTo(szGuid);
+		}
+   	}
+	else
+	
 	if(m_toolbarId == toolbarId && buttonId == m_showHelp)
 	{
-		/*std::basic_string<TCHAR> helpFile = m_path;
+		std::basic_string<TCHAR> helpFile = m_path;
 		helpFile += _T("\\..\\..\\..\\doc\\OEAPI-Help.chm");
 
-		::HtmlHelp(NULL, helpFile.c_str(), HH_DISPLAY_TOC, NULL);*/
+		::HtmlHelp(NULL, helpFile.c_str(), HH_DISPLAY_TOC, NULL);
+	}
+	return S_OK;
+}
 
-
-        long msgid = m_oeapi->GetCurrentMessageID();
-        long folderid = m_oeapi->GetSelectedFolderID();
-        //m_oeapi->OESendMessage(folderid,msgid);
-
-        IOEFolderPtr folder = m_foldermanager->GetFolder(folderid);
-        IOEMessagePtr msg = folder->OEGetMessage(msgid);
-
-   
-        long contentHandle = FindTextBody(msg, msg->GetBodyHandle(NULL,OE_IBL_ROOT));
-        _bstr_t bstrTemp = msg->GetBodyText(contentHandle);
-        
-        if (bstrTemp.GetBSTR() != NULL)
-        {
-          
-            /*wstring sBody = (wchar_t *)bstrTemp;
-            sBody = TrimString(sBody);
-
-            if(sBody.length() > 0)
-            {
-                item.bContent = true;
-            }
-            else
-            {
-                item.bContent = false;
-            }*/
-        }
-        else
-        {
-            //item.bContent = false;
-        }
+STDMETHODIMP Catl_addin::OnMsgWndToolbarButtonClicked(long toolbarId, long buttonId, long msgWndId)
+{
+	if (m_msgtoolbarId == toolbarId && buttonId == m_saveToDraftsButton)
+	{
+		IOEMsgWndPtr mw = m_oeapi->GetMsgWnd(m_oeapi->GetActiveMsgWndID());
+		mw->SaveDraft();
 
 	}
+	
 	return S_OK;
 }
 

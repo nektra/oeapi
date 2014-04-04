@@ -375,6 +375,7 @@ public:
 
 	VOID GetIHTMLDocument2(IDispatch** htmldoc);
 
+
 private:
 	BOOL GetHTMLDocument();
 

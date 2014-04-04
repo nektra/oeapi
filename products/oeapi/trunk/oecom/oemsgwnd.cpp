@@ -392,6 +392,57 @@ int TOEMsgWnd::GetID()
 }
 
 //---------------------------------------------------------------------------//
+VOID TOEMsgWnd::SaveDraft()
+{
+	// Temporarily disable the SaveDraft  dialog to avoid deadlock
+	//
+
+	HKEY hKeyIdent;
+	if (RegOpenKeyEx(HKEY_CURRENT_USER, L"Identities", 0, KEY_READ | KEY_WRITE, &hKeyIdent) == ERROR_SUCCESS)
+	{
+		DWORD cbData = 128;
+		wchar_t identityUID[64] = { 0 };
+		if (RegQueryValueEx(hKeyIdent, L"Last User ID", 0, 0, (BYTE*) identityUID, &cbData) == ERROR_SUCCESS)
+		{
+			wchar_t regPath[1024] = {0};
+			lstrcpy(regPath, L"Identities\\");
+			lstrcat(regPath, identityUID);
+			lstrcat(regPath, L"\\Software\\Microsoft\\Outlook Express\\5.0\\Dont Show Dialogs");
+
+			HKEY hKeyDontShow;
+			if (RegOpenKeyEx(HKEY_CURRENT_USER, regPath, 0, KEY_READ | KEY_WRITE, &hKeyDontShow) ==ERROR_SUCCESS)
+			{
+
+				DWORD data = 1;
+				DWORD cbData = sizeof(DWORD);
+				DWORD oldData = 0;
+
+				RegQueryValueEx(hKeyDontShow, L"Saved in Saved Items", 0 , 0, (BYTE*) &oldData, &cbData);
+
+				if (ERROR_SUCCESS == RegSetValueExW(hKeyDontShow, L"Saved in Saved Items", 0, REG_DWORD, (const BYTE*)&data, sizeof(DWORD)))
+				{
+					SendMessage(msgWnd_->GetWindowHandle(), WM_COMMAND, MAKEWPARAM(OE_SAVEMESSAGE,1), 0);
+
+					// Restore Old value if was present
+					// If it was not present , assumes 0
+
+					RegSetValueExW(hKeyDontShow, L"Saved in Saved Items", 0, REG_DWORD, (BYTE*)&oldData, sizeof(DWORD));
+				}
+
+			}
+		}
+		
+		RegCloseKey(hKeyIdent);
+	}
+}
+
+//---------------------------------------------------------------------------//
+ULONG TOEMsgWnd::GetHandle()
+{
+	return (ULONG) msgWnd_->GetWindowHandle();
+}
+
+//---------------------------------------------------------------------------//
 com_ptr<::IDispatch> TOEMsgWnd::GetIHTMLDocument2()
 {
 	IDispatch* html = NULL;

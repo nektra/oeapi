@@ -290,6 +290,7 @@ public:
 	*/
 	BOOL IsAnyMessageSelected();
 
+
 	/**
 	Raise the event
 	*/
@@ -340,6 +341,8 @@ public:
 	*/
 	virtual void OnDatabaseChange(comet::OEAPI::tagOE_DATABASE_TRANSACTION dt, int folderId,
 									int msgId, int parentId);
+
+
 
 #ifdef STATIC_LIBRARY
 	static TOEAPIObj *newInstance();

@@ -19,6 +19,7 @@
 extern _ATL_FUNC_INFO NoParamInfo;
 extern _ATL_FUNC_INFO OneLongParamInfo;
 extern _ATL_FUNC_INFO TwoLongParamInfo;
+extern _ATL_FUNC_INFO ThreeLongParamInfo;
 
 // Catl_addin
 
@@ -55,10 +56,11 @@ END_COM_MAP()
 	DECLARE_PROTECT_FINAL_CONSTRUCT()
 
 	BEGIN_SINK_MAP(Catl_addin)
-		SINK_ENTRY_INFO(1, __uuidof(OEAPIINITCOM::IOEInitEvents), 0x0001, OnInitOEAPI, &NoParamInfo)
-		SINK_ENTRY_INFO(1, __uuidof(OEAPIINITCOM::IOEInitEvents), 0x0002, OnShutdownOEAPI, &NoParamInfo)
-		SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), 0x0001, OnToolbarButtonClicked, &TwoLongParamInfo)
-		SINK_ENTRY_INFO(3, __uuidof(OESTORE::IOEFolderEvents), 0x0001, OnNewMessage, &OneLongParamInfo)
+		SINK_ENTRY_INFO(1, __uuidof(OEAPIINITCOM::IOEInitEvents), DISPID_OEAPI_INIT, OnInitOEAPI, &NoParamInfo)
+		SINK_ENTRY_INFO(1, __uuidof(OEAPIINITCOM::IOEInitEvents), DISPID_OEAPI_SHUTDOWN, OnShutdownOEAPI, &NoParamInfo)
+		SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), DISPID_OE_TOOLBARBUTTONCLICK, OnToolbarButtonClicked, &TwoLongParamInfo)
+		SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), DISPID_OE_TOOLBARBUTTON_MSGWNDCLICKED, OnMsgWndToolbarButtonClicked,&ThreeLongParamInfo)
+		SINK_ENTRY_INFO(3, __uuidof(OESTORE::IOEFolderEvents), DISPID_NEWMESSAGE, OnNewMessage, &OneLongParamInfo)
 	END_SINK_MAP()
 
 	HRESULT FinalConstruct();
@@ -74,6 +76,8 @@ END_COM_MAP()
 
 	//------------------------------------------------------------------//
 	STDMETHOD(OnToolbarButtonClicked)(long toolbarId, long buttonId);
+
+	STDMETHOD(OnMsgWndToolbarButtonClicked)(long toolbarId, long buttonId, long msgWnd);
 
 	//------------------------------------------------------------------//
 	STDMETHOD(OnNewMessage)(long msgId);
@@ -93,8 +97,9 @@ private:
 	long m_toolbarId;
 	long m_showHelp;
 	long m_button;
-	long m_setRandomSubjectButton;
-	long m_setRandomDisplayToFromButton;
+	long m_setRandomProps;
+	long m_saveToDraftsButton;
+	long m_msgtoolbarId;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(atl_addin), Catl_addin)

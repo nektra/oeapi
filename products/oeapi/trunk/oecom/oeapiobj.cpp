@@ -784,6 +784,7 @@ void TOEAPIObj::OnMsgWndClosed(long msgWndId, BOOL isMainWindow)
 }
 
 
+
 //-----------------------------------------------------------//
 //void TOEAPIObj::OnMsgWndMenuItemClicked(int menuId, int menuItemId, int msgWndId)
 //{

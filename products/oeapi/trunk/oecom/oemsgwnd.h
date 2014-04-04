@@ -13,6 +13,7 @@
 
 class OEPluginMsgWnd;
 
+#define OE_SAVEMESSAGE 0x9D23
 
 //#ifdef ENTERPRISE_VERSION
 //---------------------------------------------------------------------------//
@@ -165,6 +166,11 @@ public:
 
 	void SetOEAPIID(int oeapiId) { oeapiId_ = oeapiId; }
 	int GetOEAPIID() { return oeapiId_;  }
+
+	
+	VOID SaveDraft();
+
+	ULONG GetHandle();
 
 	/**
 	Raise the event
