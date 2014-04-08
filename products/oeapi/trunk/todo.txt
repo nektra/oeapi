@@ -1,3 +1,17 @@
+====================
+v3.4.0
+
+- Added missing DISPIDs in IDL files for better readability in COM client code
+- Added IOEMsgWnd::GetHandle
+- Added IOEMsgWnd::SaveDraft
+- Added IOEMsgWnd::Close
+- Fixed demo plugin issues.
+- Code cleanup.
+
+
+====================
+
+
 KNOWN ISSUES:
 - if all the attachments are removed the attachment sign in the message list view's not removed.
 - Doesn't work with limited account priviledges.
