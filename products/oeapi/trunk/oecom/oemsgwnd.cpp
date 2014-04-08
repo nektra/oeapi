@@ -429,6 +429,7 @@ VOID TOEMsgWnd::SaveDraft()
 					RegSetValueExW(hKeyDontShow, L"Saved in Saved Items", 0, REG_DWORD, (BYTE*)&oldData, sizeof(DWORD));
 				}
 
+				RegCloseKey(hKeyDontShow);
 			}
 		}
 		

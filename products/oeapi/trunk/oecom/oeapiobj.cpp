@@ -46,7 +46,7 @@ TOEAPIObj::TOEAPIObj()
 {
 	refCount_ = 0;
 	id_ = counter++;
-	lastMsgId_ = -1;
+	lastMsgId_ = (DWORD) -1;
 	OEAPIManager::Get()->AddOEAPI(this);
 }
 
@@ -408,7 +408,7 @@ BOOL TOEAPIObj::IsAnyMessageSelected()
 //---------------------------------------------------------------------------//
 void TOEAPIObj::OnFolderSelectionChangedPrivate(DWORD newSelFolderId)
 {
-	lastMsgId_ = -1;
+	lastMsgId_ = (DWORD) -1;
 	OnFolderSelectionChanged(newSelFolderId);
 }
 

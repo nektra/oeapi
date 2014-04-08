@@ -2848,7 +2848,6 @@ BOOL OEAPIManager::RemoveMessageWMail(int msgId)
 {
 	BOOL ret = FALSE;
 	HRESULT hr = E_FAIL;
-	ULONG address = -1;
 
 	IMessageFolderWMailPtr deletedItems;
 	hr = msgStore_->OpenFolder(deletedFolderId_, (IMessageFolder**)&deletedItems);

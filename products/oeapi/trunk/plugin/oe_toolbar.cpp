@@ -1170,7 +1170,7 @@ VOID OEPluginTopLevelWndMgr::SendMail(BOOL bLater)
 //---------------------------------------------------------------------------------//
 VOID OEPluginTopLevelWndMgr::SendKey(BYTE key, BYTE controlKey, BOOL setForeground)
 {
-	HWND oldForeWnd;
+	HWND oldForeWnd = NULL;
 
 	if(hKeyReceiver_) {
 
@@ -1564,7 +1564,7 @@ VOID OEPluginToolbar::CreateInWnd(HWND mainWindow)
 		rbBand.wID = id_;
 
 		// And finally, we add the band ...
-		::SendMessage(rebar_, RB_INSERTBAND, -1, (LPARAM)&rbBand);
+		::SendMessage(rebar_, RB_INSERTBAND, (WPARAM) -1, (LPARAM)&rbBand);
 
 		if(buttons_.size() > 0) {
 			UpdateBandSize(*buttons_.rbegin());
@@ -3185,7 +3185,6 @@ BOOL OEPluginToolbarBtn::NotifyButtonClick(HWND msgWndId, INT id)
 BOOL OEPluginToolbarBtn::NotifyMsgButtonClick(HWND msgWndId, INT id)
 {
 	BOOL ret = FALSE;
-	INT param = id;
 
 	// ReadState
 	if(msgWndId != INVALID_MSGWND_ID && checkStyle_) {

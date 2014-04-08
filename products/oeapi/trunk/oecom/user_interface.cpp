@@ -435,8 +435,7 @@ void TOEButton::Create(int toolbarId, const bstr_t &name, const bstr_t &bmpNorma
 void TOEButton::CreateSeparator(int toolbarId)
 {
 	toolbarId_ = toolbarId;
-	INT butId = -1;
-
+	
 	//OEPluginToolbar *toolbar = OEPluginToolbarMgr::Get()->GetToolbar(toolbarId);
 	OEPluginToolbar *toolbar = GetToolbarInternal();
 	if(toolbar) {

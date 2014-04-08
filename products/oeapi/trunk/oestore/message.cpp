@@ -849,7 +849,7 @@ bstr_t TOEMessage::GetAllSource()
 bstr_t TOEMessage::GetSource(DWORD maxBytesToRead)
 {
 	bstr_t ret;
-	HRESULT hr;
+	HRESULT hr = E_FAIL;
 	ULONG ulReaded = 0;
 	CHAR *buffer = NULL;
 
@@ -1056,7 +1056,6 @@ long TOEMessage::GetHTMLBody()
 	HBODY hBody = NULL;
 	FINDBODY fb = {0};
 	HRESULT hr;
-	HBODY hPivot = HBODY_ROOT;
 
 	if(!OpenMessage()) {
 		return 0;
@@ -1085,7 +1084,6 @@ long TOEMessage::GetPlainBody()
 	HBODY hBody = NULL;
 	FINDBODY fb = {0};
 	HRESULT hr;
-	HBODY hPivot = HBODY_ROOT;
 
 	if(!OpenMessage()) {
 		return 0;
@@ -1404,7 +1402,6 @@ BOOL TOEMessage::SetBodyText(long bodyHandle, const bstr_t &bodyText, const bstr
 BOOL TOEMessage::SetBodySource(long bodyHandle, IStream *pStream, const bstr_t &priContentType, const bstr_t &secContentType, ENCODINGTYPE encType)
 {
 	IMimeBody *pMimeBody = NULL;
-	LPSTR lpszBody = NULL;
 	HBODY hBody;
 
 	if(!OpenMessage()) {

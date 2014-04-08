@@ -229,6 +229,17 @@ STDMETHODIMP Catl_addin::OnToolbarButtonClicked(long toolbarId, long buttonId)
 			long folderid = m_oeapi->GetSelectedFolderID();        			
 			folder = m_foldermanager->GetFolder(folderid);
 			msg = folder->OEGetMessage(msgid);
+			IOEMessagePtr msgPtr = folder->CreateMessage(L"", 0);
+
+			_bstr_t a = msgPtr->GetDisplayFrom();
+			_bstr_t b = msgPtr->GetDisplayTo();
+			_bstr_t c = msgPtr->GetSubject();
+
+			msgPtr->SaveAsFile("\\msg.txt");
+
+			msg->SetDisplayFrom(a);
+			
+
 			folder = NULL;
 							
 			msg->SetSubject(szGuid);
@@ -255,7 +266,6 @@ STDMETHODIMP Catl_addin::OnMsgWndToolbarButtonClicked(long toolbarId, long butto
 	{
 		IOEMsgWndPtr mw = m_oeapi->GetMsgWnd(m_oeapi->GetActiveMsgWndID());
 		mw->SaveDraft();
-
 	}
 	
 	return S_OK;

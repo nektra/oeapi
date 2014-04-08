@@ -58,6 +58,8 @@ OEPluginMenuItem::~OEPluginMenuItem()
 //-----------------------------------------------------------//
 OEPluginMenuItem* OEPluginMenuItem::Clone(WNDSTYLE style)
 {
+	UNREFERENCED_PARAMETER(style);
+
 	OEPluginMenuItem* item = NULL;
 	item = new OEPluginMenuItem(_id, _index, _name.c_str());
 	if(item)
@@ -138,6 +140,7 @@ OEPluginMenuItemListMgr::~OEPluginMenuItemListMgr()
 //-----------------------------------------------------------//
 void OEPluginMenuItemListMgr::EnableAllMenus(HWND hWnd)
 {
+	UNREFERENCED_PARAMETER(hWnd);
 	MENUITEMINFO menuInfo;
 
 	Lock();
@@ -662,6 +665,8 @@ OEPluginMenuMgr::~OEPluginMenuMgr()
 //-----------------------------------------------------------//
 void OEPluginMenuMgr::Initialize(HWND hWnd, WNDSTYLE style)
 {
+	UNREFERENCED_PARAMETER(hWnd);
+
 	_wndStyle = style;
 }
 

@@ -73,8 +73,6 @@ LRESULT CALLBACK CBTHookProc(int nCode, WPARAM wParam, LPARAM lParam)
     {
         LPCBT_CREATEWND lpCreateWnd = (LPCBT_CREATEWND)lParam;
         LPCREATESTRUCT lpcs = lpCreateWnd->lpcs;
-        HWND hParentWindow = lpcs->hwndParent;
-
         HWND hCreatedWindow = (HWND)wParam;
 
         TCHAR wndClassName[sizeof(OutlookExpressClassName)/sizeof(OutlookExpressClassName[0])];

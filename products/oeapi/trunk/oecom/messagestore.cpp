@@ -1376,7 +1376,7 @@ HRESULT OEAPIMessageStoreOE::GetMessageTransactionInfo(IDatabase* database, HTRA
 		return hr;
 	}
 
-	transInfo->folderId = -1;
+	transInfo->folderId = (NktFOLDERID) -1;
 	transInfo->messageId1 = msgInfo1.dwMessageId;
 	transInfo->messageId2 = msgInfo2.dwMessageId;
 	transInfo->arf1 = msgInfo1.dwARF;
@@ -1646,7 +1646,6 @@ LONG OEAPIMessageStoreWM::GetMaxMessageId(NktFOLDERID folderId)
 		return maxId;
 	}
 
-	ULONG pos = 0;
 	MESSAGEINFOWMAIL msgInfo = {0};
 
 	while(1) {

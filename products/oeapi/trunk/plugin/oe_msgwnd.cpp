@@ -126,7 +126,7 @@ LRESULT CALLBACK MsgWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 				// Send wm_oeapi_destroy
 
-				LRESULT lResult = CallWindowProc(MsgWndProc, hWnd, WM_OEAPI_DESTROY, NULL, NULL);
+				CallWindowProc(MsgWndProc, hWnd, WM_OEAPI_DESTROY, NULL, NULL);
 			}
 
 
@@ -251,7 +251,6 @@ LRESULT CALLBACK MsgWndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 
 		case WM_INITMENUPOPUP:
 		{
-			int i = 0;
 			HMENU menu = (HMENU) wParam;
 
 			LRESULT lResult;
@@ -577,6 +576,7 @@ BOOL OEPluginMsgWndMgr::TryLockMsgWnd(OEPluginMsgWnd* msgWnd)
 //-----------------------------------------------------------//
 void OEPluginMsgWndMgr::UnlockMsgWnd(OEPluginMsgWnd* msgWnd)
 {
+	UNREFERENCED_PARAMETER(msgWnd);
 }
 
 /////////////////////////////////////////////////////////////////////////////////////

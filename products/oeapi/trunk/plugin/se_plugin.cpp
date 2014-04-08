@@ -82,10 +82,7 @@ VOID UpdateMsgSelection()
 		INT focusItemInx;
 
 		while(itemIndex != -1) {
-			int col = 0;
-
 			selItems[i++] = itemIndex;
-
 			itemIndex = ListView_GetNextItem(Plugin.OEMsgWindow, itemIndex, LVNI_SELECTED);
 		}
 
@@ -208,7 +205,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			if(Plugin.folderSelChangedEventPending) {
 				HWND msgList, msgWindow;
 
-				while(1) {
+				while(true) {
 					// first get the message view and then the list view to prevent getting contact
 					// list view
 					Plugin.hMessageView = FindWindowRecursive(Plugin.OEMainWindow, _T("Outlook Express Message View"));
@@ -276,7 +273,7 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 			if(GetProp(hWnd, _T("OEAPI_MainWndDestroying")) != (HANDLE)TRUE)
 			{
 				SetProp(hWnd, _T("OEAPI_MainWndDestroying"), (HANDLE)TRUE);
-				LRESULT lresult = CallWindowProc(MainWndProc, hWnd, WM_OEAPI_CLOSE, NULL, NULL);
+				CallWindowProc(MainWndProc, hWnd, WM_OEAPI_CLOSE, NULL, NULL);
 			}
 			// this object must be destroyed before all the windows are destroyed
 			//OEPluginToolbarMgr::Get()->DestroyOEMainWindowTopLevelWndMgr();
@@ -303,7 +300,6 @@ LRESULT CALLBACK MainWndProc(HWND hWnd,
 		}
 		case WM_INITMENUPOPUP:
 		{
-			int i = 0;
 			HMENU menu = (HMENU) wParam;
 
 			LRESULT lResult;
@@ -576,6 +572,8 @@ void DetachPlugin()
 
 INT NotificationAttach(HINSTANCE hinstDll, DWORD fdwReason)
 {
+	UNREFERENCED_PARAMETER(hinstDll);
+	UNREFERENCED_PARAMETER(fdwReason);
 	return 0;
 }
 

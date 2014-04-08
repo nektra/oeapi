@@ -25,7 +25,7 @@ DWORD _stdcall OEAPIInitServerProc(void *obj)
     HANDLE initEventHandle;
     HANDLE shutdownEventHandle;
 
-    while(1) {
+    while(true) {
         initEventHandle = CreateEvent(NULL, TRUE, FALSE, OEAPI_INIT_EVENT_NAME);
         if(initEventHandle == NULL)
         {

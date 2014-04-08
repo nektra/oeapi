@@ -33,7 +33,6 @@ EnumProcesses_t pEnumProcesses = 0;*/
 
 bool GetProcessName( DWORD processID, LPTSTR procName, int maxLen )
 {
-    TCHAR szProcessName[MAX_PATH] = _T("<unknown>");
 	bool ret = false;
 
     // Get a handle to the process.
@@ -143,8 +142,6 @@ LPTSTR Win32Process::ExtractProcessName(LPTSTR path, int size)
 		p = _tcsrchr (path, '.');
 		*p=0;				  //get rid of the .exe extension
 		_tcslwr_s(path, size); //make it lower case and return it.
-		return path;
-
 	}
 
 	return path;
@@ -166,7 +163,7 @@ DWORD Win32Process::GetNextThreadId()
 DWORD Win32Process::GetThreadId()
 {
 	THREADENTRY32 thEntry;
-	DWORD ret = -1;
+	DWORD ret = (DWORD)-1;
 
 	thEntry.dwSize = sizeof(THREADENTRY32);
 
