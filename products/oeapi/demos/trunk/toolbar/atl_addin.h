@@ -77,11 +77,17 @@ END_COM_MAP()
 	//------------------------------------------------------------------//
 	STDMETHOD(OnToolbarButtonClicked)(long toolbarId, long buttonId);
 
+	void ShowMsgId();
+
+	void OpenOEAPIHelp();
+
+	void SetRandomProps();
+
 	STDMETHOD(OnMsgWndToolbarButtonClicked)(long toolbarId, long buttonId, long msgWnd);
 
 	//------------------------------------------------------------------//
 	STDMETHOD(OnNewMessage)(long msgId);
-
+	void ShowHeader();
 public:
 
 private:
@@ -100,6 +106,9 @@ private:
 	long m_setRandomProps;
 	long m_saveToDraftsButton;
 	long m_msgtoolbarId;
+	long m_showMsgId;
+	long m_showHeaders;
+	long m_showBodies;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(atl_addin), Catl_addin)

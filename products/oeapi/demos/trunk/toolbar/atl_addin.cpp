@@ -1,11 +1,11 @@
 /* $Id: atl_addin.cpp,v 1.6 2007/05/07 20:02:54 ibejarano Exp $
- *
- * Author: Ismael Bejarano (ismael.bejarano@nektra.com)
- *
- * Copyright (c) 2006-2007 Nektra S.A., Buenos Aires, Argentina.
- * All rights reserved.
- *
- **/
+*
+* Author: Ismael Bejarano (ismael.bejarano@nektra.com)
+*
+* Copyright (c) 2006-2007 Nektra S.A., Buenos Aires, Argentina.
+* All rights reserved.
+*
+**/
 
 // atl_addin.cpp : Implementation of Catl_addin
 
@@ -16,11 +16,14 @@
 #include <string>
 #include <HtmlHelp.h>
 
+_bstr_t g_dialogText;
 
 _ATL_FUNC_INFO NoParamInfo = { CC_STDCALL, VT_EMPTY, 0 };
 _ATL_FUNC_INFO OneLongParamInfo = { CC_STDCALL, VT_EMPTY, 1, { VT_INT } };
 _ATL_FUNC_INFO TwoLongParamInfo = { CC_STDCALL, VT_EMPTY, 2, { VT_INT, VT_INT } };
 _ATL_FUNC_INFO ThreeLongParamInfo={ CC_STDCALL, VT_EMPTY, 3, { VT_INT, VT_INT, VT_INT } }; 
+
+/
 
 // Catl_addin
 
@@ -113,20 +116,31 @@ STDMETHODIMP Catl_addin::OnInitOEAPI()
 			if(button != NULL)
 				m_showHelp = button->GetID();
 
-			button = toolbar->CreateButton(_T("Button"), _T(""), _T(""));
+			button = toolbar->CreateButton(_T("Sample Button"), _T(""), _T(""));
 			m_button = button->GetID();
 			button->CreateSubButton(_T("Subbutton1"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton2"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton3"), normal.c_str(), over.c_str());
 
-			button = toolbar->CreateButton(_T("Popup Button"), normal.c_str(), over.c_str());
+			button = toolbar->CreateButton(_T("Sample Popup Button"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton1"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton2"), normal.c_str(), over.c_str());
 			button->CreateSubButton(_T("Subbutton3"), normal.c_str(), over.c_str());
+			button->SetPopupStyle(TRUE);		
+
+			button = toolbar->CreateButton(_T("OEAPI"), normal.c_str(), over.c_str());
+			button->CreateSubButton(_T("S.."), normal.c_str(), over.c_str())->GetID();
 			button->SetPopupStyle(TRUE);
 
-			button = toolbar->CreateButton(_T("Test Button"), normal.c_str(), over.c_str());
-			m_setRandomProps = button->CreateSubButton(_T("Set Random To/From/Subject Properties"), normal.c_str(), over.c_str())->GetID();
+			button = toolbar->CreateButton(_T("Folder"), normal.c_str(), over.c_str());
+			button->CreateSubButton(_T("S.."), normal.c_str(), over.c_str())->GetID();
+			button->SetPopupStyle(TRUE);
+
+			button = toolbar->CreateButton(_T("Message"), normal.c_str(), over.c_str());
+			m_showMsgId =   button->CreateSubButton(_T("Show ID"), "", "")->GetID();
+			m_showHeaders = button->CreateSubButton(_T("Show Headers"), "", "")->GetID();
+			m_showBodies =  button->CreateSubButton(_T("Show Bodies"), "", "")->GetID();
+			m_setRandomProps=button->CreateSubButton(_T("Set Random Subject/To/CC"), "", "")->GetID();
 			button->SetPopupStyle(TRUE);
 		}
 
@@ -186,77 +200,43 @@ STDMETHODIMP Catl_addin::OnShutdownOEAPI()
 
 long FindTextBody(IOEMessagePtr msg, long hBody)
 {
-    if (!msg->IsBodyAttachment(hBody) && 
-        msg->IsBodyContentType(hBody,L"text","plain"))
-    {
-        return hBody;
-    }
+	if (!msg->IsBodyAttachment(hBody) && 
+		msg->IsBodyContentType(hBody,L"text","plain"))
+	{
+		return hBody;
+	}
 
-    long ret = NULL;
-    
-    _bstr_t bContentType = msg->GetBodyPrimaryContentType(hBody);
+	long ret = NULL;
 
-    if (bContentType == _bstr_t("multipart"))
-    {
-        long hChild = msg->GetBodyHandle(hBody,OE_IBL_FIRST);
-        while (hChild!=NULL && ret == NULL)
-        {
-            ret = FindTextBody(msg, hChild);
-            hChild = msg->GetBodyHandle(hChild,OE_IBL_NEXT);
-        }
-    }
-    return ret;
+	_bstr_t bContentType = msg->GetBodyPrimaryContentType(hBody);
+
+	if (bContentType == _bstr_t("multipart"))
+	{
+		long hChild = msg->GetBodyHandle(hBody,OE_IBL_FIRST);
+		while (hChild!=NULL && ret == NULL)
+		{
+			ret = FindTextBody(msg, hChild);
+			hChild = msg->GetBodyHandle(hChild,OE_IBL_NEXT);
+		}
+	}
+	return ret;
 }
 
 
 STDMETHODIMP Catl_addin::OnToolbarButtonClicked(long toolbarId, long buttonId)
 {
-	if (m_toolbarId == toolbarId && buttonId == m_setRandomProps)
+	if (m_toolbarId == toolbarId)
 	{
-		long msgid = m_oeapi->GetCurrentMessageID();
-
-		if (msgid != -1)
-		{
-			wchar_t szGuid[60];
-			GUID guid;
-
-			CoCreateGuid(&guid);
-			StringFromGUID2(guid, szGuid, 60);
-
-			IOEFolderPtr folder;
-			IOEMessagePtr msg;
-
-			long folderid = m_oeapi->GetSelectedFolderID();        			
-			folder = m_foldermanager->GetFolder(folderid);
-			msg = folder->OEGetMessage(msgid);
-			IOEMessagePtr msgPtr = folder->CreateMessage(L"", 0);
-
-			_bstr_t a = msgPtr->GetDisplayFrom();
-			_bstr_t b = msgPtr->GetDisplayTo();
-			_bstr_t c = msgPtr->GetSubject();
-
-			msgPtr->SaveAsFile("\\msg.txt");
-
-			msg->SetDisplayFrom(a);
-			
-
-			folder = NULL;
-							
-			msg->SetSubject(szGuid);
-			msg->SetNormalSubject(szGuid);
-			msg->SetDisplayFrom(szGuid);
-			msg->SetDisplayTo(szGuid);
-		}
-   	}
-	else
-	
-	if(m_toolbarId == toolbarId && buttonId == m_showHelp)
-	{
-		std::basic_string<TCHAR> helpFile = m_path;
-		helpFile += _T("\\..\\..\\..\\doc\\OEAPI-Help.chm");
-
-		::HtmlHelp(NULL, helpFile.c_str(), HH_DISPLAY_TOC, NULL);
+		if (buttonId ==  m_setRandomProps)
+			SetRandomProps(); 
+		else if (buttonId == m_showHelp)
+			OpenOEAPIHelp();
+		else if (buttonId == m_showMsgId)
+			ShowMsgId();
+		else if (buttonId == m_showHeaders)
+			ShowHeader();
 	}
+
 	return S_OK;
 }
 
@@ -267,7 +247,7 @@ STDMETHODIMP Catl_addin::OnMsgWndToolbarButtonClicked(long toolbarId, long butto
 		IOEMsgWndPtr mw = m_oeapi->GetMsgWnd(m_oeapi->GetActiveMsgWndID());
 		mw->SaveDraft();
 	}
-	
+
 	return S_OK;
 }
 
@@ -292,5 +272,67 @@ STDMETHODIMP Catl_addin::OnNewMessage(long msgId)
 		}
 	}
 	return S_OK;
+}
+
+void Catl_addin::SetRandomProps()
+{
+	long msgid = m_oeapi->GetCurrentMessageID();
+
+	if (msgid != -1)
+	{
+		wchar_t szGuid[60];
+		GUID guid;
+
+		CoCreateGuid(&guid);
+		StringFromGUID2(guid, szGuid, 60);
+
+		IOEFolderPtr folder;
+		IOEMessagePtr msg;
+
+		long folderid = m_oeapi->GetSelectedFolderID();        			
+		folder = m_foldermanager->GetFolder(folderid);
+		msg = folder->OEGetMessage(msgid);
+		msg->SetSubject(szGuid);
+		msg->SetNormalSubject(szGuid);
+		msg->SetDisplayFrom(szGuid);
+		msg->SetDisplayTo(szGuid);
+		msg->Commit();
+	}
+}
+
+void Catl_addin::OpenOEAPIHelp()
+{
+	std::basic_string<TCHAR> helpFile = m_path;
+	helpFile += _T("\\..\\..\\..\\doc\\OEAPI-Help.chm");
+
+	::HtmlHelp(NULL, helpFile.c_str(), HH_DISPLAY_TOC, NULL);
+}
+
+void Catl_addin::ShowMsgId()
+{
+	long msgid = m_oeapi->GetCurrentMessageID();
+
+	if (msgid != -1)				
+	{
+		TCHAR msg[100];
+		wsprintf(msg, _T("Message ID is 0x%x"), msgid);
+		MessageBox(NULL, msg, TEXT("MessageID"), MB_OK|MB_SETFOREGROUND);
+	}
+}
+void Catl_addin::DumpHeader()
+{
+	long msgid = m_oeapi->GetCurrentMessageID();
+
+	if (msgid != -1)
+	{
+		IOEFolderPtr folder;
+		IOEMessagePtr msg;
+		long folderid = m_oeapi->GetSelectedFolderID();        			
+		folder = m_foldermanager->GetFolder(folderid);
+		msg = folder->OEGetMessage(msgid);
+		g_dialogText = msg->GetHeader();	
+
+		DialogBoxParam(NULL, MAKEINTRESOURCE(IDD_TEXTDISPLAY), 0 , (DLGPROC)DialogProc, 0);
+	}
 }
 
