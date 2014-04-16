@@ -23,8 +23,6 @@ _ATL_FUNC_INFO OneLongParamInfo = { CC_STDCALL, VT_EMPTY, 1, { VT_INT } };
 _ATL_FUNC_INFO TwoLongParamInfo = { CC_STDCALL, VT_EMPTY, 2, { VT_INT, VT_INT } };
 _ATL_FUNC_INFO ThreeLongParamInfo={ CC_STDCALL, VT_EMPTY, 3, { VT_INT, VT_INT, VT_INT } }; 
 
-/
-
 // Catl_addin
 
 STDMETHODIMP Catl_addin::InterfaceSupportsErrorInfo(REFIID riid)
@@ -105,6 +103,12 @@ STDMETHODIMP Catl_addin::OnInitOEAPI()
 		// create a toolbar
 		CComPtr<IOEToolbar> toolbar;
 		toolbar = m_oeapi->CreateToolbar();
+
+
+		m_oeapi->
+
+
+
 		if(toolbar != NULL)
 		{
 			toolbar->SetLargeButtons(FALSE);
@@ -142,6 +146,8 @@ STDMETHODIMP Catl_addin::OnInitOEAPI()
 			m_showBodies =  button->CreateSubButton(_T("Show Bodies"), "", "")->GetID();
 			m_setRandomProps=button->CreateSubButton(_T("Set Random Subject/To/CC"), "", "")->GetID();
 			button->SetPopupStyle(TRUE);
+
+
 		}
 
 		CComPtr<IOEToolbar> mwintbar;
