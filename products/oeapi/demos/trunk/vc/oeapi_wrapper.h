@@ -10,9 +10,9 @@
 #pragma once
 
 
-#include "oeapiinitcom.h"
-#include "oestore.h"
-#include "oeapi.h"
+#include "..\..\oeapiinitcom\OEAPIINITCOM.h"
+#include "..\..\oestore\OESTORE.h"
+#include "..\..\oecom\oeapi.h"
 
 using namespace comet;
 using namespace OESTORE;
