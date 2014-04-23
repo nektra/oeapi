@@ -13,6 +13,7 @@ Section CopySource
 	File "${INPATH_PRODUCT_SRCDIR}\launcher\*.vcproj"
 	File "${INPATH_PRODUCT_SRCDIR}\launcher\*.ico"
 	File "${INPATH_PRODUCT_SRCDIR}\launcher\*.rc"
+	File "${INPATH_PRODUCT_SRCDIR}\launcher\*.h"
 	
 	SetOutPath "$INSTDIR\Source\oeapicommon"
 	File "${INPATH_PRODUCT_SRCDIR}\oeapicommon\*.cpp"
@@ -56,13 +57,13 @@ Section CopySource
 	File "${INPATH_PRODUCT_SRCDIR}\plugin\*.cpp"
 	File "${INPATH_PRODUCT_SRCDIR}\plugin\*.h"
 
-	SetOutPath "$INSTDIR\Comet\bin"
+	SetOutPath "$INSTDIR\Comet"
 	File /r "${INPATH_PRODUCT_SRCDIR}\comet\bin"
 
-	SetOutPath "$INSTDIR\Comet\include"
+	SetOutPath "$INSTDIR\Comet"
 	File /r "${INPATH_PRODUCT_SRCDIR}\comet\include"
 
-	SetOutPath "$INSTDIR\Comet\src"
+	SetOutPath "$INSTDIR\Comet"
 	File /r "${INPATH_PRODUCT_SRCDIR}\comet\src"
 
 	
