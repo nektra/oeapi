@@ -55,5 +55,15 @@ Section CopySource
 	File /oname=oeapiplugin.vcproj "${INPATH_PRODUCT_SRCDIR}\plugin\oeapiplugin-distro.vcproj"
 	File "${INPATH_PRODUCT_SRCDIR}\plugin\*.cpp"
 	File "${INPATH_PRODUCT_SRCDIR}\plugin\*.h"
+
+	SetOutPath "$INSTDIR\Comet\bin"
+	File /r "${INPATH_PRODUCT_SRCDIR}\comet\bin"
+
+	SetOutPath "$INSTDIR\Comet\include"
+	File /r "${INPATH_PRODUCT_SRCDIR}\comet\include"
+
+	SetOutPath "$INSTDIR\Comet\src"
+	File /r "${INPATH_PRODUCT_SRCDIR}\comet\src"
+
 	
 SectionEnd
