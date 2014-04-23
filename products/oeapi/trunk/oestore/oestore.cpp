@@ -15,7 +15,7 @@ using namespace OESTORE;
 #include "manager.h"
 #include "message.h"
 #include "folder.h"
-#include "manager.h"
+#include "accmgr.h"
 
 #include "oeapi_utils.h"
 

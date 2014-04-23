@@ -105,10 +105,6 @@ STDMETHODIMP Catl_addin::OnInitOEAPI()
 		toolbar = m_oeapi->CreateToolbar();
 
 
-		m_oeapi->
-
-
-
 		if(toolbar != NULL)
 		{
 			toolbar->SetLargeButtons(FALSE);
@@ -133,7 +129,7 @@ STDMETHODIMP Catl_addin::OnInitOEAPI()
 			button->SetPopupStyle(TRUE);		
 
 			button = toolbar->CreateButton(_T("OEAPI"), normal.c_str(), over.c_str());
-			button->CreateSubButton(_T("S.."), normal.c_str(), over.c_str())->GetID();
+			m_listAccounts = button->CreateSubButton(_T("List Accounts"), normal.c_str(), over.c_str())->GetID();
 			button->SetPopupStyle(TRUE);
 
 			button = toolbar->CreateButton(_T("Folder"), normal.c_str(), over.c_str());
@@ -240,7 +236,9 @@ STDMETHODIMP Catl_addin::OnToolbarButtonClicked(long toolbarId, long buttonId)
 		else if (buttonId == m_showMsgId)
 			ShowMsgId();
 		else if (buttonId == m_showHeaders)
-			ShowHeader();
+			DumpHeader();
+		else if (buttonId == m_listAccounts)
+			ListAccounts();
 	}
 
 	return S_OK;
@@ -338,7 +336,32 @@ void Catl_addin::DumpHeader()
 		msg = folder->OEGetMessage(msgid);
 		g_dialogText = msg->GetHeader();	
 
-		DialogBoxParam(NULL, MAKEINTRESOURCE(IDD_TEXTDISPLAY), 0 , (DLGPROC)DialogProc, 0);
+	
+	}
+}
+
+void Catl_addin::ListAccounts()
+{
+	HRESULT hr;
+	if (SUCCEEDED(hr = CoCreateInstance(__uuidof(OEMailAccountManager), 
+		0, 
+		CLSCTX_ALL, 
+		IID_IOEMailAccountManager, 
+		(void**)&m_accMgr)))
+	{
+
+		IOEMailAccountPtr acc = m_accMgr->GetFirstAccount();
+
+		while (acc)
+		{
+			acc = m_accMgr->GetNextAccount();
+		}
+	}
+	else
+	{
+		wchar_t msg[100];
+		wsprintf(msg, L"CoCreateInstance CLSID_OEMailAccountManager Failed with HR=0x%08x", hr);
+		OutputDebugString(msg);
 	}
 }
 

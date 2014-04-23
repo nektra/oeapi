@@ -1296,24 +1296,47 @@ interface NktIMessageList
 // MSOEACCT.DLL
 //
 
-interface IMSOEAccountManager : public IUnknown
-{
-
-
-};
-
 interface IMSOEAccount : public IUnknown
 {
-
-
+	virtual long __stdcall GetPropA(unsigned long,unsigned char *,unsigned long *)=0;	
+	virtual long __stdcall GetPropDw(unsigned long,unsigned long *)=0;
+	virtual long __stdcall GetPropSz(unsigned long,char *,unsigned long)=0;
+	virtual long __stdcall SetPropA(unsigned long,unsigned char *,unsigned long)=0;
+	virtual long __stdcall SetPropDw(unsigned long,unsigned long)=0;
+	virtual long __stdcall SetPropSz(unsigned long,char *)=0;	
+	virtual long __stdcall Exist(void)=0;
+	virtual long __stdcall SetAsDefault(void)=0;	
+	virtual long __stdcall Delete(void)=0;	
+	virtual long __stdcall SaveChanges(void)=0;	
+	virtual long __stdcall GetAccountType(LONG *)=0;
+	virtual long __stdcall GetServerTypes(unsigned long *)=0;	
+	virtual long __stdcall ShowProperties(struct HWND__ *,unsigned long)=0;	
+	virtual long __stdcall ValidateProperty(unsigned long,unsigned char *,unsigned long)=0;
+	virtual long __stdcall DoWizard(struct HWND__ *,unsigned long)=0;
+	virtual long __stdcall DoImportWizard(struct HWND__ *,struct _GUID,unsigned long)=0;
 };
+
 
 interface IMSOEAccountEnum : public IUnknown
 {
-	
-
+	virtual HRESULT STDMETHODCALLTYPE Count(LONG*) = 0;
+	virtual HRESULT STDMETHODCALLTYPE Sort() = 0;
+	virtual HRESULT STDMETHODCALLTYPE Next(IMSOEAccount**) = 0;
+	virtual HRESULT STDMETHODCALLTYPE Reset() = 0;
 
 };
+
+interface IMSOEAccountManager : public IUnknown
+{
+	virtual HRESULT STDMETHODCALLTYPE Init(void*) = 0;
+	virtual HRESULT STDMETHODCALLTYPE CreateAccount(LONG type, IMSOEAccount** pAcc) = 0;
+	virtual HRESULT STDMETHODCALLTYPE EnumerateAccounts(LONG type, IMSOEAccountEnum**) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetAccountCount(LONG type, LONG* count) = 0;
+	virtual HRESULT STDMETHODCALLTYPE FindAccount() = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetDefaultAccount(LONG type, IMSOEAccount**) = 0;
+};
+
+
 
 
 

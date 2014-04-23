@@ -16,6 +16,8 @@
 //////////////////////////////////////////////////////////////////////////
 TOEMailAccountManager::TOEMailAccountManager()
 {
+	_pMSOEAccMgr = NULL;
+
 	HRESULT hr;
 	if (FAILED(hr = CoCreateInstance(CLSID_IOEAccountManager, 
 		NULL, 
@@ -29,17 +31,38 @@ TOEMailAccountManager::TOEMailAccountManager()
 
 TOEMailAccountManager::~TOEMailAccountManager()
 {
-
-
+	
 }
 
 TOEMailAccountPtr TOEMailAccountManager::GetFirstAccount()
 {
+	HRESULT hr;
+
+	_pMSOEAccEnum = NULL;
+	TOEMailAccountPtr pAcc;
+	
+	if (SUCCEEDED(hr = _pMSOEAccMgr->EnumerateAccounts(0xFFFFFFFF, &_pMSOEAccEnum)))
+	{
+		CComPtr<IMSOEAccount> pMSOEAcc;
+		_pMSOEAccEnum->Reset();
+		_pMSOEAccEnum->Next(&pMSOEAcc);
+
+		pAcc->
+	}
+	else
+	{
+		debug_print(DEBUG_ERROR, TEXT("EnumerateAccounts failed with HR=0x%08x"), hr);
+	}
+
 	return 0;
 }
 
 TOEMailAccountPtr TOEMailAccountManager::GetNextAccount()
 {
+	if (!_pMSOEAccEnum)
+		return 0;
+
+	
 
 	return 0;
 }
@@ -61,4 +84,28 @@ TOEMailAccountPtr TOEMailAccountManager::GetCurrentAccount()
 //
 //////////////////////////////////////////////////////////////////////////
 
+unsigned __int64 TOEMailAccount::GetAccountId()
+{
+	return 0;
+
+}
+comet::bstr_t TOEMailAccount::GetAccountName()
+{
+	return "";
+
+}
+comet::bstr_t TOEMailAccount::GetAccountGuid()
+{
+	return "";
+
+}
+comet::bstr_t TOEMailAccount::GetMailAddress()
+{
+	return "";
+
+}
+comet::OESTORE::ACCOUNTTYPE TOEMailAccount::GetAccountType()
+{
+	return comet::OESTORE::OE_ACCTYPE_HTTP;
+}
 

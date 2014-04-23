@@ -5,12 +5,21 @@
 #include "msoeapi.h"
 #include "mimeole.h"
 #include "oeundoc.h"
+#include "std.h"
+	
+#include <atlbase.h>
 
 #define TOEMailAccountPtr comet::com_ptr<comet::OESTORE::IOEMailAccount>
 #define TOEMailAccount coclass_implementation<comet::OESTORE::OEMailAccount>
-template<> class TOEMailAccount : public comet::coclass<comet::OESTORE::OEMailAccount>
+
+template<>
+class TOEMailAccount : public comet::coclass<OEMailAccount>
 {
+	CComPtr<IMSOEAccount> _pMSOEAcct;
+	
 public:
+
+	static TCHAR *get_progid() { return _T("OESTORE.OEMailAccount"); }
 
 	unsigned __int64 GetAccountId();
 	comet::bstr_t GetAccountName();
@@ -18,20 +27,36 @@ public:
 	comet::bstr_t GetMailAddress();
 	comet::OESTORE::ACCOUNTTYPE GetAccountType();
 	
-	TOEMailAccount();
-	virtual ~TOEMailAccount();
+	TOEMailAccount()
+	{
+		_pMSOEAcct = NULL;
+	}
+
+	TOEMailAccount(IMSOEAccount* pacct)
+	{
+		_pMSOEAcct = pacct;
+	};
+
+	~TOEMailAccount() {};
 };
 
 #define TOEMailAccountManagerPtr comet::com_ptr<comet::OESTORE::IOEMailAccountManager>
 #define TOEMailAccountManager coclass_implementation<comet::OESTORE::OEMailAccountManager>
 
-template<> class TOEMailAccountManager : public comet::coclass<comet::OESTORE::OEMailAccountManager>
+template<> 
+class TOEMailAccountManager : public comet::coclass<comet::OESTORE::OEMailAccountManager>
 {
-	comet::com_ptr<IMSOEAccountManager> _pMSOEAccMgr;
+	CComPtr<IMSOEAccountManager> _pMSOEAccMgr;
+	CComPtr<IMSOEAccountEnum> _pMSOEAccEnum;
+
+	TOEMailAccountPtr _currentAccount;	
+
 public:
 	TOEMailAccountManager();
-	virtual ~TOEMailAccountManager();
+	~TOEMailAccountManager() ;
 	
+	static TCHAR *get_progid() { return _T("OESTORE.OEMailAccountManager"); }
+
 	TOEMailAccountPtr GetFirstAccount();
 	TOEMailAccountPtr GetNextAccount();
 	TOEMailAccountPtr GetCurrentAccount();

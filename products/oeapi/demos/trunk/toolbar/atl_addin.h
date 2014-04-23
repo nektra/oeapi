@@ -76,18 +76,16 @@ END_COM_MAP()
 
 	//------------------------------------------------------------------//
 	STDMETHOD(OnToolbarButtonClicked)(long toolbarId, long buttonId);
-
-	void ShowMsgId();
-
-	void OpenOEAPIHelp();
-
-	void SetRandomProps();
-
 	STDMETHOD(OnMsgWndToolbarButtonClicked)(long toolbarId, long buttonId, long msgWnd);
-
 	//------------------------------------------------------------------//
 	STDMETHOD(OnNewMessage)(long msgId);
-	void ShowHeader();
+
+	void DumpHeader();
+	void ListAccounts();
+	void ShowMsgId();
+	void OpenOEAPIHelp();
+	void SetRandomProps();
+
 public:
 
 private:
@@ -95,6 +93,7 @@ private:
 	CComPtr<IOEAPIObj> m_oeapi;
 	CComPtr<IOEFolder> m_inbox;
 	CComPtr<IOEFolderManager> m_foldermanager;
+	CComPtr<IOEMailAccountManager> m_accMgr;
 
 	std::basic_string<TCHAR> m_identity;
 
@@ -109,6 +108,7 @@ private:
 	long m_showMsgId;
 	long m_showHeaders;
 	long m_showBodies;
+	long m_listAccounts;
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(atl_addin), Catl_addin)
