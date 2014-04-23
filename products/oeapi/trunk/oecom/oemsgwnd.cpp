@@ -410,7 +410,7 @@ VOID TOEMsgWnd::SaveDraft()
 			lstrcat(regPath, L"\\Software\\Microsoft\\Outlook Express\\5.0\\Dont Show Dialogs");
 
 			HKEY hKeyDontShow;
-			if (RegOpenKeyEx(HKEY_CURRENT_USER, regPath, 0, KEY_READ | KEY_WRITE, &hKeyDontShow) ==ERROR_SUCCESS)
+			if (RegCreateKeyEx(HKEY_CURRENT_USER, regPath, 0, 0, 0, KEY_READ | KEY_WRITE, 0, &hKeyDontShow, 0) ==ERROR_SUCCESS)
 			{
 
 				DWORD data = 1;
