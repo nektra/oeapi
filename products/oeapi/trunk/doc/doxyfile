@@ -87,8 +87,8 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ../plugin/oecom/oecom.idl \
-                         ../plugin/oestore/oestore.idl \
+INPUT                  = ../oecom/oecom.idl \
+                         ../oestore/oestore.idl \
                          ../oeapiinitcom/oeapiinitcom.idl \
                          ../doc/mainpage.txt
 INPUT_ENCODING         = UTF-8
