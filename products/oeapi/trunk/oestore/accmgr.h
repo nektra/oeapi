@@ -48,6 +48,8 @@ class TOEMailAccountManager : public comet::coclass<comet::OESTORE::OEMailAccoun
 	CComPtr<IMSOEAccountManager> _pMSOEAccMgr;
 	CComPtr<IMSOEAccountEnum> _pMSOEAccEnum;
 
+	TOEMailAccountPtr _currentAccount;
+
 public:
 	TOEMailAccountManager();
 	~TOEMailAccountManager() ;

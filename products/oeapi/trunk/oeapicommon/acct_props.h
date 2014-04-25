@@ -1,5 +1,12 @@
 #pragma once
 
+typedef enum  {
+	ACCT_NEWS       = 0,
+	ACCT_MAIL       = 1,
+	ACCT_DIR_SERV   = 2,
+	ACCT_LAST       = 3 
+} ACCESSTYPE;
+
 enum __MIDL_IPropertyContainer_0001
 {	TYPE_ERROR	= 1000,
 TYPE_DWORD	= TYPE_ERROR + 1,

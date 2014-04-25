@@ -48,10 +48,11 @@ TOEMailAccountPtr TOEMailAccountManager::GetFirstAccount()
 		_pMSOEAccEnum->Reset();
 		_pMSOEAccEnum->Next(&pMSOEAcc);
 
-		
-
 		TOEMailAccountPtr pAcc = TOEMailAccountPtr(new TOEMailAccount);
 		((TOEMailAccount*)pAcc.get())->setMSOEAcct(pMSOEAcc);
+
+		_currentAccount = pAcc;
+
 		return pAcc;
 		
 	}
@@ -68,20 +69,36 @@ TOEMailAccountPtr TOEMailAccountManager::GetNextAccount()
 	if (!_pMSOEAccEnum)
 		return 0;
 
-	
+	CComPtr<IMSOEAccount> pMSOEAcc;
+	HRESULT hr = _pMSOEAccEnum->Next(&pMSOEAcc);
+
+	if (SUCCEEDED(hr) && pMSOEAcc)
+	{
+		TOEMailAccountPtr pAcc = TOEMailAccountPtr(new TOEMailAccount);
+		((TOEMailAccount*)pAcc.get())->setMSOEAcct(pMSOEAcc);
+		_currentAccount = pAcc;
+		return pAcc;
+	}
 
 	return 0;
 }
 
 TOEMailAccountPtr TOEMailAccountManager::GetDefaultAccount()
 {
-	return 0;
+	CComPtr<IMSOEAccount> pMSOEAcc;
+	if (SUCCEEDED(_pMSOEAccMgr->GetDefaultAccount(ACCT_MAIL, &pMSOEAcc)))
+	{
+		TOEMailAccountPtr pAcc = TOEMailAccountPtr(new TOEMailAccount);
+		((TOEMailAccount*)pAcc.get())->setMSOEAcct(pMSOEAcc);
+		return pAcc;
+	}
 
+	return 0;
 }
 
 TOEMailAccountPtr TOEMailAccountManager::GetCurrentAccount()
 {
-	return 0;
+	return _currentAccount;
 }
 
 //////////////////////////////////////////////////////////////////////////

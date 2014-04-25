@@ -359,6 +359,11 @@ void Catl_addin::ListAccounts()
 			_bstr_t uid = acc->GetAccountGuid();
 			_bstr_t addr = acc->GetMailAddress();
 			ACCOUNTTYPE at = acc->GetAccountType();
+
+			wchar_t s[1000];
+			wsprintf(s, L"name:%s id:%d uid:%s addr:%s acctype:%d", name, id, uid, addr, at);
+			OutputDebugString(s);
+		
 			acc = m_accMgr->GetNextAccount();
 		}
 	}
