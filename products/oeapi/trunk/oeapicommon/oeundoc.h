@@ -1339,5 +1339,4 @@ interface IMSOEAccountManager : public IUnknown
 
 
 
-
 #endif // __OEUNDOC_H__

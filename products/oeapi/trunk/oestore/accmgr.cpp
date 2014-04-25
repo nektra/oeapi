@@ -1,6 +1,8 @@
 #include "accmgr.h"
 #include "se_debug.h"
 
+#include "acct_props.h"
+
 #if _MSC_VER >= 1400
 #pragma warning(push)
 // disable warning C4812: 
@@ -39,7 +41,6 @@ TOEMailAccountPtr TOEMailAccountManager::GetFirstAccount()
 	HRESULT hr;
 
 	_pMSOEAccEnum = NULL;
-	TOEMailAccountPtr pAcc;
 	
 	if (SUCCEEDED(hr = _pMSOEAccMgr->EnumerateAccounts(0xFFFFFFFF, &_pMSOEAccEnum)))
 	{
@@ -47,7 +48,12 @@ TOEMailAccountPtr TOEMailAccountManager::GetFirstAccount()
 		_pMSOEAccEnum->Reset();
 		_pMSOEAccEnum->Next(&pMSOEAcc);
 
-		pAcc->
+		
+
+		TOEMailAccountPtr pAcc = TOEMailAccountPtr(new TOEMailAccount);
+		((TOEMailAccount*)pAcc.get())->setMSOEAcct(pMSOEAcc);
+		return pAcc;
+		
 	}
 	else
 	{
@@ -86,26 +92,63 @@ TOEMailAccountPtr TOEMailAccountManager::GetCurrentAccount()
 
 unsigned __int64 TOEMailAccount::GetAccountId()
 {
-	return 0;
-
+	char s[1024] = {0};
+	_pMSOEAcct->GetPropSz(AP_ACCOUNT_ID, s, 1024);
+	return atoi(s);
 }
+
 comet::bstr_t TOEMailAccount::GetAccountName()
 {
-	return "";
-
+	char s[1024] = {0};
+	_pMSOEAcct->GetPropSz(AP_ACCOUNT_NAME, s, 1024);
+	return comet::bstr_t(s);
 }
 comet::bstr_t TOEMailAccount::GetAccountGuid()
 {
-	return "";
-
+	const ULONG bs = 1024;
+	BYTE b[bs];
+	HRESULT hr = _pMSOEAcct->GetPropA(AP_UNIQUE_ID, b, (ULONG*)&bs);
+	
+	if (SUCCEEDED(hr))
+	{
+		WCHAR szGuid[40];
+		GUID guid;
+		memcpy(&guid, b, sizeof(GUID));
+		StringFromGUID2(guid, szGuid, 40);
+		return comet::bstr_t(szGuid);
+	}
+	else
+	{
+		return "";
+	}
 }
+	
 comet::bstr_t TOEMailAccount::GetMailAddress()
 {
-	return "";
-
+	char s[1024] = {0};
+	_pMSOEAcct->GetPropSz(AP_SMTP_EMAIL_ADDRESS, s, 1024);
+	return comet::bstr_t(s);
 }
 comet::OESTORE::ACCOUNTTYPE TOEMailAccount::GetAccountType()
 {
-	return comet::OESTORE::OE_ACCTYPE_HTTP;
+	char tmp[CCHMAX_SERVER_NAME];
+	
+	if (SUCCEEDED(_pMSOEAcct->GetPropSz(AP_HTTPMAIL_SERVER, tmp, CCHMAX_SERVER_NAME)))
+		return OE_ACCTYPE_HTTP;
+
+	if (SUCCEEDED(_pMSOEAcct->GetPropSz(AP_LDAP_SERVER, tmp, CCHMAX_SERVER_NAME)))
+		return OE_ACCTYPE_LDAP;
+
+	if (SUCCEEDED(_pMSOEAcct->GetPropSz(AP_POP3_SERVER, tmp, CCHMAX_SERVER_NAME)))
+		return OE_ACCTYPE_POP3;
+
+	if (SUCCEEDED(_pMSOEAcct->GetPropSz(AP_IMAP_SERVER, tmp, CCHMAX_SERVER_NAME)))
+		return OE_ACCTYPE_IMAP;
+
+	if (SUCCEEDED(_pMSOEAcct->GetPropSz(AP_NNTP_SERVER, tmp, CCHMAX_SERVER_NAME)))
+		return OE_ACCTYPE_NEWS;
+
+	return OE_ACCTYPE_UNKNOWN;
+
 }
 

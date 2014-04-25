@@ -16,6 +16,7 @@ template<>
 class TOEMailAccount : public comet::coclass<OEMailAccount>
 {
 	CComPtr<IMSOEAccount> _pMSOEAcct;
+
 	
 public:
 
@@ -26,16 +27,14 @@ public:
 	comet::bstr_t GetAccountGuid();
 	comet::bstr_t GetMailAddress();
 	comet::OESTORE::ACCOUNTTYPE GetAccountType();
+
+	void setMSOEAcct(IMSOEAccount* p ) { _pMSOEAcct = p; }
+
 	
 	TOEMailAccount()
 	{
 		_pMSOEAcct = NULL;
 	}
-
-	TOEMailAccount(IMSOEAccount* pacct)
-	{
-		_pMSOEAcct = pacct;
-	};
 
 	~TOEMailAccount() {};
 };
@@ -48,8 +47,6 @@ class TOEMailAccountManager : public comet::coclass<comet::OESTORE::OEMailAccoun
 {
 	CComPtr<IMSOEAccountManager> _pMSOEAccMgr;
 	CComPtr<IMSOEAccountEnum> _pMSOEAccEnum;
-
-	TOEMailAccountPtr _currentAccount;	
 
 public:
 	TOEMailAccountManager();

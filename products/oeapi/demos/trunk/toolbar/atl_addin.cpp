@@ -354,6 +354,11 @@ void Catl_addin::ListAccounts()
 
 		while (acc)
 		{
+			_bstr_t name = acc->GetAccountName();
+			ULONGLONG id = acc->GetAccountId();
+			_bstr_t uid = acc->GetAccountGuid();
+			_bstr_t addr = acc->GetMailAddress();
+			ACCOUNTTYPE at = acc->GetAccountType();
 			acc = m_accMgr->GetNextAccount();
 		}
 	}
