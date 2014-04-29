@@ -182,6 +182,22 @@ STDMETHODIMP Catl_addin::OnInitOEAPI()
 		}
 	}
 
+	HRESULT hr;
+	if (SUCCEEDED(hr = CoCreateInstance(__uuidof(OEMailAccountManager), 
+		0, 
+		CLSCTX_ALL, 
+		IID_IOEMailAccountManager, 
+		(void**)&m_accMgr)))
+	{
+		_OEAccMgrEvents::DispEventAdvise(m_accMgr);
+	}
+	else
+	{
+		wchar_t msg[100];
+		wsprintf(msg, L"CoCreateInstance CLSID_OEMailAccountManager Failed with HR=0x%08x", hr);
+		OutputDebugString(msg);
+	}
+
 	return S_OK;
 }
 
@@ -195,6 +211,11 @@ STDMETHODIMP Catl_addin::OnShutdownOEAPI()
 		_OEFolderEvents::DispEventUnadvise((IUnknown*)m_inbox);
 		m_inbox = NULL;
 	}
+	if (m_accMgr != NULL)
+	{
+		_OEAccMgrEvents::DispEventUnadvise((IUnknown*) m_accMgr, &__uuidof(OESTORE::IOEMailAccountManagerEvents));
+		m_accMgr = NULL;
+	}
 
 	// stop listening oeapi events
 	if(m_oeapi != NULL)
@@ -205,6 +226,8 @@ STDMETHODIMP Catl_addin::OnShutdownOEAPI()
 
 	// stop listening init events
 	_OEAPIInitEvents::DispEventUnadvise((IUnknown*)m_init, &__uuidof(OEAPIINITCOM::IOEInitEvents));
+
+
 
 	return S_OK;
 }
@@ -339,7 +362,9 @@ void Catl_addin::ShowMsgId()
 
 STDMETHODIMP Catl_addin::OnDefaultAccountChanged()
 {
-	return S_OK;}
+	MessageBox(0, L"Default account changed.", L"OEAPI DEMO", MB_OK|MB_SETFOREGROUND);
+	return S_OK;
+}
 
 void Catl_addin::DumpHeader()
 {
@@ -359,12 +384,7 @@ void Catl_addin::DumpHeader()
 
 void Catl_addin::ListAccounts()
 {
-	HRESULT hr;
-	if (SUCCEEDED(hr = CoCreateInstance(__uuidof(OEMailAccountManager), 
-		0, 
-		CLSCTX_ALL, 
-		IID_IOEMailAccountManager, 
-		(void**)&m_accMgr)))
+	if (m_accMgr)
 	{
 		std::wstringstream ss;
 
@@ -397,13 +417,6 @@ void Catl_addin::ListAccounts()
 		td.DoModal();
 
 		acc = NULL;
-		m_accMgr = NULL;
-	}
-	else
-	{
-		wchar_t msg[100];
-		wsprintf(msg, L"CoCreateInstance CLSID_OEMailAccountManager Failed with HR=0x%08x", hr);
-		OutputDebugString(msg);
-	}
+	}	
 }
 
