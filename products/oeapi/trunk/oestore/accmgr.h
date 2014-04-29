@@ -9,6 +9,36 @@
 	
 #include <atlbase.h>
 
+// Implementation of internal IImnAdviseAccount for catching events
+//
+class CAccMgrEventSink : public IMSOEAdviseAccount
+{
+	HRESULT STDMETHODCALLTYPE QueryInterface(REFIID riid, __RPC__deref_out void **ppvObject)
+	{
+		*ppvObject = this;
+		return S_OK;
+	}
+
+	ULONG STDMETHODCALLTYPE AddRef()
+	{
+		return 1;
+	}
+
+	ULONG STDMETHODCALLTYPE Release()
+	{
+		return 1;
+	}
+
+	HRESULT STDMETHODCALLTYPE AdviseAccount(DWORD dwAdviseType, void*)
+	{
+		if (dwAdviseType == AN_DEFAULT_CHANGED)
+		{
+
+		}
+		return S_OK;
+	}
+};
+
 #define TOEMailAccountPtr comet::com_ptr<comet::OESTORE::IOEMailAccount>
 #define TOEMailAccount coclass_implementation<comet::OESTORE::OEMailAccount>
 
@@ -49,6 +79,9 @@ class TOEMailAccountManager : public comet::coclass<comet::OESTORE::OEMailAccoun
 	CComPtr<IMSOEAccountEnum> _pMSOEAccEnum;
 
 	TOEMailAccountPtr _currentAccount;
+
+	CAccMgrEventSink* _pEventSink;
+	DWORD _dwCookie;
 
 public:
 	TOEMailAccountManager();

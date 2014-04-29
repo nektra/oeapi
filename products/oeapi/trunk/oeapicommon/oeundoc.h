@@ -1295,6 +1295,13 @@ interface NktIMessageList
 //
 // MSOEACCT.DLL
 //
+#define AN_ACCOUNT_DELETED           WM_USER + 1
+#define AN_ACCOUNT_ADDED             WM_USER + 2
+#define AN_ACCOUNT_CHANGED           WM_USER + 3
+#define AN_DEFAULT_CHANGED           WM_USER + 4
+#define AN_SERVERTYPES_CHANGED       WM_USER + 5
+#define AN_ACCOUNT_PREDELETE         WM_USER + 6
+
 
 interface IMSOEAccount : public IUnknown
 {
@@ -1326,6 +1333,11 @@ interface IMSOEAccountEnum : public IUnknown
 
 };
 
+interface IMSOEAdviseAccount : public IUnknown
+{
+	virtual HRESULT STDMETHODCALLTYPE AdviseAccount(DWORD,void*) = 0;
+};
+
 interface IMSOEAccountManager : public IUnknown
 {
 	virtual HRESULT STDMETHODCALLTYPE Init(void*) = 0;
@@ -1334,9 +1346,12 @@ interface IMSOEAccountManager : public IUnknown
 	virtual HRESULT STDMETHODCALLTYPE GetAccountCount(LONG type, LONG* count) = 0;
 	virtual HRESULT STDMETHODCALLTYPE FindAccount() = 0;
 	virtual HRESULT STDMETHODCALLTYPE GetDefaultAccount(LONG type, IMSOEAccount**) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetDefaultAccountName() =0;
+	virtual HRESULT STDMETHODCALLTYPE ProcessNotification() = 0;
+	virtual HRESULT STDMETHODCALLTYPE f0() = 0;
+	virtual HRESULT STDMETHODCALLTYPE f1() = 0;
+	virtual HRESULT STDMETHODCALLTYPE Advise(IMSOEAdviseAccount*, ULONG* dwCookie) = 0;
+	virtual HRESULT STDMETHODCALLTYPE Unadvise(ULONG dwCookie) = 0;
 };
-
-
-
 
 #endif // __OEUNDOC_H__

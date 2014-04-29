@@ -30,12 +30,14 @@ class ATL_NO_VTABLE Catl_addin :
 	public IDispatchImpl<Iatl_addin, &IID_Iatl_addin, &LIBID_oeapi_sampleLib, /*wMajor =*/ 1, /*wMinor =*/ 0>,
 	public IDispEventSimpleImpl<1, Catl_addin, &__uuidof(OEAPIINITCOM::IOEInitEvents)>,
 	public IDispEventSimpleImpl<2, Catl_addin, &__uuidof(OEAPI::IOEAPIObjEvents)>,
-	public IDispEventSimpleImpl<3, Catl_addin, &__uuidof(OESTORE::IOEFolderEvents)>
+	public IDispEventSimpleImpl<3, Catl_addin, &__uuidof(OESTORE::IOEFolderEvents)>,
+	public IDispEventSimpleImpl<4, Catl_addin, &__uuidof(OESTORE::IOEMailAccountManagerEvents)>
 {
 public:
 	typedef IDispEventSimpleImpl<1, Catl_addin, &__uuidof(OEAPIINITCOM::IOEInitEvents)> _OEAPIInitEvents;
 	typedef IDispEventSimpleImpl<2, Catl_addin, &__uuidof(OEAPI::IOEAPIObjEvents)> _OEAPIObjEvents;
 	typedef IDispEventSimpleImpl<3, Catl_addin, &__uuidof(OESTORE::IOEFolderEvents)> _OEFolderEvents;
+	typedef IDispEventSimpleImpl<4, Catl_addin, &__uuidof(OESTORE::IOEMailAccountManagerEvents)> _OEAccMgrEvents;
 
 	Catl_addin()
 	{
@@ -61,6 +63,7 @@ END_COM_MAP()
 		SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), DISPID_OE_TOOLBARBUTTONCLICK, OnToolbarButtonClicked, &TwoLongParamInfo)
 		SINK_ENTRY_INFO(2, __uuidof(OEAPI::IOEAPIObjEvents), DISPID_OE_TOOLBARBUTTON_MSGWNDCLICKED, OnMsgWndToolbarButtonClicked,&ThreeLongParamInfo)
 		SINK_ENTRY_INFO(3, __uuidof(OESTORE::IOEFolderEvents), DISPID_NEWMESSAGE, OnNewMessage, &OneLongParamInfo)
+		SINK_ENTRY_INFO(4, __uuidof(OESTORE::IOEMailAccountManagerEvents), DISPID_DEFAULTACCOUNTCHANGED, OnDefaultAccountChanged, &NoParamInfo)
 	END_SINK_MAP()
 
 	HRESULT FinalConstruct();
@@ -79,6 +82,8 @@ END_COM_MAP()
 	STDMETHOD(OnMsgWndToolbarButtonClicked)(long toolbarId, long buttonId, long msgWnd);
 	//------------------------------------------------------------------//
 	STDMETHOD(OnNewMessage)(long msgId);
+
+	STDMETHOD(OnDefaultAccountChanged)();
 
 	void DumpHeader();
 	void ListAccounts();

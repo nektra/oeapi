@@ -20,6 +20,9 @@ TOEMailAccountManager::TOEMailAccountManager()
 {
 	_pMSOEAccMgr = NULL;
 
+	_dwCookie = 0;
+	_pEventSink = NULL;
+
 	HRESULT hr;
 	if (FAILED(hr = CoCreateInstance(CLSID_IOEAccountManager, 
 		NULL, 
@@ -28,12 +31,21 @@ TOEMailAccountManager::TOEMailAccountManager()
 		(void**) &_pMSOEAccMgr)))
 	{
 		debug_print(DEBUG_ERROR, TEXT("CoCreateInstance for CLSID_IOEAccountManager failed with HR=0x%08x"), hr);
+
+		_pEventSink = new CAccMgrEventSink;
+		if (FAILED(hr = _pMSOEAccMgr->Advise(_pEventSink, &_dwCookie)))
+		{
+			debug_print(DEBUG_ERROR, TEXT("Advise failed with HR=0x%08x"), hr);
+		}
 	}
 }
 
 TOEMailAccountManager::~TOEMailAccountManager()
 {
-	
+	if (_pEventSink)
+	{
+		_pMSOEAccMgr->Unadvise(_dwCookie);
+	}	
 }
 
 TOEMailAccountPtr TOEMailAccountManager::GetFirstAccount()

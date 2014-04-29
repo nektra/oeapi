@@ -336,6 +336,11 @@ void Catl_addin::ShowMsgId()
 		MessageBox(NULL, msg, TEXT("MessageID"), MB_OK|MB_SETFOREGROUND);
 	}
 }
+
+STDMETHODIMP Catl_addin::OnDefaultAccountChanged()
+{
+	return S_OK;}
+
 void Catl_addin::DumpHeader()
 {
 	long msgid = m_oeapi->GetCurrentMessageID();
@@ -383,7 +388,12 @@ void Catl_addin::ListAccounts()
 			acc = m_accMgr->GetNextAccount();
 		}
 
-		CTextDialog td(L"Accounts", ss.str());
+		IOEMailAccountPtr defAcc = m_accMgr->GetDefaultAccount();
+		
+		ss << L"==== Default account is " << defAcc->GetAccountName() 
+			<< L" <" << defAcc->GetMailAddress() << L">\r\n";
+
+		CTextDialog td(L"Account List", ss.str());
 		td.DoModal();
 
 		acc = NULL;
