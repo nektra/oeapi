@@ -2,7 +2,7 @@
 *
 * Author: Ismael Bejarano (ismael.bejarano@nektra.com)
 *
-* Copyright (c) 2006-2007 Nektra S.A., Buenos Aires, Argentina.
+* Copyright (c) 2006-2013 Nektra S.A., Buenos Aires, Argentina.
 * All rights reserved.
 *
 **/
@@ -15,13 +15,26 @@
 #include <iostream>
 #include <string>
 #include <HtmlHelp.h>
-
-_bstr_t g_dialogText;
+#include "textdlg.h"
 
 _ATL_FUNC_INFO NoParamInfo = { CC_STDCALL, VT_EMPTY, 0 };
 _ATL_FUNC_INFO OneLongParamInfo = { CC_STDCALL, VT_EMPTY, 1, { VT_INT } };
 _ATL_FUNC_INFO TwoLongParamInfo = { CC_STDCALL, VT_EMPTY, 2, { VT_INT, VT_INT } };
 _ATL_FUNC_INFO ThreeLongParamInfo={ CC_STDCALL, VT_EMPTY, 3, { VT_INT, VT_INT, VT_INT } }; 
+
+static LPCWSTR ACCOUNTTYPE2STR(ACCOUNTTYPE a)
+{
+	switch (a)
+	{
+		case OE_ACCTYPE_HTTP: return L"HTTP"; break;
+		case OE_ACCTYPE_IMAP: return L"IMAP";break;
+		case OE_ACCTYPE_LDAP: return L"LDAP (Directory Service)"; break;
+		case OE_ACCTYPE_NEWS: return L"NEWS"; break;
+		case OE_ACCTYPE_POP3: return L"POP3"; break;
+		default:
+			return L"Unknown";
+	}
+}
 
 // Catl_addin
 
@@ -334,9 +347,8 @@ void Catl_addin::DumpHeader()
 		long folderid = m_oeapi->GetSelectedFolderID();        			
 		folder = m_foldermanager->GetFolder(folderid);
 		msg = folder->OEGetMessage(msgid);
-		g_dialogText = msg->GetHeader();	
-
-	
+		CTextDialog td(L"Message Header", (wchar_t*)msg->GetHeader());
+		td.DoModal();
 	}
 }
 
@@ -349,6 +361,7 @@ void Catl_addin::ListAccounts()
 		IID_IOEMailAccountManager, 
 		(void**)&m_accMgr)))
 	{
+		std::wstringstream ss;
 
 		IOEMailAccountPtr acc = m_accMgr->GetFirstAccount();
 
@@ -360,12 +373,21 @@ void Catl_addin::ListAccounts()
 			_bstr_t addr = acc->GetMailAddress();
 			ACCOUNTTYPE at = acc->GetAccountType();
 
-			wchar_t s[1000];
-			wsprintf(s, L"name:%s id:%d uid:%s addr:%s acctype:%d", name, id, uid, addr, at);
-			OutputDebugString(s);
-		
+			ss << L"=======================================\r\n";
+			ss << L"Account Type:" << ACCOUNTTYPE2STR(at) << L"\r\n";
+			ss << L"Account Name:  " << name << L"\r\n";
+			ss << L"ID:  " << id << L"\r\n";
+			ss << L"UID: " << uid << L"\r\n";
+			ss << L"Mail-Address: " << addr << L"\r\n";
+
 			acc = m_accMgr->GetNextAccount();
 		}
+
+		CTextDialog td(L"Accounts", ss.str());
+		td.DoModal();
+
+		acc = NULL;
+		m_accMgr = NULL;
 	}
 	else
 	{
