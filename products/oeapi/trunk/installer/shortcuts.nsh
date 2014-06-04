@@ -16,7 +16,7 @@
 ;  CreateShortCut "$SMPROGRAMS\Nektra\OEApi\Open C# Exe Demo Source.lnk" "$INSTDIR\Src\C# Exe\OEApiDemoC#.sln"
 
 
-  CreateShortCut "$SMPROGRAMS\Nektra\OEApi\OEAPI-Help.lnk" "$INSTDIR\Doc\OEAPI-Help.chm"
+  ; CreateShortCut "$SMPROGRAMS\Nektra\OEApi\OEAPI-Help.lnk" "$INSTDIR\Doc\OEAPI-Help.chm"
 
 
   CreateShortCut "$SMPROGRAMS\Nektra\OEApi\Uninstall.lnk" "$INSTDIR\uninst.exe"

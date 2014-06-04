@@ -17,9 +17,12 @@
 !define PRODUCT_SOURCE TRUE
 !define DEMO_BINARIES_DIR "Release"
 
+
 !include "prelude.nsh"
 
 !include "demos.nsh"
+
+!include "documentation.nsh"
 
 !include "install.nsh"
 
