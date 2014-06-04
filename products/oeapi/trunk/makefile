@@ -2,15 +2,15 @@ NSISDIR="C:\Program Files\NSIS"
 MAKENSIS=$(NSISDIR)\makensis.exe
 DOXYGEN="c:\program files\doxygen\bin\doxygen.exe"
 
-BUILDS=debug evaluation standard
+BUILDS=debug evaluation standard enterprise
 
 all: clean-all build-all installer-all 
 
-clean-all: clean-debug clean-evaluation clean-standard clean-doc clean-installer
+clean-all: clean-debug clean-evaluation clean-standard clean-doc clean-installer clean-enterprise
 
-build-all: build-debug build-evaluation build-standard
+build-all: build-debug build-evaluation build-standard build-enterprise
 
-installer-all: installer-evaluation installer-standard  installer-standard-source
+installer-all: installer-evaluation installer-standard  installer-standard-source installer-enterprise
 
 
 build-common:
@@ -29,6 +29,10 @@ build-standard:
 	set BUILDTYPE=Standard
 	$(MAKE) build-common
 
+build-enterprise:
+	set BUILDTYPE=Enterprise
+	$(MAKE) build-common
+	
 clean-common:
 	devenv oeapi.sln /Clean "$(BUILDTYPE)|Win32"
 	devenv demo\demos.sln /Clean "$(BUILDTYPE)|Win32"
@@ -43,6 +47,11 @@ clean-evaluation:
 clean-standard:
 	set BUILDTYPE=Standard
 	$(MAKE) clean-common
+
+clean-enterprise:
+	set BUILDTYPE=Enterprise
+	$(MAKE) clean-common
+
 
 installer-common: doc 
 	echo !define WLMAILAPI_BUILDTYPE_STR "$(BUILDTYPE)" > installer\buildtype.nsh 
@@ -65,6 +74,10 @@ installer-standard: build-standard installer-common
 
 installer-standard-source: build-standard installer-common
 	$(MAKENSIS) installer\standard-source.nsi
+	tools\symbolzip.py .\Bin .\installer oeapi src
+
+installer-enterprise: build-enterprise installer-common
+	$(MAKENSIS) installer\enterprise.nsi
 	tools\symbolzip.py .\Bin .\installer oeapi src
 
 clean-installer:
