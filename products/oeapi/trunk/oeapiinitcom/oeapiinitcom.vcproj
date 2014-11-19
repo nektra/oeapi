@@ -72,7 +72,7 @@
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
+				RandomizedBaseAddress="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -158,7 +158,7 @@
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
+				RandomizedBaseAddress="2"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -240,7 +240,7 @@
 				ModuleDefinitionFile="./oeapiinitcom.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				RandomizedBaseAddress="1"
+				RandomizedBaseAddress="2"
 				TargetMachine="1"
 			/>
 			<Tool
