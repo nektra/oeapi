@@ -16,6 +16,12 @@ installer-all: installer-evaluation installer-standard  installer-standard-sourc
 build-common:
 	devenv oeapi.sln /Build "$(BUILDTYPE)|Win32"
 	devenv demo\demos.sln /Build "Release|Win32"
+	tools\sign\signfile.bat $(BUILDTYPE)\oeapiinitcom.dll
+	tools\sign\signfile.bat $(BUILDTYPE)\oecom.dll
+	tools\sign\signfile.bat $(BUILDTYPE)\oestore.dll
+	tools\sign\signfile.bat Release\oehook.dll
+	tools\sign\signfile.bat Release\launcher.exe
+
 
 build-debug:
 	set BUILDTYPE=Debug
