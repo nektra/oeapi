@@ -72,19 +72,24 @@ installer-common: doc
 
 installer-evaluation: build-evaluation installer-common
 	$(MAKENSIS) installer\evaluation.nsi	
+	for %%f in (installer\*.exe) do tools\sign\signfile.bat %%f 
 	tools\symbolzip.py .\Bin .\installer oeapi evaluation
 
 installer-standard: build-standard installer-common
 	$(MAKENSIS) installer\standard.nsi
+	for %%f in (installer\*.exe) do tools\sign\signfile.bat %%f 
 	tools\symbolzip.py .\Bin .\installer oeapi standard
 
 installer-standard-source: build-standard installer-common
 	$(MAKENSIS) installer\standard-source.nsi
+	for %%f in (installer\*.exe) do tools\sign\signfile.bat %%f 
 	tools\symbolzip.py .\Bin .\installer oeapi src
 
 installer-enterprise: build-enterprise installer-common
 	$(MAKENSIS) installer\enterprise.nsi
-	tools\symbolzip.py .\Bin .\installer oeapi src
+	for %%f in (installer\*.exe) do tools\sign\signfile.bat %%f 
+	tools\symbolzip.py .\Bin .\installer oeapi enterprise
+	
 
 clean-installer:
 	del installer\buildtype.nsh
