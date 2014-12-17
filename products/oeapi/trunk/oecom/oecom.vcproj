@@ -107,6 +107,92 @@
 			/>
 		</Configuration>
 		<Configuration
+			Name="Standard|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="3"
+				TypeLibraryName=".\Standard/oecom.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm200 "
+				InlineFunctionExpansion="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="11274"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RegisterOutput="true"
+				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(OutDir)\"
+				ModuleDefinitionFile="./oecom.def"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
@@ -173,6 +259,98 @@
 				RandomizedBaseAddress="2"
 				DataExecutionPrevention="2"
 				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Debug|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="_DEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="3"
+				TypeLibraryName=".\Debug/oecom.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm200 "
+				Optimization="0"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				MinimalRebuild="true"
+				BasicRuntimeChecks="3"
+				RuntimeLibrary="1"
+				BrowseInformation="1"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="_DEBUG"
+				Culture="11274"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RegisterOutput="true"
+				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
+				LinkIncremental="2"
+				AdditionalLibraryDirectories="$(OutDir)"
+				ModuleDefinitionFile="./oecom.def"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
 			/>
 			<Tool
 				Name="VCALinkTool"
@@ -286,199 +464,21 @@
 			/>
 		</Configuration>
 		<Configuration
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="1"
-			ConfigurationType="2"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			Name="Standard|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			UseOfATL="0"
-			UseOfMFC="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				CommandLine=""
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				HeaderFileName=""
-				MkTypLibCompatible="true"
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="NDEBUG"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName=".\Standard/oecom.tlb"
-			/>
-			<Tool
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
-				AdditionalOptions="/Zm200 "
-				InlineFunctionExpansion="0"
-				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;STANDARD_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				WarningLevel="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Culture="11274"
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="NDEBUG"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
-				AdditionalLibraryDirectories="$(OutDir)\"
-				DataExecutionPrevention="0"
-				LinkIncremental="1"
-				ModuleDefinitionFile="./oecom.def"
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				RegisterOutput="true"
-				SubSystem="2"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				CommandLine=""
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="1"
-			ConfigurationType="2"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
-			Name="Debug|x64"
-			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			UseOfATL="0"
-			UseOfMFC="0"
-			>
-			<Tool
-				Name="VCPreBuildEventTool"
-			/>
-			<Tool
-				CommandLine=""
-				Name="VCCustomBuildTool"
-			/>
-			<Tool
-				Name="VCXMLDataGeneratorTool"
-			/>
-			<Tool
-				Name="VCWebServiceProxyGeneratorTool"
-			/>
-			<Tool
-				HeaderFileName=""
-				MkTypLibCompatible="true"
-				Name="VCMIDLTool"
-				PreprocessorDefinitions="_DEBUG"
-				SuppressStartupBanner="true"
-				TargetEnvironment="3"
-				TypeLibraryName=".\Debug/oecom.tlb"
-			/>
-			<Tool
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
-				AdditionalOptions="/Zm200 "
-				BasicRuntimeChecks="3"
-				BrowseInformation="1"
-				DebugInformationFormat="3"
-				MinimalRebuild="true"
-				Name="VCCLCompilerTool"
-				Optimization="0"
-				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_USRDLL;PRINT_ERRORS;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
-				RuntimeLibrary="1"
-				WarningLevel="3"
-			/>
-			<Tool
-				Name="VCManagedResourceCompilerTool"
-			/>
-			<Tool
-				Culture="11274"
-				Name="VCResourceCompilerTool"
-				PreprocessorDefinitions="_DEBUG"
-			/>
-			<Tool
-				Name="VCPreLinkEventTool"
-			/>
-			<Tool
-				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
-				AdditionalLibraryDirectories="$(OutDir)"
-				DataExecutionPrevention="0"
-				GenerateDebugInformation="true"
-				LinkIncremental="2"
-				ModuleDefinitionFile="./oecom.def"
-				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
-				RegisterOutput="true"
-				SubSystem="2"
-				TargetMachine="17"
-			/>
-			<Tool
-				Name="VCALinkTool"
-			/>
-			<Tool
-				Name="VCManifestTool"
-			/>
-			<Tool
-				Name="VCXDCMakeTool"
-			/>
-			<Tool
-				Name="VCBscMakeTool"
-			/>
-			<Tool
-				Name="VCFxCopTool"
-			/>
-			<Tool
-				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				CommandLine=""
-				Name="VCPostBuildEventTool"
-			/>
-		</Configuration>
-		<Configuration
-			ATLMinimizesCRunTimeLibraryUsage="false"
-			CharacterSet="1"
-			ConfigurationType="2"
-			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
 			Name="Enterprise|x64"
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
-			UseOfATL="0"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
 			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
 			/>
 			<Tool
-				CommandLine=""
 				Name="VCCustomBuildTool"
+				CommandLine=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -487,18 +487,18 @@
 				Name="VCWebServiceProxyGeneratorTool"
 			/>
 			<Tool
-				HeaderFileName=""
-				MkTypLibCompatible="true"
 				Name="VCMIDLTool"
 				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
 				SuppressStartupBanner="true"
 				TargetEnvironment="3"
 				TypeLibraryName=".\Release/oecom.tlb"
+				HeaderFileName=""
 			/>
 			<Tool
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
-				AdditionalOptions="/Zm200 "
 				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm200 "
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
 				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
 				WarningLevel="3"
 			/>
@@ -506,23 +506,23 @@
 				Name="VCManagedResourceCompilerTool"
 			/>
 			<Tool
-				Culture="11274"
 				Name="VCResourceCompilerTool"
 				PreprocessorDefinitions="NDEBUG"
+				Culture="11274"
 			/>
 			<Tool
 				Name="VCPreLinkEventTool"
 			/>
 			<Tool
-				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
-				AdditionalLibraryDirectories="$(OutDir)\"
-				DataExecutionPrevention="0"
-				LinkIncremental="1"
-				ModuleDefinitionFile="./oecom.def"
 				Name="VCLinkerTool"
-				RandomizedBaseAddress="1"
 				RegisterOutput="true"
+				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(OutDir)\"
+				ModuleDefinitionFile="./oecom.def"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="17"
 			/>
 			<Tool
@@ -544,8 +544,180 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				CommandLine=""
 				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Evaluation|Win32"
+			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
+			IntermediateDirectory="$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="1"
+				TypeLibraryName=".\Release/oecom.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm200 "
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;EVALUATION_VERSION;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				RuntimeLibrary="0"
+				WarningLevel="3"
+				DebugInformationFormat="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="11274"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				RegisterOutput="true"
+				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(OutDir)\"
+				ModuleDefinitionFile="./oecom.def"
+				GenerateDebugInformation="true"
+				SubSystem="2"
+				RandomizedBaseAddress="2"
+				DataExecutionPrevention="2"
+				TargetMachine="1"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
+			/>
+		</Configuration>
+		<Configuration
+			Name="Evaluation|x64"
+			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
+			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)"
+			ConfigurationType="2"
+			UseOfMFC="0"
+			UseOfATL="0"
+			ATLMinimizesCRunTimeLibraryUsage="false"
+			CharacterSet="1"
+			>
+			<Tool
+				Name="VCPreBuildEventTool"
+			/>
+			<Tool
+				Name="VCCustomBuildTool"
+				CommandLine=""
+			/>
+			<Tool
+				Name="VCXMLDataGeneratorTool"
+			/>
+			<Tool
+				Name="VCWebServiceProxyGeneratorTool"
+			/>
+			<Tool
+				Name="VCMIDLTool"
+				PreprocessorDefinitions="NDEBUG"
+				MkTypLibCompatible="true"
+				SuppressStartupBanner="true"
+				TargetEnvironment="3"
+				TypeLibraryName=".\Release/oecom.tlb"
+				HeaderFileName=""
+			/>
+			<Tool
+				Name="VCCLCompilerTool"
+				AdditionalOptions="/Zm200 "
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)oeapicommon&quot;;&quot;$(SolutionDir)plugin&quot;;&quot;$(SolutionDir)oeapiinitcom&quot;"
+				PreprocessorDefinitions="WIN32;_WINDOWS;NDEBUG;_USRDLL;ENTERPRISE_VERSION;WINVER=0x0500;_WIN32_WINNT=0x0500;"
+				WarningLevel="3"
+			/>
+			<Tool
+				Name="VCManagedResourceCompilerTool"
+			/>
+			<Tool
+				Name="VCResourceCompilerTool"
+				PreprocessorDefinitions="NDEBUG"
+				Culture="11274"
+			/>
+			<Tool
+				Name="VCPreLinkEventTool"
+			/>
+			<Tool
+				Name="VCLinkerTool"
+				AdditionalDependencies="comctl32.lib oeapiplugin.lib"
+				LinkIncremental="1"
+				AdditionalLibraryDirectories="$(OutDir)\"
+				ModuleDefinitionFile="./oecom.def"
+				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
+				TargetMachine="17"
+			/>
+			<Tool
+				Name="VCALinkTool"
+			/>
+			<Tool
+				Name="VCManifestTool"
+			/>
+			<Tool
+				Name="VCXDCMakeTool"
+			/>
+			<Tool
+				Name="VCBscMakeTool"
+			/>
+			<Tool
+				Name="VCFxCopTool"
+			/>
+			<Tool
+				Name="VCAppVerifierTool"
+			/>
+			<Tool
+				Name="VCPostBuildEventTool"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -590,7 +762,27 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
+					Name="Standard|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oeapi.h;oecom.tlb"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
 					Name="Debug|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oeapi.h;oecom.tlb"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Debug|x64"
 					>
 					<Tool
 						Name="VCCustomBuildTool"
@@ -610,32 +802,32 @@
 					/>
 				</FileConfiguration>
 				<FileConfiguration
-					Name="Standard|x64"
-					>
-					<Tool
-						CommandLine="idl2h &quot;$(InputName)&quot;  "
-						Description="Compiling Type Library."
-						Name="VCCustomBuildTool"
-						Outputs="oeapi.h;oecom.tlb"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
-					Name="Debug|x64"
-					>
-					<Tool
-						CommandLine="idl2h &quot;$(InputName)&quot;  "
-						Description="Compiling Type Library."
-						Name="VCCustomBuildTool"
-						Outputs="oeapi.h;oecom.tlb"
-					/>
-				</FileConfiguration>
-				<FileConfiguration
 					Name="Enterprise|x64"
 					>
 					<Tool
-						CommandLine="idl2h &quot;$(InputName)&quot;  "
-						Description="Compiling Type Library."
 						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oeapi.h;oecom.tlb"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Evaluation|Win32"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
+						Outputs="oeapi.h;oecom.tlb"
+					/>
+				</FileConfiguration>
+				<FileConfiguration
+					Name="Evaluation|x64"
+					>
+					<Tool
+						Name="VCCustomBuildTool"
+						Description="Compiling Type Library."
+						CommandLine="idl2h &quot;$(InputName)&quot;&#x0D;&#x0A;"
 						Outputs="oeapi.h;oecom.tlb"
 					/>
 				</FileConfiguration>
