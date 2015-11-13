@@ -738,11 +738,6 @@ protected:
 	HTREEITEM FindChild(HWND hTree, HTREEITEM hParent, LONG folderId);
 	
 	/**
-	Create OEAPIInit Object.
-	*/
-	void CreateOEAPIInitObject();
-
-	/**
 	*/
 	BOOL RemoveMessageWMail(int msgId);
 

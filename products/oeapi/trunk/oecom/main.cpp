@@ -48,6 +48,7 @@ HWND g_oehWnd = NULL;
 
 ///////////////////////////////////////////////////////////////////////////
 #include <list>
+#include <set>
 
 #include "main.h"
 #include "se_debug.h"
@@ -71,18 +72,7 @@ using namespace OEAPI;
 
 
 // HINSTANCE of the dll
-HINSTANCE hInstOecom = NULL;
-
-// OEAPIInit object
-com_ptr<OEAPIINITCOM::IOEAPIInitState> g_OEAPIInitState;
-//com_ptr<OEAPIINITCOM::IOEAPIInit> g_OEAPIInit;
-
-// saves the number of OEAPIInit objects that have already finished initialization.
-long g_initializedCount;
-
-HWND hWnd = NULL;
-
-//HWND hWndDebug = NULL;
+HINSTANCE g_hInstOECOM = NULL;
 
 const UINT BUTTON_CLICKED_MESSAGE_CODE = RegisterWindowMessage(_T("OEAPI.OnButtonClick"));
 const UINT MENU_ITEM_CLICKED_MESSAGE_CODE = RegisterWindowMessage(_T("OEAPI.OnMenuItemClick"));
@@ -172,6 +162,79 @@ typedef struct tagMenuInfo {
 	INT menuIndex;
 	HWND wndMsgId;
 } MenuItemInfo;
+
+
+class OEAPIInitComStatus
+{
+public:
+	OEAPIInitComStatus();
+
+	// Find all windows with class OEAPI_INITCOM_CALLBACK_CLASS and mark them as pending
+	bool Reset();
+
+	// A notification from hWnd was received. Return true if no pending notifications
+	bool Notify(HWND hWnd);
+
+	// Check if there is pending notifications
+	bool Check();
+
+private:
+	NktLock pendingLock_;
+	std::set<HWND> pending_;
+};
+
+OEAPIInitComStatus::OEAPIInitComStatus()
+:pendingLock_(true)
+{
+}
+
+
+bool OEAPIInitComStatus::Reset()
+{
+	std::set<HWND> pending;
+	{
+		HWND hWnd = NULL;
+		hWnd = ::FindWindowEx(NULL, hWnd, OEAPI_INITCOM_CALLBACK_CLASS, NULL);
+		while (hWnd) {
+			pending.insert(hWnd);
+			hWnd = ::FindWindowEx(NULL, hWnd, OEAPI_INITCOM_CALLBACK_CLASS, NULL);
+		}
+
+	}
+
+	NktAutoLock locker(pendingLock_);
+	pending_ = pending;
+	return !pending_.empty();
+}
+
+bool OEAPIInitComStatus::Notify(HWND hWnd)
+{
+	NktAutoLock locker(pendingLock_);
+	size_t erased = pending_.erase(hWnd);
+	return pending_.empty();
+}
+
+bool OEAPIInitComStatus::Check()
+{
+	NktAutoLock locker(pendingLock_);
+	if (!pending_.empty()) {
+		std::set<HWND>::iterator it = pending_.begin();
+		while (it != pending_.end()) {
+			HWND hWnd = *it;
+			if (!::IsWindow(hWnd)) {
+				std::set<HWND>::iterator delIt = it;
+				++it;
+				pending_.erase(delIt);
+			}
+			else
+				++it;
+		}
+		return pending_.empty();
+	}
+	return true;
+}
+
+OEAPIInitComStatus g_OEAPIInitComStatus;
 
 
 #ifdef ENTERPRISE_VERSION
@@ -529,10 +592,6 @@ OEAPIManager::~OEAPIManager()
 	::CloseHandle(folderChangeEvent_);
 	::CloseHandle(databaseEvent_);
 	::CloseHandle(msgWndCloseEvent_);
-
-	if(!g_OEAPIInitState.is_null()) {
-		g_OEAPIInitState = NULL;
-	}
 }
 
 //---------------------------------------------------------------------------//
@@ -800,18 +859,6 @@ void OEAPIManager::HookSendWnd()
 		}
 		else {
 			debug_print(DEBUG_ERROR, _T("OEAPIManager::HookSendWnd: Can't find send windows.\n"));
-		}
-	}
-}
-
-//---------------------------------------------------------------------------//
-void OEAPIManager::CreateOEAPIInitObject()
-{
-	if(g_OEAPIInitState.is_null())
-    {
-        g_OEAPIInitState = OEAPIINITCOM::OEAPIInitState::create();
-		if(g_OEAPIInitState.is_null()) {
-			debug_print(DEBUG_ERROR, _T("OEAPIManager::CreateOEAPIInitObject: Error CoCreateInstance.\n"));
 		}
 	}
 }
@@ -3595,8 +3642,8 @@ LRESULT CALLBACK OEAPIWndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 		CoTaskMemFree((LPVOID) lParam);
 	}
 	// another OEAPIInit client finished initialization.
-	else if(!g_OEAPIInitState.is_null() && uMsg == WM_OEAPI_INIT_NOTIFICATION_MSG_CODE) {
-		if(g_OEAPIInitState->GetOEAPIInitInitializedObjectsCount() >= g_OEAPIInitState->GetOEAPIInitObjectsCount()) {
+	else if(uMsg == WM_OEAPI_INIT_NOTIFICATION_MSG_CODE) {
+		if (g_OEAPIInitComStatus.Notify(reinterpret_cast<HWND>(lParam))) {
 //			g_sendDlgSyncblocked = FALSE;
 //			if(OEAPIManager::Get()->IsSynchroPending()) {
 //				OEAPIManager::Get()->SendAndReceiveMessages();
@@ -3620,7 +3667,7 @@ HWND CreateCallbackWindow()
 	wndclass.lpfnWndProc	= &OEAPIWndProc;
 	wndclass.cbClsExtra		= 0;
 	wndclass.cbWndExtra		= 0;
-	wndclass.hInstance		= hInstOecom;
+	wndclass.hInstance		= g_hInstOECOM;
 	wndclass.hIcon			= NULL;
 	wndclass.hCursor		= NULL;
 	wndclass.hbrBackground	= (HBRUSH) GetStockObject(WHITE_BRUSH);
@@ -3640,7 +3687,7 @@ HWND CreateCallbackWindow()
 				400, 200,
 				NULL,
 				NULL,
-				hInstOecom,
+				g_hInstOECOM,
 				NULL);
 
 	if (hWnd == NULL) {
@@ -3696,7 +3743,7 @@ void LoadPlugin(HWND hwnd)
 //	MWShutdowned = FALSE;
 
 	g_oehWnd = hwnd;
-	AttachPlugin(hwnd, hInstOecom);
+	AttachPlugin(hwnd, g_hInstOECOM);
 	// Set the function that will be called when the OE window is destroyed
 	OEAPI_SetDetachCallback(ExitServerCallback);
 	// Set the function that will be called when the OE window is destroyed
@@ -4145,7 +4192,7 @@ DWORD _stdcall OEAPICOMServerProc(void *)
 		
         LoadRegisteredPlugins();
         
-		oeapi_exe_server server(hInstOecom);
+		oeapi_exe_server server(g_hInstOECOM);
 //		exe_server<type_library> server(hInstOecom);
 
 		// register_server function uses the hInstOecom to register the typelibrary and the
@@ -4175,25 +4222,9 @@ DWORD _stdcall OEAPICOMServerProc(void *)
 
 		// reset: OE shouldn't get messages from server until all OEInit clients finish
 		// processing the OnOEAPIInit event
-		g_initializedCount = 0;
+		bool wait = g_OEAPIInitComStatus.Reset();
 
-		BOOL setEvent = FALSE;
-
-		if(!g_OEAPIInitState.is_null()) {
-			g_OEAPIInitState->ResetOEAPIInitInitializedObjectsCount();
-
-			// let all OEAPIInit clients return from the OnOEAPIInit function before OE starts
-			// message download.
-			// if there are no OEAPIInit objects don't wait their initialization.
-			if(g_OEAPIInitState->GetOEAPIInitObjectsCount() == 0) {
-				setEvent = TRUE;
-			}
-		}
-		else {
-			setEvent = TRUE;
-		}
-
-		if(setEvent) {
+		if(!wait) {
 			HANDLE initEventHandle = CreateEvent(NULL, TRUE, FALSE, OEAPI_PLUGINS_INITIALIZED_EVENT_NAME);
 			SetEvent(initEventHandle);
 		}
@@ -4258,16 +4289,6 @@ void _stdcall StartServer(HWND hwnd)
 			//OEAPI_AddMenuItem(5, _T("About OEAPI"), _T("About"), TRUE, &AboutOEAPI);
 #endif // EVALUATION_VERSION
 
-			// HACK: if I don't create this object before loading add-ins there could be
-			// a problem sometimes: when I call FreeLibrary of the last add-in that use
-			// OEAPIINITCOM library, OEAPIINITCOM library unloads before (sometimes) deleting
-			// global variables, so if any global variable is a referenced counted object
-			// owned by OEAPIINITCOM library it generates a exception in the Release.
-			// if I create this object here I prevent the unload because this module should
-			// be the owner of the library.
-			
-            g_OEAPIInitState = OEAPIINITCOM::OEAPIInitState::create();
-
 			//LoadRegisteredPlugins();
 
 			if((hServer = CreateThread(0, 0, OEAPICOMServerProc, 0, 0, &serverID)) == NULL)
@@ -4305,6 +4326,7 @@ void _stdcall StartServer(HWND hwnd)
 			// force to finish all initialization staff in ServerProc before continuing
 			HANDLE afterInitializationFinishHandle = CreateEvent(NULL, TRUE, FALSE, OEAPI_PLUGINS_INITIALIZED_EVENT_NAME);
 
+			//FIXME Replace by MsgWaitForMultipleObjectsEx
 			// don't block because OEAPInit object needs messages to serve the events.
 			MSG msg;
 			while(WaitForSingleObject(afterInitializationFinishHandle, 0) == WAIT_TIMEOUT) {
@@ -4320,6 +4342,14 @@ void _stdcall StartServer(HWND hwnd)
 					}
 					else {
 						break;
+					}
+				}
+				else {
+					if (g_OEAPIInitComStatus.Check()) {
+						::SetEvent(afterInitializationFinishHandle);
+					}
+					else {
+						Sleep(10); 
 					}
 				}
 			}
@@ -4503,7 +4533,7 @@ STDAPI DllRegisterServer()
 		RegCloseKey(hKey);
 	}
 
-	if(GetModuleFileName(hInstOecom, filename, sizeof(filename)/sizeof(TCHAR)-1) == 0) {
+	if(GetModuleFileName(g_hInstOECOM, filename, sizeof(filename)/sizeof(TCHAR)-1) == 0) {
 		debug_print(DEBUG_ERROR, _T("DllRegisterServer: Error GetModuleFileName.\n"));
 		return E_FAIL;
 	}
@@ -4542,7 +4572,7 @@ STDAPI DllUnregisterServer()
 	TCHAR filename[MAX_PATH*4];
 	HRESULT hr;
 
-	if(GetModuleFileName(hInstOecom, filename, sizeof(filename)/sizeof(TCHAR)-1) == 0) {
+	if(GetModuleFileName(g_hInstOECOM, filename, sizeof(filename)/sizeof(TCHAR)-1) == 0) {
 		debug_print(DEBUG_ERROR, _T("UnregisterServer: Error GetModuleFileName.\n"));
 		return E_FAIL;
 	}
@@ -4592,7 +4622,7 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID)
 	case DLL_PROCESS_ATTACH:
 		{
 			// just save the hInstance of the dll
-			hInstOecom = hInstance;
+			g_hInstOECOM = hInstance;
 			break;
 		}
 	}

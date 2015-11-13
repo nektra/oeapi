@@ -27,6 +27,7 @@ template<> class TOEAPIInit : public comet::coclass<comet::OEAPIINITCOM::OEAPIIn
 	    void FireOnInitOEAPI();
 	    void TriggerOnShutdownOEAPI();
 	    void FireOnShutdownOEAPI();
+		void NotifyInitComplete();
 
     private:
 	    HANDLE hThread_;

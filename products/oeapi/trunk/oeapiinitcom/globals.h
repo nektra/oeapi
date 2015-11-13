@@ -1,9 +1,5 @@
 #pragma once
 
-extern HWND g_hwndServerArray[];
-extern int g_hwndCount;
-extern int g_initializedObjects;
+extern volatile LONG g_objectCounter;
 
-extern int counter;
-
-extern HINSTANCE hInst;
+extern HINSTANCE g_hOEAPIINITCOM;
