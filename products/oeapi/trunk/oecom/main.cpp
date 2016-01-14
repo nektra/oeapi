@@ -3702,7 +3702,7 @@ HWND CreateCallbackWindow()
 
 #include "resource.h"
 
-extern HINSTANCE hInstOecom;
+//extern HINSTANCE g_hInstOecom;
 HWND hAboutDlg = NULL;
 
 BOOL CALLBACK AboutOEAPIDlgProc(
@@ -3728,7 +3728,7 @@ BOOL CALLBACK AboutOEAPIDlgProc(
 
 INT __cdecl AboutOEAPI(HWND, INT, INT)
 {
-	hAboutDlg = CreateDialogParam( hInstOecom, MAKEINTRESOURCE(IDD_ABOUT),
+	hAboutDlg = CreateDialogParam( g_hInstOECOM, MAKEINTRESOURCE(IDD_ABOUT),
 						g_oehWnd,
 					    (DLGPROC) AboutOEAPIDlgProc,
 					    (LONG) 0);
