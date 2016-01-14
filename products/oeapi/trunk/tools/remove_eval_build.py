@@ -21,11 +21,11 @@ for node in doc.getElementsByTagName("FileConfiguration"):
     confname = node.getAttribute("Name")
     if confname.startswith("Evaluation"):
         node.parentNode.removeChild(node)
-	sys.stderr.write("FileConfiguration \""+ confname + "\" removed\n")
+    sys.stderr.write("FileConfiguration \""+ confname + "\" removed\n")
 
 newfile = projfile.replace('.vcproj','-distro.vcproj');
 
-print doc.toprettyxml()
+print(doc.toprettyxml())
 
 #f = open(newfile, 'w')
 #doc.writexml(f)
