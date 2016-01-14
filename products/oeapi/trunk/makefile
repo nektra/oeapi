@@ -1,4 +1,4 @@
-NSISDIR="C:\Program Files\NSIS"
+NSISDIR="C:\Program Files (x86)\NSIS"
 MAKENSIS=$(NSISDIR)\makensis.exe
 DOXYGEN="c:\program files\doxygen\bin\doxygen.exe"
 
@@ -59,7 +59,7 @@ clean-enterprise:
 	$(MAKE) clean-common
 
 
-installer-common: doc 
+installer-common: build-doc 
 	echo !define WLMAILAPI_BUILDTYPE_STR "$(BUILDTYPE)" > installer\buildtype.nsh 
 
 	tools\remove_eval_build.py oeapiinitcom\oeapiinitcom.vcproj > oeapiinitcom\oeapiinitcom-distro.vcproj
@@ -73,22 +73,22 @@ installer-common: doc
 installer-evaluation: build-evaluation installer-common
 	$(MAKENSIS) installer\evaluation.nsi	
 	for %%f in (installer\*.exe) do tools\sign\signfile.bat %%f 
-	tools\symbolzip.py .\Bin .\installer oeapi evaluation
+	tools\symbolzip.py .\Evaluation .\installer oeapi evaluation
 
 installer-standard: build-standard installer-common
 	$(MAKENSIS) installer\standard.nsi
 	for %%f in (installer\*.exe) do tools\sign\signfile.bat %%f 
-	tools\symbolzip.py .\Bin .\installer oeapi standard
+	tools\symbolzip.py .\Standard .\installer oeapi standard
 
 installer-standard-source: build-standard installer-common
 	$(MAKENSIS) installer\standard-source.nsi
 	for %%f in (installer\*.exe) do tools\sign\signfile.bat %%f 
-	tools\symbolzip.py .\Bin .\installer oeapi src
+	tools\symbolzip.py .\Standard .\installer oeapi src
 
 installer-enterprise: build-enterprise installer-common
 	$(MAKENSIS) installer\enterprise.nsi
 	for %%f in (installer\*.exe) do tools\sign\signfile.bat %%f 
-	tools\symbolzip.py .\Bin .\installer oeapi enterprise
+	tools\symbolzip.py .\Enterprise .\installer oeapi enterprise
 	
 
 clean-installer:
@@ -100,7 +100,7 @@ clean-installer:
 	-del source\WLMailCom\oecom-distro.vcproj
 	-del source\lib\oeapiplugin-distro.vcproj
 
-doc:
+build-doc:
 	cd doc
 	$(DOXYGEN)
 	cd ..
