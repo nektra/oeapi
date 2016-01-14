@@ -41,7 +41,7 @@ build-enterprise:
 	
 clean-common:
 	devenv oeapi.sln /Clean "$(BUILDTYPE)|Win32"
-	devenv demo\demos.sln /Clean "$(BUILDTYPE)|Win32"
+	devenv demo\demos.sln /Clean "Release|Win32"
 clean-debug:
 	set BUILDTYPE=Debug
 	$(MAKE) clean-common 
@@ -92,13 +92,13 @@ installer-enterprise: build-enterprise installer-common
 	
 
 clean-installer:
-	del installer\buildtype.nsh
-	del installer\version.nsh
+	-del installer\buildtype.nsh
+	-del installer\version.nsh
 
-	del source\WLMailApiInit\WLMailApiInit-distro.vcproj
-	del source\WLMailStore\WLMailStore-distro.vcproj
-	del source\WLMailCom\oecom-distro.vcproj
-	del source\lib\oeapiplugin-distro.vcproj
+	-del source\WLMailApiInit\WLMailApiInit-distro.vcproj
+	-del source\WLMailStore\WLMailStore-distro.vcproj
+	-del source\WLMailCom\oecom-distro.vcproj
+	-del source\lib\oeapiplugin-distro.vcproj
 
 doc:
 	cd doc
