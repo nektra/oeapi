@@ -40,16 +40,16 @@
 #include <atlcom.h>
 
 // to handle OnInit & OnShutdown
-#import <oeapiinitcom.tlb> named_guids
+#import "libid:A4885815-462D-4d7b-895C-78FAE55AB177" named_guids
 using namespace OEAPIINITCOM;
 
 // to handle objects from oecom
-#import <oecom.tlb> named_guids, \
+#import "libid:54B89298-879A-4086-B082-854D3EBFDCC3" named_guids, \
 	rename("SendMessage", "OESendMessage")
 using namespace OEAPI;
 
 // to handle objects from oestore
-#import <oestore.tlb> named_guids \
+#import "libid:A684B0CB-4EA0-4c72-8AEF-3C98D767FAD2" named_guids \
 	rename("GetMessage", "OEGetMessage")
 using namespace OESTORE;
 
